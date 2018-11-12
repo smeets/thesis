@@ -1,0 +1,146 @@
+\documentclass[11pt,twoside]{eitExjobb}
+%%\documentclass[11pt,twoside,final]{eitExjobb}  % Use final for the final version that will be printed
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Other fonts (Palatino as rm font, helvetica as sf font and courier as tt font. All fonts are normally installed with a standard LaTeX distribution.)
+% \usepackage{mathpazo} % Also in math mode
+% \usepackage[scaled=.95]{helvet}
+% \usepackage{courier}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ÅÄÖ
+\usepackage[utf8]{inputenc}  % Input encoding (this file): 8 bit unicode. Default by most text editors
+\usepackage[T1]{fontenc}     % Output encoding (pdf file)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Packages used in the example
+\usepackage{graphicx}   % Included graphics and some resizable boxes
+\usepackage{url}        % nice urls with line breaks
+\usepackage{lipsum}     % nonsense text blocks
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%% Title page
+\Title{A Test of \texttt{eitExjobb.cls}}
+\Author{Stefan Höst\\\texttt{stefan.host@eit.lth.se}}
+\Supervisor{Stefan Höst}
+\Examiner{Stefan Höst}
+%% Set by default
+% \Date{\today}    %% Today's date
+% \Year{\the\year} %% This year shown in copyright
+% \Company{Department of Electrical and Information Technology\\Lund University}
+%%%%%%
+\MakeTitlePage  %%% Print title page and copyright page
+%%%%%% 
+\frontmatter    %%% Page numbering for front pages (small roman)
+%%%%% Abstract
+\chapter*{Abstract}
+\lipsum[1-2]
+%%%%% Abstract
+\chapter*{Popular Science Summary}
+\lipsum[3-7]
+%% ToC etc
+\tableofcontents
+\listoffigures
+\listoftables
+\cleardoublepage
+%%%%% Page numbering for the main thesis (arabic)
+\mainmatter
+%%%%%
+
+\chapter{Introduction}
+\lipsum[1]
+
+\section{Test section}
+\lipsum[2-4]
+
+\subsection{Test subsection}
+\lipsum[5]
+
+\subsection{New subsection}
+\lipsum[6]
+
+\section{New section}
+\lipsum[1]
+\begin{displaymath}
+  A=\sum_{i=0}^{\infty}\beta\alpha^i=\frac{\beta}{1-\alpha},\quad |\alpha|<1
+\end{displaymath}
+\lipsum[2]
+
+\section{Another section}
+\lipsum[3-6]
+
+\section{Yet another section}
+\lipsum[7]
+
+%%%%%%%%%%%%%%%%%%%
+\chapter[A Shorter Chapter Title]{New Chapter with a Long Title that Spanns over More Than One Line}
+In Figure~\ref{fig:testfig} a typical test mage is shown.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.4\linewidth]{example-image}
+  \caption{Example image.}
+  \label{fig:testfig}
+\end{figure}
+
+\section{New new section}
+\lipsum[1-2]
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{lll}
+    Group & Test 1 & Test 2\\\hline
+    A & 253 &54\\
+    B & 636 & 33
+  \end{tabular}
+  \caption{A nice table.}
+  \label{tab:tabletest}
+\end{table}
+
+\lipsum[3]
+\begin{figure}[htbp]
+  \begin{minipage}[t]{0.5\linewidth}
+    \centering
+    \includegraphics[width=0.8\linewidth]{example-image-a}
+    \caption{Image A}
+    \label{fig:imageA}
+  \end{minipage}%
+  \begin{minipage}[t]{0.5\linewidth}
+    \centering
+    \includegraphics[width=0.8\linewidth]{example-image-b}
+    \caption{Image B. It can also be a long caption even if the space is narrow.}
+    \label{fig:imageB}
+  \end{minipage}
+\end{figure}
+
+Figure~\ref{fig:imageA} is displayed next to Figure~\ref{fig:imageB}. Notice that \verb|\linewidth| is the line width inside the \verb|minipage|.
+
+\lipsum[4]
+
+\chapter{Comments on LaTeX references}
+If you want to know more about \LaTeX\ there is a (free) manual at \cite{cite:NotShort}. For more specific questions, it is recommended to have a look at the forum StackExchange \cite{cite:TeX.SX}, where the most common questions already have answers. All official packets can be found, and downloaded, from CTAN \cite{cite:CTAN}. Finally, for the hardcore programmer who thinks \LaTeX\ is a bit inflexible, I can recommend the \TeX\ introduction in \cite{cite:TeXimpatient}.
+
+For questions about how you should do to get your imported graphics as you want, have a look at \cite{cite:ImportedGraphics}. If you instead want to do the images inline from the \TeX\ code you are recommended to use TikZ \cite{cite:TikZ}. However, it is known to have a relatively high learning threshold. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% References
+\begin{thebibliography}{99}
+\bibitem{cite:NotShort} T. Oetiker, H Partl, I Hyna, and E. Schlegl, \textit{A (Not So) Short Introduction to \LaTeX2e}, \url{www.ctan.org/tex-archive/info/lshort/english/}
+\bibitem{cite:TeX.SX} \{\TeX\} StackExchange, \url{tex.stackexchange.com/}
+\bibitem{cite:CTAN} The Comprehensive \TeX\ Archive Network, \url{www.ctan.org/}
+\bibitem{cite:TeXimpatient} P. Abrahams, K. Hargreaves, and K. Berry, \textit{TeX for the Impatient}, \url{savannah.gnu.org/projects/teximpatient/}
+\bibitem{cite:ImportedGraphics} K. Reckdahl, \textit{Using Imported Graphics in LaTeX and pdfLaTeX}, \url{www.ctan.org/tex-archive/info/epslatex/english}
+\bibitem{cite:TikZ} T. Tantau, \textit{The TikZ and PGF Packages}, \url{www.bu.edu/math/files/2013/08/tikzpgfmanual.pdf}. Warning: 400+ pages.
+\end{thebibliography}
+
+
+%%%%%%%%%%%%%%%%%%
+\appendix
+%%%%%%%%%%%%%%%%%%
+\chapter{Some extra material}
+\lipsum[1]
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\linewidth]{example-image}
+  \caption{A picture or table in the appendix is numbered accordingly.}
+  \label{fig:AppFig}
+\end{figure}
+
+\end{document}
