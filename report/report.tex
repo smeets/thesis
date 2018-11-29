@@ -19,7 +19,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 %%% Title page
-\Title{Predicting WiFi Performance In The Wild}
+\Title{Analysis of Analytic Wi-Fi Performance Models Based on End-User Data}
 \Author{Axel Smeets\\\texttt{dat12asm@student.lu.se}}
 \Supervisor{Björn Landfeld}
 \Examiner{Christian Nyberg}
@@ -31,12 +31,13 @@
 \MakeTitlePage  %%% Print title page and copyright page
 %%%%%%
 \frontmatter    %%% Page numbering for front pages (small roman)
-%%%%% Abstract
+
 \chapter*{Abstract}
-\lipsum[1-2]
-%%%%% Abstract
+\input{abstract}
+
 \chapter*{Popular Science Summary}
-\lipsum[3-7]
+\input{popsci}
+
 %% ToC etc
 \tableofcontents
 \listoffigures
@@ -47,77 +48,19 @@
 %%%%%
 
 \chapter{Introduction}
-\lipsum[1]
+\input{introduction}
 
-\section{Test section}
-\lipsum[2-4]
+\chapter{Background}
+\input{background}
 
-\subsection{Test subsection}
-\lipsum[5]
+\chapter{Previous Work}
+\input{previous_work}
 
-\subsection{New subsection}
-\lipsum[6]
+\chapter{Results}
+\input{results}
 
-\section{New section}
-\lipsum[1]
-\begin{displaymath}
-  A=\sum_{i=0}^{\infty}\beta\alpha^i=\frac{\beta}{1-\alpha},\quad |\alpha|<1
-\end{displaymath}
-\lipsum[2]
-
-\section{Another section}
-\lipsum[3-6]
-
-\section{Yet another section}
-\lipsum[7]
-
-%%%%%%%%%%%%%%%%%%%
-\chapter[A Shorter Chapter Title]{New Chapter with a Long Title that Spanns over More Than One Line}
-In Figure~\ref{fig:testfig} a typical test mage is shown.
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.4\linewidth]{example-image}
-  \caption{Example image.}
-  \label{fig:testfig}
-\end{figure}
-
-\section{New new section}
-\lipsum[1-2]
-\begin{table}[htbp]
-  \centering
-  \begin{tabular}{lll}
-    Group & Test 1 & Test 2\\\hline
-    A & 253 &54\\
-    B & 636 & 33
-  \end{tabular}
-  \caption{A nice table.}
-  \label{tab:tabletest}
-\end{table}
-
-\lipsum[3]
-\begin{figure}[htbp]
-  \begin{minipage}[t]{0.5\linewidth}
-    \centering
-    \includegraphics[width=0.8\linewidth]{example-image-a}
-    \caption{Image A}
-    \label{fig:imageA}
-  \end{minipage}%
-  \begin{minipage}[t]{0.5\linewidth}
-    \centering
-    \includegraphics[width=0.8\linewidth]{example-image-b}
-    \caption{Image B. It can also be a long caption even if the space is narrow.}
-    \label{fig:imageB}
-  \end{minipage}
-\end{figure}
-
-Figure~\ref{fig:imageA} is displayed next to Figure~\ref{fig:imageB}. Notice that \verb|\linewidth| is the line width inside the \verb|minipage|.
-
-\lipsum[4]
-
-\chapter{Comments on LaTeX references}
-If you want to know more about \LaTeX\ there is a (free) manual at \cite{cite:NotShort}. For more specific questions, it is recommended to have a look at the forum StackExchange \cite{cite:TeX.SX}, where the most common questions already have answers. All official packets can be found, and downloaded, from CTAN \cite{cite:CTAN}. Finally, for the hardcore programmer who thinks \LaTeX\ is a bit inflexible, I can recommend the \TeX\ introduction in \cite{cite:TeXimpatient}.
-
-For questions about how you should do to get your imported graphics as you want, have a look at \cite{cite:ImportedGraphics}. If you instead want to do the images inline from the \TeX\ code you are recommended to use TikZ \cite{cite:TikZ}. However, it is known to have a relatively high learning threshold.
+\chapter{Discussion and Future Work}
+\input{discussion}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% References

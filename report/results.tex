@@ -1,0 +1,40 @@
+In Figure~\ref{fig:testfig} a typical test mage is shown.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.4\linewidth]{example-image}
+  \caption{Example image.}
+  \label{fig:testfig}
+\end{figure}
+
+\section{New new section}
+\lipsum[1-2]
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{lll}
+    Group & Test 1 & Test 2\\\hline
+    A & 253 &54\\
+    B & 636 & 33
+  \end{tabular}
+  \caption{A nice table.}
+  \label{tab:tabletest}
+\end{table}
+
+\lipsum[3]
+\begin{figure}[htbp]
+  \begin{minipage}[t]{0.5\linewidth}
+    \centering
+    \includegraphics[width=0.8\linewidth]{example-image-a}
+    \caption{Image A}
+    \label{fig:imageA}
+  \end{minipage}%
+  \begin{minipage}[t]{0.5\linewidth}
+    \centering
+    \includegraphics[width=0.8\linewidth]{example-image-b}
+    \caption{Image B. It can also be a long caption even if the space is narrow.}
+    \label{fig:imageB}
+  \end{minipage}
+\end{figure}
+
+Figure~\ref{fig:imageA} is displayed next to Figure~\ref{fig:imageB}. Notice that \verb|\linewidth| is the line width inside the \verb|minipage|.
+
+\lipsum[4]

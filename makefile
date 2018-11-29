@@ -1,5 +1,6 @@
 
-.phony: pdf
+.PHONY: report
 
-pdf:
-	$(MAKE) -C report
+report:
+	$(MAKE) report -C report
+	cp report/out/report.pdf .
