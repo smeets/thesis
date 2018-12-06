@@ -1,10 +1,14 @@
 
-SOURCES = 
+SOURCES = base.tex                    \
+	abstract.tex      popsci.tex      \
+	introduction.tex  background.tex  \
+	previous_work.tex methodology.tex \
+	results.tex       conclusion.tex
 
 .PHONY: report
 
-out:
-	mkdir out
+tmp:
+	mkdir tmp
 
-report: report.tex $(SOURCES) out
-	pdflatex -output-directory=out report.tex 
+report: tmp $(SOURCES)
+	pdflatex -output-directory=.. -aux-directory=tmp base.tex

@@ -1,0 +1,68 @@
+\documentclass[11pt,twoside]{eitExjobb}
+%%\documentclass[11pt,twoside,final]{eitExjobb}  % Use final for the final version that will be printed
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Other fonts (Palatino as rm font, helvetica as sf font and courier as tt font. All fonts are normally installed with a standard LaTeX distribution.)
+% \usepackage{mathpazo} % Also in math mode
+% \usepackage[scaled=.95]{helvet}
+% \usepackage{courier}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ÅÄÖ
+\usepackage[utf8]{inputenc}  % Input encoding (this file): 8 bit unicode. Default by most text editors
+\usepackage[T1]{fontenc}     % Output encoding (pdf file)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Packages used in the example
+\usepackage{graphicx}   % Included graphics and some resizable boxes
+\usepackage{url}        % nice urls with line breaks
+\usepackage{lipsum}     % nonsense text blocks
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+	\Title{Analysis of Analytic Wi-Fi Performance Models Based on End-User Data}
+	\Author{Axel Smeets\\\texttt{dat12asm@student.lu.se}}
+	\Supervisor{Björn Landfeld}
+	\Examiner{Christian Nyberg}
+
+	\MakeTitlePage
+	\frontmatter
+
+	\include{abstract}
+
+	\include{popsci}
+
+	\tableofcontents
+	\listoffigures
+	\listoftables
+	\cleardoublepage
+
+	\mainmatter
+
+		\include{introduction}
+
+		\include{background}
+
+		\include{previous_work}
+
+		\include{methodology}
+
+		\include{results}
+
+		\include{conclusion}
+
+		\begin{thebibliography}{99}
+		\input{bibliography}
+		\end{thebibliography}
+
+
+	\appendix
+\chapter{Some extra material}
+\lipsum[1]
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\linewidth]{example-image}
+  \caption{A picture or table in the appendix is numbered accordingly.}
+  \label{fig:AppFig}
+\end{figure}
+
+\end{document}
