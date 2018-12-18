@@ -32,4 +32,6 @@ We want to analyse the reported values for RSSI, SNR, broken \& valid IEEE 802.1
 Using quantenna and wl API:s to query:
 \begin{itemize}
     \item \texttt{wl assoclist} $\rightarrow$ \texttt{wl rssi}
+    \item \texttt{ubus call wireless.radio.monitor get}
+    \item \texttt{qcsapi get\_rssi\_per\_association "wifi0"}
 \end{itemize}
