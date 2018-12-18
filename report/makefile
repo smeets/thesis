@@ -11,4 +11,5 @@ tmp:
 	mkdir tmp
 
 report: tmp $(SOURCES)
-	pdflatex -output-directory=.. -aux-directory=tmp base.tex
+	pdflatex -output-directory=tmp base.tex
+	cp tmp/base.pdf ../report.pdf
