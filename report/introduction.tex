@@ -1,55 +1,55 @@
 \chapter{Introduction}
 
-The demand and need for wireless networking is high. 
+In 2014 a report on Wi-Fi adoption found that 25\% of households, all over the world, had Wi-Fi networks set up. In households with fixed-line broadband access, 65\% had set up a Wi-Fi network\cite{smith}. The report also states that the number of Wi-Fi-enabled devices is projected to increase. 
 
-Consumers have high expectations.
+Naturally, consumers today have higher expectations regarding network throughput and latency than the standard was designed for back in 1997 - 1-2 Mbps. However, the IEEE 802.11 standard was not designed to solve the problems of today. In recent years, the Wi-Fi label has become hugely popular and the standard been catching up ever since it was introduced beyond the corporate sector, for which it was originally intended, with almost annual extensions.
 
-Network devices are deployed and configured in a decentralised fashion. 
+One problem all wireless networking technologies has to solve is interference. Since devices communicate via physical radio any devices sending at the same time will interfere, protocols implement some sort of multiple access protocol. Wi-Fi is no different has employed a wide variety of schemes to work around the limitations of the physical medium. These schemes have been incrementally introduced with each new extension (commonly referred to as generation).
 
-Original IEEE 802.11 solution was not made for today's problem.
+Even though newer routers today are able to automatically (re)configure themselves after analysing the communication of nearby networks, they cannot be optimal since they have a local view of the network. Older routers rely on manual configuration. This configuration is not strictly an issue with the standard, but rather with how the routers are being deployed. One can think of the deployment process as being decentralised—each household purchases and configures their own router. 
 
-Results in many types of problems wrt. customer experience. 
+With some assistance and effort, manual configuration is not difficult and can result in good performance. For many, however, this is not the common case and the common case becomes whatever the manufacturer configured the default settings to be. This can result in extremely poor performance. The customer sees three potential failure points—the internet service provider, the device manufacturer or something else. Since ``something else'' is difficult and complaining to the ISP or manufacturer is comparatively easy, a coin flip later the call is made.
 
-When customer expectations are not met they call their Internet Service Provider (ISP) support line and complain.
+Generally, ISPs have no responsibility for the network on the customer's side---that's the \emph{private} network. However, loss of customers outweighs the cost of support and technical assistance, so the ISP takes on an additional role to fix the customer's problem. These ISPs are very interested in lowering their supportive costs.
 
-ISP often not involved in problem but still needs to please customer - sends technician.
+There are a few possible solutions on how they might reduce or completely evade these costs:
 
-Customer is pleased but at a significant cost to the ISP.
+\begin{itemize}
+    \item automatic, centralised configuration of customer routers
+    \item expert system á la ``you have this problem?'' - ``try this solution''
+    \item ??
+\end{itemize}
 
-Technician's solution can result in problems for neighbours -- ping/pong or ripple effect.
+% ----------
 
-Core problem: usage and deployment scenario different than standard imagined.
+Centralised configuration is still not on the map for the foreseeable future. Expert systems are already in-place. The task becomes on how to improve existing systems---can we come up with a system which guarantees that a recommended change results in an improvement? This would require extensive simulation of the network and the ability to predict the effect of a change in a configuration parameter.
 
-Not possible to replace IEEE 802.11 for the foreseeable future.
+This master thesis aims to be a step in this direction: evaluate existing Wi-Fi models to see if they are useful in real-world settings.
+% em —
 
-Possible solutions: 
 
- - centralised configuration (still in future)
- - reconfiguration recommendation based on network-wide overview (requires competent models and data collection)
- - ??
+% Recommend configuration based on both detailed and wide view of network performance.
 
-Recommend configuration based on both detailed and wide view of network performance.
+% To recommend a change it must lead to improvement in some aspect.
 
-To recommend a change it must lead to improvement in some aspect.
+% How to be sure of this? Model the network and simulate what happens when the change is made.
 
-How to be sure of this? Model the network and simulate what happens when the change is made.
+% This requires competent Wi-Fi models.
 
-This requires competent Wi-Fi models.
+% Must have clear definition of a competent Wi-Fi model is.
 
-Must have clear definition of a competent Wi-Fi model is.
+% Wi-Fi models with good performance in simulated tests need not be as good in the real world.
 
-Wi-Fi models with good performance in simulated tests need not be as good in the real world.
+% So we have to test this, and we need the data to do it.
 
-So we have to test this, and we need the data to do it.
+% Telenor now has a good platform for us to get the data.
 
-Telenor now has a good platform for us to get the data.
+% But can we trust it? Perhaps the logging is inaccurate?
 
-But can we trust it? Perhaps the logging is inaccurate?
+% So we need to analyse the quality of the data.
 
-So we need to analyse the quality of the data.
+%  - is it accurate?
+%  - is it precise?
 
- - is it accurate?
- - is it precise?
-
-Experiments will be conducted and results will impact model testing and evaluation.
+% Experiments will be conducted and results will impact model testing and evaluation.
 
