@@ -1,6 +1,5 @@
 import math
 import numpy as np
-import sympy as sp
 
 from scipy.special import binom as binomial
 from numpy.linalg import norm
@@ -24,7 +23,7 @@ def solve_steady_state(pi, epsilon=1e-8, max_iter=1e5):
         if n <= epsilon or i >= max_iter:
             return A
 
-def sum(fn, limits):
+def suml(fn, limits):
     lo, hi = limits
     val = 0
     for i in range(lo, hi+1):
@@ -109,13 +108,13 @@ class Felemban():
             psi = 1 - pss
 
             # Equation (8)
-            CW_avg = sum(lambda i: (1-P) * (P**i) * W(i)/(1-Pdrop), (0, L))
+            CW_avg = suml(lambda i: (1-P) * (P**i) * W(i)/(1-Pdrop), (0, L))
 
             # Equation (7)
-            pci = sum(lambda n: Q(n) * (1 - 1/CW_avg)**n, (2, N-1))
+            pci = suml(lambda n: Q(n) * (1 - 1/CW_avg)**n, (2, N-1))
 
             # Equation (9)
-            pcs = sum(lambda n: Q(n) * n * (1/CW_avg) * (1 - 1/CW_avg)**(n-1), (2, N-1))
+            pcs = suml(lambda n: Q(n) * n * (1/CW_avg) * (1 - 1/CW_avg)**(n-1), (2, N-1))
 
             pcc = 1 - pci - pcs
 
@@ -137,12 +136,14 @@ class Felemban():
             Pf = 1 - Pd
 
             # Equation (1)
-            tau_new = (1 - P**(L+1)) / ((1 - P) * sum(lambda j: (1 + (1/(1-Pf)) * sum(lambda k: (W(j) - k)/W(j), (1,W(j)-1))) * P**j, (0,L)))
+            #tau_newp =(1 - P**(L+1)) / ((1 - P) * sum([1 + (1/(1-Pf)) * sum([(W(j) - k)/W(j) for k in range(1,W(j))]) * P**j for j in range(0,L+1)]))
+            tau_new = (1 - P**(L+1)) / ((1 - P) * suml(lambda j: (1 + (1/(1-Pf)) * suml(lambda k: (W(j) - k)/W(j), (1,W(j)-1))) * P**j, (0,L)))
 
             # tau_i = alpha*tau_{i-1} + (1-alpha) * tau_new
             tau_old = tau
             tau = alpha * tau_old + (1 - alpha) * tau_new
-            if abs(tau - tau_old) < epsilon: break
+            if abs(tau - tau_old) <= epsilon: 
+                break
 
         return tau, P, Pf
 
@@ -151,21 +152,23 @@ class Felemban():
         Normalized channel throughput.
 
         Keyword arguments:
-        bps -- channel bit rate in bits per second (default=1e6)
+        bps -- channel bit rate in bits per second (default=1Mbps)
         access_mode -- either "basic" or "rts" (default="basic")
         payload -- size of packet without headers, in bits (default=8192)
         slot_idle -- time of an idle slot, in microseconds (default=50)
         """
+        channel_bit_rate = bps
+
         # IEEE frame sizes
-        MAC = 272 * 8 # bits
-        PHY = 128 * 8 # bits^
+        MAC = 272 * 8       # bits
+        PHY = 128 * 8       # bits
         ACK = 112 * 8 + PHY # bits
         RTS = 160 * 8 + PHY # bits
         CTS = 112 * 8 + PHY # bits
 
         # IEEE guard times
         DIFS = 128*1e-6 # s
-        SIFS = 28*1e-6  #
+        SIFS = 28*1e-6 # s
 
         # Transmission duration of RTS, CTS and ACK packets
         TRTS = RTS / channel_bit_rate # s
@@ -197,5 +200,7 @@ class Felemban():
         else:
             # wat
             pass
-
+        print("Pb={}\nPs={}\nTh={}\nTp={}\nTi={}\n".format(Pb, Ps, Th, Tp, Ti))
         return (Ps*Tp)/((Ps*Ts) + (Pb-Ps)*Tc + (1-Pb)*Ti)
+
+Felemban().compute()
