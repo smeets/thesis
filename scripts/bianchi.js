@@ -1,10 +1,12 @@
-let N = 3 // competing stations
+let N = 10 // competing stations
 let L = 7 // short retry limit
 let CWmin = 32
 let CWmax = 1024
 let W = new Array(L+1).fill(1).map((e,i) => Math.min(Math.pow(2, i) * CWmin, CWmax))
 let rate = 1 // channel rate (Mbps)
 let D = 8182 // frame size (bit)
+
+const { MAC_HEADER, SERVICE, PHY_HEADER, ACK, DIFS, SIFS, BASIC_RATE, T_SLOT, B0 } = require('./config')
 
 // same
 const Ptau = tau => 1.0 - Math.pow(1.0 - tau, N-1)
@@ -21,7 +23,8 @@ const tauP = P => {
     return 1/(den+1)
 }
 
-function solve() {
+function solve(NN) {
+    N = NN
     let p = 0
     let tau = 0
     let oldp = 0
@@ -41,18 +44,23 @@ function solve() {
 }
 
 function U(tau) {
-    const P = Ptau(tau)
-    const Pidle = Math.pow(1 - tau, N)
-    const PS = N * t * (1 - p)
+    const P     = Ptau(tau)            // eq. 2 from felemban
+    const Pidle = Math.pow(1 - tau, N) // inv. of Pbusy
+    const PS    = N * tau * (1 - P)    // Ps from eq. 2 from felemban
+    
+    const Tsucc = (4*Math.ceil((D+MAC_HEADER+SERVICE)/(4*rate)) + DIFS + ACK/BASIC_RATE + 2*PHY_HEADER + SIFS + 2)/(1-B0) + T_SLOT
+    const Tcoll =  4*Math.ceil((D+MAC_HEADER+SERVICE)/(4*rate)) + DIFS + ACK/BASIC_RATE + 2*PHY_HEADER + SIFS + 1 + T_SLOT
+    const s = Pidle*T_SLOT + PS*Tsucc + (1-PS-Pidle)*Tcoll
+    return PS*D/s
 }
 
-let tau = solve()
+// let tau = solve()
 
-console.log("Competing stations (N) =", N)
-console.log("Short Retry Limit (L) =", L)
-console.log("Contention windows =", W)
-console.log("Channel bitrate =", rate, "Mbps")
-console.log("Payload size =", D, "bits")
-console.log("")
-console.log("bianchi:", "tau", "=", tau)
-console.log("throughput:")
+// console.log("> bianchi")
+// console.log("N", "=", N, "|", "L", "=", L, "|", "R", "=", rate, "Mbps", "|", "D", "=", D, "bits")
+// console.log("W", "=", W)
+// console.log("tau", "=", tau)
+// console.log("U  ", "=", U(tau))
+// console.log("Ps ", "=", N*tau*(1-Ptau(tau))/(1-Math.pow(1 - tau, N)))
+
+module.exports = { solve: solve, U: U, Ptau: Ptau }
