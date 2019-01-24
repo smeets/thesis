@@ -87,14 +87,14 @@ class Felemban():
         def W(j):
             assert(j >= 0)
             assert(j <= L)
-            return 2**j*CW_min if j < m else 2**m*CW_min
+            return 2**j*CW_min if j < m else CW_max
 
         # Equation (6)
         def Q(n):
             return binomial(N-1, n) * (tau**n) * (1 - tau)**(N - n - 1)
 
         while True:
-            # Equation (2)
+            # Equation (2) - aka. p_tau(tau, )
             P = 1 - (1 - tau) ** (N - 1)
             Pdrop = P**(L+1)
 
