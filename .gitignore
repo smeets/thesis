@@ -1,3 +1,4 @@
 report/tmp
 report.pdf
 __pycache__
+*.o
