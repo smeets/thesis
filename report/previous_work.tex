@@ -1,5 +1,25 @@
 \chapter{Previous Work}
 
-\section{The Saturated Model}
+Modelling of Wi-Fi performance is an active field of research. This chapter introduces the models which are evaluated.
 
-In 2000, a new approach to analysis of Wi-Fi networks was established by model construction using Markov chains\cite{bianchi}.
+% TODO: add specific models
+All evaluated models of this master thesis can trace their origins to the seminal work of Giuseppe Bianchi, who, in 2000, publicised a novel approach to Wi-Fi modeling, based on Markov chains\cite{bianchi}, for fully-connected (no hidden nodes), single-hop networks.
+
+\section{Limitations Of The Bianchi Model}
+The Bianchi model in \cite{bianchi} puts forth some serious conditions for its tractability. Some conditions arise from the use of a Markov chain itself, and some to further simplify calculations and behavior. One such intrinsic condition imposed by the Markov chain is that the network must be in a steady state, and all transient behavior is discarded.
+
+\subsection{The Saturation Condition}
+
+One of the most severe conditions of the Bianchi model states that the network must be \emph{saturated}, defined as "every node it the network always has something in its send buffer".
+
+\subsection{The Tagged Node}
+
+Another constraint of the Bianchi approach to modelling is the limitation to the \emph{Tagged Node} (TN). In a network with $N$ nodes, the model is built around the assumption that all $N$ nodes behave similarly, and thus argues that modelling one node, named the \emph{Tagged Node}, is good enough to model the network.
+
+\section{Extending The Bianchi Model}
+
+In 2011, Felemban \& Ekici publicised an extended version of Bianchi's model.
+
+\subsection{The Unsaturated Model}
+
+Another contribution made by Felemban \& Ekici lifted the saturation condition on their original model.
