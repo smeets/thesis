@@ -73,9 +73,9 @@ const Pi = tau => [[Pei(tau), Pes(tau), Pec(tau)],
 const solvePf = tau => {
     let pi = Pi(tau)
     
-    let PI = 0.3
-    let PS = 0.4
-    let PC = 0.3
+    let PI = 1.0
+    let PS = 0.0
+    let PC = 0.0
 
     let PIo = 0
     let PSo = 0
@@ -156,11 +156,11 @@ function U(tau) {
  //        DIFS = 128*1e-6 # s
  //        SIFS = 28*1e-6 # s
     MAC_HEADER = 272 
-    PHY_HEADER = 192
+    PHY_HEADER = 128
     ACK        = 112 + PHY_HEADER
 
-    DIFS = 128 * 1e-6
-    SIFS = 28 * 1e-6
+    SIFS = 0 * 1e-6
+    DIFS = 0 * 1e-6
 
     const Tack = ACK / (rate * 1e6)
     const Th = (MAC_HEADER+PHY_HEADER)/(rate * 1e6)
@@ -173,7 +173,7 @@ function U(tau) {
     const PsTp = Ps(tau) * Tp                // P(send) * Time(payload)
     const PsTs = Ps(tau) * Ts                // P(send) * Time(send)
     const PcTc = (Pbusy(tau) - Ps(tau)) * Tc // P(coll) * Time(collision)
-    const PiTi = (1 - Pbusy(tau)) * Ti     // P(idle) * Time(idle)
+    const PiTi = (1 - Pbusy(tau)) * Ti       // P(idle) * Time(idle)
 
     return PsTp / (PcTc + PsTs + PiTi)
 }
