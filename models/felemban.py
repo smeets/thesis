@@ -39,7 +39,7 @@ class Felemban():
     x.setup(*x.compute())
     x.simulate()
     """
-    def __init__(self, L=10, N=3):
+    def __init__(self, L=7, N=3):
         self.L = L
         self.N = N
         self.setup(tau=0, P=0, Pf=0)
@@ -58,12 +58,12 @@ class Felemban():
         self.P = P
         self.Pf = Pf
 
-    def compute(self, tau0=0.5, epsilon=1e-6, CW_min=32, CW_max=1024):
+    def compute(self, tau0=0.0, epsilon=1e-6, CW_min=32, CW_max=1024):
         """
         Calculate model parameters iteratively.
 
         Keyword arguments:
-        tau0 -- initial guess for tau (0 < tau0 < 1, default 0.5)
+        tau0 -- initial guess for tau (0 < tau0 < 1, default 0.0)
         epsilon -- desired precision (default 1e-6)
         CW_min -- ieee specified congestion window size (default=32)
         CW_max -- ieee specified congestion window size (default=1024)
@@ -97,6 +97,8 @@ class Felemban():
             # Equation (2) - aka. p_tau(tau, )
             P = 1 - (1 - tau) ** (N - 1)
             Pdrop = P**(L+1)
+            if Pdrop == 1:
+                print("warn Pdrop=1, tau={}, P={}\n".format(tau, P))
 
             pei = (1 - tau)**(N-1)
 
@@ -203,4 +205,11 @@ class Felemban():
         print("Pb={}\nPs={}\nTh={}\nTp={}\nTi={}\n".format(Pb, Ps, Th, Tp, Ti))
         return (Ps*Tp)/((Ps*Ts) + (Pb-Ps)*Tc + (1-Pb)*Ti)
 
-Felemban().compute()
+    def print_stats(self):
+        P = 1 - (1 - self.tau) ** (self.N - 1)
+        print("N={}, tau={}, P={}\n".format(self.N, self.tau, P))
+
+for N in range(5,70,5):
+    x = Felemban(N=N, L=7)
+    x.setup(*x.compute())
+    x.print_stats()

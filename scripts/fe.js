@@ -44,12 +44,12 @@ function binom(n,k) {
 // same
 const Ptau  = tau => 1 - (1 - tau)**(N-1)
 const Pbusy = tau => 1 - (1 - tau)**(N)
-const Ps    = tau => N * tau * (1 - Ptau(tau))
+const Ps    = tau => N * tau * (1 - tau)**(N-1)
 const Pdrop = tau => Ptau(tau)**(L+1)
 const PtauInv = P => 1 - Math.pow(1 - P, 1/(N - 1))
 
 // Pf
-const Pei = tau => Math.pow(1 - tau, N - 1)
+const Pei = tau => (1 - tau)**(N - 1)
 const Pes = tau => binom(N-1, 1) * tau * (1 - tau)**(N-2)
 const Pec = tau => 1 - Pei(tau) - Pes(tau)
 
@@ -60,7 +60,7 @@ const Pci = tau => sum(2, N-1, n => Q(tau, n)*Math.pow(1 - 1/CWinv(tau), n))
 const Pcs = tau => sum(2, N-1, n => Q(tau, n)*n*(1/CWinv(tau))*(1-1/CWinv(tau))**(n-1))
 const Pcc = tau => 1 - Pci(tau) - Pcs(tau)
 
-const Q = (tau, n) => binom(N - 1, n) * (tau**n) * (1 - tau)**(N-n-1)
+const Q = (tau, n) => binom(N-1, n) * (tau**n) * (1 - tau)**(N-n-1)
 const CWinv = tau => {
     let P = Ptau(tau)
     return sum(0, L, i => (1 - P)*(P**i)*W[i]/(1 - Pdrop(tau)))
@@ -70,46 +70,49 @@ const Pi = tau => [[Pei(tau), Pes(tau), Pec(tau)],
                    [Psi(tau), Pss(tau), 0       ],
                    [Pci(tau), Pcs(tau), Pcc(tau)]]
 
+const transpose = pi => {
+    return [
+        [pi[0][0], pi[1][0], pi[2][0]],
+        [pi[0][1], pi[1][1], pi[2][1]],
+        [pi[0][2], pi[1][2], pi[2][2]]
+    ]
+}
+const dot = (P, A) => {
+    let a = [1,1,1]
+    a[0] = P[0][0]*A[0] + P[0][1]*A[1] + P[0][2]*A[2]
+    a[1] = P[1][0]*A[0] + P[1][1]*A[1] + P[1][2]*A[2]
+    a[2] = P[2][0]*A[0] + P[2][1]*A[1] + P[2][2]*A[2]
+    return a
+}
+
 const solvePf = tau => {
     let pi = Pi(tau)
-    
-    let PI = 1.0
-    let PS = 0.0
-    let PC = 0.0
-
-    let PIo = 0
-    let PSo = 0
-    let PCo = 0
-
-    let err = () => Math.abs(PI-PIo)+Math.abs(PS-PSo)+Math.abs(PC-PCo)
-    while (err() > 1e-8) {
-        // 
-        // Pei Pes Pec    PI    Pei*PI + Pes*PS + Pec*PC
-        // Psi Pss 0.0  x PS  = Psi*PI + Pss*PS + 0.0*PC
-        // Pci Pcs Pcc    PC  = Pci*PI + Pcs*PS + Pcc*PC
-        //
-
-        PIo = PI; PSo = PS; PCo = PC;
-        PI = pi[0][0]*PIo + pi[0][1]*PSo + pi[0][2]*PCo
-        PS = pi[1][0]*PIo + pi[1][1]*PSo + pi[1][2]*PCo
-        PC = pi[2][0]*PIo + pi[2][1]*PSo + pi[2][2]*PCo
-
+    let P = transpose(pi)
+    let A = [1, 0, 0]
+    let A1 = [0, 0, 0]
+    let ctr = 0
+    let err = (a, b) => Math.abs(a[0]-b[0])+Math.abs(a[1]-b[1])+Math.abs(a[2]-b[2])
+    while (err(A, A1) > 1e-8) {
+        ctr += 1
+        A1 = dot(P, A)
+        A = dot(P, A1)
     }
 
-    for (var j = 0; j < 3; j++) {
-        if (j != 1) process.stderr.write('     ')
-        else process.stderr.write('pi = ')
-        for (var i = 0; i < 3; i++) {
-            process.stderr.write(pi[j][i].toFixed(5).padEnd(8, " "))
-        }
-        if (j === 0) process.stderr.write("N   = " + N)
-        if (j === 1) process.stderr.write("tau = " + tau)
-        if (j === 2) process.stderr.write("err = " + err())
-        console.error()
-    }
-    console.error()
-
-    return PI
+    // for (var j = 0; j < 3; j++) {
+    //     if (j != 1) process.stderr.write('     ')
+    //     else process.stderr.write('pi = ')
+    //     for (var i = 0; i < 3; i++) {
+    //         process.stderr.write(pi[j][i].toFixed(5).padEnd(8, " "))
+    //     }
+    //     if (j === 0) process.stderr.write("N   = " + N)
+    //     if (j === 1) process.stderr.write("tau = " + tau)
+    //     if (j === 2) process.stderr.write("err = " + err())
+    //     console.error()
+    // }
+    // console.error()
+    let PI = A[0]
+    let Pd = PI
+    return 1 - Pd
 }
                    
 // no idea
@@ -118,10 +121,10 @@ const tauP = (P, Pf) => {
     let den = 0
     let pf1 = 1/(1-Pf)
     for (let j = 0; j <= L; j++) {
-        let s = 1 + pf1*sum(1, W[j] - 1, k => (W[j] - k)/W[j])
-        den += s * Math.pow(P, j)
+        let s = pf1 * sum(1, W[j] - 1, k => (W[j] - k)/W[j])
+        den += (1 + s) * (P**j)
     }
-    return (1 - Math.pow(P, L+1))/(den*(1 - P))
+    return (1 - P**(L+1))/((1-P) * den)
 }
 
 function solve() {
@@ -179,6 +182,8 @@ function U(tau) {
 }
 
 console.log("N", "bianchi", "felemban", "reimpl")
+
+
         // 5    10    15    20    25    30    35    40    45    50    55    60
 var FeU = [0.7, 0.69, 0.67, 0.65, 0.63, 0.62, 0.61, 0.60, 0.59, 0.58, 0.57, 0.56]
 var FeC = [0.1, 0.18, 0.23, 0.28, 0.30, 0.32, 0.35, 0.38, 0.40, 0.42, 0.43, 0.45]
