@@ -4,7 +4,7 @@ let CWmin = 32
 let CWmax = 1024
 let W = new Array(L+1).fill(1).map((e,i) => Math.min(Math.pow(2, i) * CWmin, CWmax))
 let rate = 1 // channel rate (Mbps)
-let D = 8182 // frame size (bit)
+let D = 8184 // frame size (bit)
 let { MAC_HEADER, SERVICE, PHY_HEADER, ACK, DIFS, SIFS, BASIC_RATE, T_SLOT, B0 } = require('./config')
 
 function sum(from, to, fn) {
@@ -158,15 +158,15 @@ function U(tau) {
  //        # IEEE guard times
  //        DIFS = 128*1e-6 # s
  //        SIFS = 28*1e-6 # s
-    MAC_HEADER = 272 
+    MAC_HEADER = 272
     PHY_HEADER = 128
     ACK        = 112 + PHY_HEADER
 
-    SIFS = 0 * 1e-6
-    DIFS = 0 * 1e-6
+    DIFS = 128 * 1e-6
+    SIFS = 28 * 1e-6
 
     const Tack = ACK / (rate * 1e6)
-    const Th = (MAC_HEADER+PHY_HEADER)/(rate * 1e6)
+    const Th = (MAC_HEADER+PHY_HEADER)/(1e6)
     const Ti = 50*1e-6
     const Tp = D/(rate * 1e6)
 

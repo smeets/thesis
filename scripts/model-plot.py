@@ -38,15 +38,15 @@ emptyPlot(col, "collision %", 'k--')
 
 emptyPlot(col, "", ' ')
 
-plot(thr, Bi, 'bianchi', 'cx-')
+# plot(thr, Bi, 'bianchi', 'cx-')
 plot(thr, Fe, 'felemban', 'b*-')
-plot(thr, U, 'smeets', 'ro-')
+plot(thr, U, 'reimpl.', 'r*-')
 
 emptyPlot(col, "", ' ')
 
-plot(col, BiC, 'bianchi', 'cx--')
+# plot(col, BiC, 'bianchi', 'cx--')
 plot(col, FeC, 'felemban', 'b*--')
-plot(col, C, 'smeets', 'ro--')
+plot(col, C, 'reimpl.', 'r*--')
 
 
 #plt.legend(legendP, legendL)
