@@ -1,10 +1,15 @@
 \chapter{Previous Work}
 
+This chapter provides a brief introduction to some important academic efforts this master thesis is based on. In particular, the Bianchi and Felemban models.
+
+\section{Modelling IEEE 802.11}
 Modelling of Wi-Fi performance is an active field of research. This chapter introduces the models which are evaluated.
 
 \section{The Bianchi Model}
 
 All evaluated models of this master thesis can trace their origins to the seminal work of Giuseppe Bianchi, who, in 2000, invented a novel approach to Wi-Fi modeling, based on Markov chains\cite{bianchi}, for fully-connected (no hidden nodes), single-hop networks.
+
+The modelputs forth some serious conditions for its tractability. Some conditions arise from the use of a Markov chain itself, and some to further simplify calculations and behavior. One such intrinsic condition imposed by the Markov chain is that the network must be in a steady state, and all transient behavior is discarded.
 
 In short, the key contribution was to model the backoff behaviour, i.e. the distributed co-ordination function ($DCF$), of the protocol using a Markov chain.
 
