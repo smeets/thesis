@@ -4,25 +4,16 @@ In 2014 a report on Wi-Fi adoption found that 25\% of households, all over the w
 
 Naturally, consumers today have higher expectations regarding network throughput and latency than the IEEE 802.11 standard was designed for back in 1997. In recent years, the Wi-Fi label has become hugely popular and the standard been catching up ever since it was introduced beyond the corporate sector, for which it was originally intended, with almost annual extensions.
 
-One limitation all wireless networking technologies have to consider is radio interference. Some protocols implement ALOHA-style protocols with no coordination between devices, relying on collision detection techniques and subsequent retransmission. IEEE 802.11 implements a \emph{distributed contribution function} (DCF) which is resposible for controling access to the medium.
+One limitation all wireless networking technologies have to consider is radio interference. Some protocols implement ALOHA-style protocols with no coordination between devices, relying on collision detection techniques and subsequent retransmission. IEEE 802.11 implements a \emph{distributed contribution function} (DCF) which is resposible for controlling access to the medium.
 
-Even though newer routers today are able to automatically (re)configure themselves after analysing the communication of nearby networks, they cannot be optimal since they have a local view of the network. Older routers rely on manual configuration. This configuration is not strictly an issue with the standard, but rather with how the routers are being deployed. One can think of the deployment process as being decentralised—each household purchases and configures their own router. 
+Even though newer routers today are able to automatically (re)configure themselves based on analysis of neighbouring networks, they are not guaranteed to be optimal since they have a local view of the network. Older routers rely on manual configuration. This configuration is not strictly an issue with the standard, but rather with how the routers are being deployed. One can think of the deployment process as being decentralised—each household purchases and configures their own router. 
 
-With some assistance and effort, manual configuration is not difficult and can result in good performance. For many, however, this is not the common case and the common case becomes whatever the manufacturer configured the default settings to be. This can result in extremely poor performance. The customer sees three potential failure points—the internet service provider, the device manufacturer or something else. Since ``something else'' is difficult and complaining to the ISP or manufacturer is comparatively easy, a coin flip later the call is made.
+With existing IEEE 802.11 models it is possible to predict configuration effects. However, few, if not none, implementations conform to the theoretical models. This work aims to evaluate IEEE 802.11 models with end-user data and analyse if, and how, these models may be applicable.
 
-Generally, ISPs have no responsibility for the network on the customer's side---that's the \emph{private} network. However, loss of customers outweighs the cost of support and technical assistance, so the ISP takes on an additional role to fix the customer's problem. These ISPs are very interested in lowering their supportive costs.
+% Centralised configuration is still not on the map for the foreseeable future. Expert systems are already in-place. The task becomes on how to improve existing systems---can we come up with a system which guarantees that a recommended change results in an improvement? This would require extensive simulation of the network and the ability to predict the effect of a change in a configuration parameter.
 
-There are a few possible solutions on how they might reduce or completely evade these costs:
 
-\begin{itemize}
-    \item automatic, centralised configuration of customer routers
-    \item expert system á la ``you have this problem?'' - ``try this solution''
-    \item ??
-\end{itemize}
 
-% ----------
-
-Centralised configuration is still not on the map for the foreseeable future. Expert systems are already in-place. The task becomes on how to improve existing systems---can we come up with a system which guarantees that a recommended change results in an improvement? This would require extensive simulation of the network and the ability to predict the effect of a change in a configuration parameter.
 
 This master thesis aims to be a step in this direction: evaluate existing Wi-Fi models to see if they are useful in real-world settings.
 % em —
