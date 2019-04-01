@@ -2,23 +2,24 @@
 
 Modelling of Wi-Fi performance is an active field of research. This chapter introduces the models which are evaluated.
 
-% TODO: add specific models
-All evaluated models of this master thesis can trace their origins to the seminal work of Giuseppe Bianchi, who, in 2000, publicised a novel approach to Wi-Fi modeling, based on Markov chains\cite{bianchi}, for fully-connected (no hidden nodes), single-hop networks.
+\section{The Bianchi Model}
 
-\section{Limitations Of The Bianchi Model}
+All evaluated models of this master thesis can trace their origins to the seminal work of Giuseppe Bianchi, who, in 2000, invented a novel approach to Wi-Fi modeling, based on Markov chains\cite{bianchi}, for fully-connected (no hidden nodes), single-hop networks.
+
+In short, the key contribution was to model the backoff behaviour, i.e. the distributed co-ordination function ($DCF$), of the protocol using a Markov chain.
+
+\subsection{Limitations Of The Bianchi Model}
 The Bianchi model in \cite{bianchi} puts forth some serious conditions for its tractability. Some conditions arise from the use of a Markov chain itself, and some to further simplify calculations and behavior. One such intrinsic condition imposed by the Markov chain is that the network must be in a steady state, and all transient behavior is discarded.
 
-\subsection{The Saturation Condition}
-
 One of the most severe conditions of the Bianchi model states that the network must be \emph{saturated}, defined as "every node it the network always has something in its send buffer".
-
-\subsection{The Tagged Node}
 
 Another constraint of the Bianchi approach to modelling is the limitation to the \emph{Tagged Node} (TN). In a network with $N$ nodes, the model is built around the assumption that all $N$ nodes behave similarly, and thus argues that modelling one node, named the \emph{Tagged Node}, is good enough to model the network.
 
 \section{Extending The Bianchi Model}
 
-In 2011, Felemban \& Ekici publicised an extended version of Bianchi's model.
+In 2011, Felemban \& Ekici published an extended version of Bianchi's model, where they significantly improved the model's accuracy by introducing a more accurate behaviour of the entry into backoff and the backoff countdown procedure.
+
+In short, when a packet collision is detected the sender goes into a backoff and counts down until it may attempt to retransmit the packet. In \cite{felemban}, the authors introduce a Markov chain to compute the parameters of $P(count-down)$ and $P(freeze)$.
 
 \subsection{The Unsaturated Model}
 
