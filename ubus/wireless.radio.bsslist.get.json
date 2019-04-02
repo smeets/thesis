@@ -1,0 +1,22 @@
+{
+        "radio_2G": {
+                "00:16:a6:13:fb:80": {
+                        "ssid": "SOME_NAME",
+                        "channel": 9,
+                        "chan_descr": "9",
+                        "rssi": -58,
+                        "sec": "OPEN",
+                        "cap": "0428"
+                }
+        },
+        "radio_5G": {
+                "30:91:8f:7b:a9:61": {
+                        "ssid": "SOME_NAME_2",
+                        "channel": 44,
+                        "chan_descr": "44",
+                        "rssi": -74,
+                        "sec": "WPAWPA2PSK",
+                        "cap": "0000"
+                }
+        }
+}

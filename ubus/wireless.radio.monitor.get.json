@@ -1,0 +1,68 @@
+{
+        "radio_2G": {
+                "last_measurement": "11:14:39-10\/05\/2017",
+                "measurement_interval": 30,
+                "medium_available": 93,
+                "glitch": 349,
+                "txtime": 3,
+                "rxtime_inside_bss": 0,
+                "rxtime_outside_bss": 1,
+                "probe_request": {
+                        "da:b6:0c:f3:85:00": {
+                                "age": 59,
+                                "rssi": -75
+                        },
+                        "78:c3:e9:94:d5:a2": {
+                                "age": 95,
+                                "rssi": -76
+                        },
+                        "00:1b:77:72:91:fa": {
+                                "age": 60,
+                                "rssi": -81
+                        },
+                        "00:16:6f:f6:a6:49": {
+                                "age": 229,
+                                "rssi": -57
+                        },
+                        "b8:27:eb:73:7b:ae": {
+                                "age": 8,
+                                "rssi": -82
+                        },
+                        "78:a2:a0:a1:23:9f": {
+                                "age": 28,
+                                "rssi": -71
+                        },
+                        "60:5b:b4:4f:a8:99": {
+                                "age": 0,
+                                "rssi": -80
+                        },
+                        "b8:e9:37:2f:d7:bd": {
+                                "age": 0,
+                                "rssi": -48
+                        }
+                }
+        },
+        "radio_5G": {
+                "last_measurement": "",
+                "measurement_interval": 0,
+                "medium_available": 0,
+                "glitch": 0,
+                "txtime": 0,
+                "rxtime_inside_bss": 0,
+                "rxtime_outside_bss": 0,
+                "probe_request": {
+                        "da:b6:0c:f3:85:00": {
+                                "age": 59,
+                                "rssi": -84
+                        },
+                        "00:1b:77:72:91:fa": {
+                                "age": 60,
+                                "rssi": -84
+                        },
+                        "00:16:6f:f6:a6:49": {
+                                "age": 229,
+                                "rssi": -60
+                        }
+                }
+        }
+}

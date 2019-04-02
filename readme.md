@@ -1,5 +1,11 @@
 # thesis
 
+## todo
+
+ -[x] dump `ubus` objects
+ -[ ] review & analyse counters
+ -[ ]
+
 ## references
 
  - [Performance Analysis of the IEEE 802.11 Distributed
@@ -15,3 +21,4 @@ Unsaturated Traffic Cases, Felemban & Ekici, 2011](https://sci-hub.tw/10.1109/tw
 ## other
 
  - quantenna [qcsapi](https://github.com/Noltari/qcsapi)
+ - OpenWrt [ubus](https://openwrt.org/docs/techref/ubus)

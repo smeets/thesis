@@ -1,0 +1,44 @@
+{
+        "ap0": {
+                "ssid": "wl0",
+                "admin_state": 1,
+                "oper_state": 1,
+                "config_state": 1,
+                "ap_isolation": 0,
+                "public": 1,
+                "station_history": 1,
+                "max_assoc": 0,
+                "trace_modules": "",
+                "trace_level": "some",
+                "uuid": "d2ef0f5854b55ee88439d3b8e1727615",
+                "uuid_idx": 0
+        },
+        "ap1": {
+                "ssid": "wl1",
+                "admin_state": 1,
+                "oper_state": 1,
+                "config_state": 1,
+                "ap_isolation": 0,
+                "public": 1,
+                "station_history": 0,
+                "max_assoc": 0,
+                "trace_modules": "",
+                "trace_level": "some",
+                "uuid": "d2ef0f5854b55ee88439d3b8e1727615",
+                "uuid_idx": 0
+        },
+        "ap2": {
+                "ssid": "wl0_1",
+                "admin_state": 1,
+                "oper_state": 0,
+                "config_state": 1,
+                "ap_isolation": 1,
+                "public": 1,
+                "station_history": 1,
+                "max_assoc": 8,
+                "trace_modules": "",
+                "trace_level": "some",
+                "uuid": "605af271a5135cceb97a0113c86f000e",
+                "uuid_idx": 1
+        }
+}

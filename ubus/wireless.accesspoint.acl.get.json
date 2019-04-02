@@ -1,0 +1,29 @@
+{
+        "ap0": {
+                "mode": "unlock",
+                "state": "unlock",
+                "registration_time": 60,
+                "block_probe_response": 0,
+                "accept_list": "",
+                "deny_list": "",
+                "dynamic_deny_list": ""
+        },
+        "ap1": {
+                "mode": "unlock",
+                "state": "unlock",
+                "registration_time": 15,
+                "block_probe_response": 0,
+                "accept_list": "",
+                "deny_list": "",
+                "dynamic_deny_list": ""
+        },
+        "ap2": {
+                "mode": "unlock",
+                "state": "unlock",
+                "registration_time": 60,
+                "block_probe_response": 0,
+                "accept_list": "",
+                "deny_list": "",
+                "dynamic_deny_list": ""
+        }
+}
