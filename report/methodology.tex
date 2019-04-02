@@ -1,14 +1,37 @@
 \chapter{Methodology}
 
-This section describes the methodology we used to analyse the models.
-
-\section{Data Collection}
-
-How did we get the data? What did we get?
+This section describes the methodology used to analyse the models.
 
 \section{Model Selection}
 
-Which models did we elect to use and how did we simplify/change them?
+The evaluated model is Felemban-Ekici.
+
+\section{Model Parameters}
+The first step was to analyse the theoretical models.
+
+To run the Felemban-Ekici model the following properties are required:
+
+\begin{itemize}
+	\item \emph{N}, the number of network nodes
+	\item $CW_{min}$ and $CW_{max}$, contention window min and max size
+	\item \emph{E[D]}, the mean payload size
+	\item channel bit rate
+	\item $L$, the \texttt{ShortRetryLimit}
+\end{itemize}
+
+The Felemban-Ekici model provides metrics such as normalized throughput, channel access delay and probability of packet collision.
+
+\section{Tool}
+
+On the router side three programs, which provide access to network interface data, were tested and evaluated:
+
+\begin{enumerate}
+	\item ubus - openwrt interface
+	\item qcsapi - quantenna interface
+	\item wl - driver interface
+\end{enumerate}
+
+In the end, ubus was chosen as it was found to be more consistent than the qcsapi.
 
 \section{Parameter Extraction}
 

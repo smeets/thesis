@@ -1,11 +1,5 @@
 # thesis
 
-## todo
-
- -[x] dump `ubus` objects
- -[ ] review & analyse counters
- -[ ]
-
 ## references
 
  - [Performance Analysis of the IEEE 802.11 Distributed
