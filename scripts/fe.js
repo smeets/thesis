@@ -163,12 +163,12 @@ function U(tau) {
     ACK        = 112 + PHY_HEADER
 
     DIFS = 128 * 1e-6
-    SIFS = 28 * 1e-6
+    SIFS = 24 * 1e-6
 
     const Tack = ACK / (rate * 1e6)
     const Th = (MAC_HEADER+PHY_HEADER)/(1e6)
     const Ti = 50*1e-6
-    const Tp = D/(rate * 1e6)
+    const Tp = 8192/(rate * 1e6)
 
     const Ts = DIFS + Th + Tp + SIFS + Tack
     const Tc = Ts
@@ -181,12 +181,12 @@ function U(tau) {
     return PsTp / (PcTc + PsTs + PiTi)
 }
 
-console.log("N", "bianchi", "felemban", "reimpl")
+console.log("N", "U[b]", "P[b]", "U[f]", "P[f]", "U", "P")
 
 
         // 5    10    15    20    25    30    35    40    45    50    55    60
-var FeU = [0.7, 0.69, 0.67, 0.65, 0.63, 0.62, 0.61, 0.60, 0.59, 0.58, 0.57, 0.56]
-var FeC = [0.1, 0.18, 0.23, 0.28, 0.30, 0.32, 0.35, 0.38, 0.40, 0.42, 0.43, 0.45]
+var FeU = [0.68, 0.65, 0.62, 0.60, 0.58, 0.56, 0.55, 0.54, 0.53, 0.52, 0.51, 0.50]
+var FeC = [0.1, 0.18, 0.24, 0.28, 0.31, 0.34, 0.36, 0.38, 0.40, 0.42, 0.43, 0.44]
 
 var bianchi = require('./bianchi')
 

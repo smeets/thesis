@@ -6,26 +6,22 @@ import csv
 
 data = {
     'time': [],
+    'rssi': [],
     'utxb': [],
     'utxp': [],
     'urxb': [],
     'urxp': [],
-    # 'qtxb': [],
-    # 'qtxp': [],
-    # 'qrxb': [],
-    # 'qrxp': []
+    'qtxb': [],
+    'qtxp': [],
+    'qrxb': [],
+    'qrxp': []
 }
 
 with open(sys.argv[1]) as csvfile:
     txrx_data = csv.reader(csvfile)
-    for time, utxb, utxp, urxb, urxp in txrx_data:
+    for time, rssi in txrx_data:
         data['time'].append(datetime.strptime(time, '%Y-%m-%d %H:%M:%S'))
-        data['utxb'].append(utxb)
-        data['utxp'].append(utxp)
-        data['urxb'].append(urxb)
-        data['urxp'].append(urxp)
-
-print(data['utxb'])
+        data['rssi'].append(rssi)
 
 legendP = []
 legendL = []
@@ -35,18 +31,7 @@ def plot(var, lbl, opt):
     legendP.append(x[0])
     legendL.append(lbl)
 
-# plot(data['utxp'], 'ubus tx [p]', 'y+')
-plot(data['urxp'], 'ubus rx [p]', 'yx')
-# plot(data['qtxp'], 'qcs tx [p]', 'rx')
-# plot(data['qrxp'], 'qcs rx [p]', 'r*')
-
-# emptyPlot(b, "", ' ')
-
-# plot(data['utxb'], 'ubus tx [b]', 'y+--')
-plot(data['urxb'], 'ubus rx [b]', 'bx--')
-# plot(data['qtxb'], 'qcs tx [b]', 'r+--')
-# plot(data['qrxb'], 'qcs rx [b]', 'r+--')
-
+plot(data['rssi'], 'rssi [router]', 'yx-')
 
 plt.legend(legendP, legendL)
 # box = b.get_position()
