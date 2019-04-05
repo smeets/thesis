@@ -1,14 +1,15 @@
 \chapter{Methodology}
 
-This section describes the methodology used to analyse the models.
+This chapter describes the methodology used to analyse the models.
 
+The general methodology of the evaluation was to iterate back and forth between model parameters and router metrics until both datasets could be compared. Metrics were in some cases also analysed if they behaved as expected, were accurate or precise.
 
 \begin{verbatim}
   +-> model selection --> list of parameters --+
   |                                            |
   +-- parameter analysis <-- data collection <-+
 \end{verbatim}
- 
+
 \section{Model Selection}
 
 The evaluated model is Felemban-Ekici.
@@ -26,7 +27,7 @@ To run the Felemban-Ekici model the following properties are required:
 	\item $L$, the \texttt{ShortRetryLimit}
 \end{itemize}
 
-The Felemban-Ekici model provides metrics such as normalized throughput, channel access delay and probability of packet collision.
+The Felemban-Ekici model provides metrics such as normalized throughput ($U$), channel access delay and probability of packet collision. Thus, in order to evaluate the model, a set of equivalent metrics must be collected from the router.
 
 \section{Tool}
 
@@ -40,9 +41,12 @@ On the router side three programs, which provide access to network interface dat
 
 In the end, ubus was chosen as it was found to be more consistent than the qcsapi.
 
-\section{Parameter Extraction}
+\section{Router Metrics}
+Selecting a set of metrics which are equivalent to the model parameters.
 
-In order to evaluate the models we needed these parameters:
+This required a good understanding oh how the constraints of the model affected the selection of router metrics, e.g. the model separates CTS-RTS and Basic mode while the router automatically decides which to use based on packet payload size, which isn't available to any tool.
+
+In order to evaluate the models we needed these metrics:
 
 \begin{itemize}
 \item rssi
@@ -51,7 +55,7 @@ In order to evaluate the models we needed these parameters:
 \item physical tx/rx rates
 \end{itemize}
 
-\section{Parameter Analysis}
+\section{Metric Analysis}
 
 We must analyse the validity of the reported parameters.
 
