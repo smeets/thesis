@@ -1,18 +1,10 @@
 \chapter{Methodology}
 
-This chapter describes the methodology used to analyse the models.
+This chapter describes rationale for the approach used to evaluate the theoretical models.
 
-The general methodology of the evaluation was to iterate back and forth between model parameters and router metrics until both datasets could be compared. Metrics were in some cases also analysed if they behaved as expected, were accurate or precise.
+To evaluate the theoretical model there must first exist some set of values produced by the model itself, and an equivalent set of data to compare against. In this report, the values produced by the model are referenced to as \emph{model parameters}. The other set of data, the comparison set, is gathered from a specific device, the TG799-VAC, and referred to as the \emph{router metrics}.
 
-\begin{verbatim}
-  +-> model selection --> list of parameters --+
-  |                                            |
-  +-- parameter analysis <-- data collection <-+
-\end{verbatim}
-
-\section{Model Selection}
-
-The evaluated model is Felemban-Ekici.
+The general methodology of the model evaluation consists of iteration between selection of model parameters and router metrics until both datasets could be compared. Metrics were in most cases also analysed if they behaved as expected, were accurate or precise.
 
 \section{Model Parameters}
 The first step was to analyse the theoretical models.
@@ -29,9 +21,9 @@ To run the Felemban-Ekici model the following properties are required:
 
 The Felemban-Ekici model provides metrics such as normalized throughput ($U$), channel access delay and probability of packet collision. Thus, in order to evaluate the model, a set of equivalent metrics must be collected from the router.
 
-\section{Tool}
+\section{Router Interface}
 
-On the router side three programs, which provide access to network interface data, were tested and evaluated:
+On the router side, three programs, which provide access to network interface data, were tested and evaluated:
 
 \begin{enumerate}
 	\item ubus - openwrt interface
@@ -65,7 +57,7 @@ We want to analyse the reported values for RSSI, SNR, broken \& valid IEEE 802.1
 
 Using quantenna and wl API:s to query:
 \begin{itemize}
-    \item \texttt{wl assoclist} $\rightarrow$ \texttt{wl rssi}
     \item \texttt{ubus call wireless.radio.monitor get}
-    \item \texttt{qcsapi get\_rssi\_per\_association "wifi0"}
+    \item \texttt{ubus call wireless.ssid.stats get}
+    \item \texttt{ubus call wireless.radio.stats get}
 \end{itemize}
