@@ -12,6 +12,8 @@ Accurate Modeling of Channel Access Delay and
 Throughput for Saturated and
 Unsaturated Traffic Cases, Felemban & Ekici, 2011](https://sci-hub.tw/10.1109/twc.2011.072511.101227)
 
+ - [Differences in RSSI readings made by different Wi-Fi chipsets: A limitation of WLAN localization, G. Lui, T. Gallagher, B. Li, A. G. Dempster and C. Rizos, 2011](https://sci-hub.tw/10.1109/ICL-GNSS.2011.5955283)
+
 ## other
 
  - quantenna [qcsapi](https://github.com/Noltari/qcsapi)
