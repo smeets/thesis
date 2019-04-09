@@ -46,7 +46,8 @@ class Felemban():
 
     def setup(self, tau, P, Pf):
         """
-        Set model parameters. Parameters can be derived from the compute method.
+        Set model parameters.
+        Parameters can be derived from the compute method.
 
         Keyword arguments:
         tau -- packet transmission probability
@@ -58,18 +59,19 @@ class Felemban():
         self.P = P
         self.Pf = Pf
 
-    def compute(self, tau0=0.0, epsilon=1e-6, CW_min=32, CW_max=1024):
+    def compute(self, tau0=0.0, epsilon=1e-6,
+                CW_min=32, CW_max=1024):
         """
         Calculate model parameters iteratively.
 
         Keyword arguments:
         tau0 -- initial guess for tau (0 < tau0 < 1, default 0.0)
         epsilon -- desired precision (default 1e-6)
-        CW_min -- ieee specified congestion window size (default=32)
-        CW_max -- ieee specified congestion window size (default=1024)
+        CW_min -- ieee specified congestion window (default=32)
+        CW_max -- ieee specified congestion window (default=1024)
         """
 
-        # p_e (probability exit in idle state) is defined to be 1 in the paper
+        # Pe is defined to be 1 in the paper
         pe = 1
 
         # IEEE specification
@@ -110,13 +112,17 @@ class Felemban():
             psi = 1 - pss
 
             # Equation (8)
-            CW_avg = suml(lambda i: (1-P) * (P**i) * W(i)/(1-Pdrop), (0, L))
+            CW_avg = suml(
+                lambda i: (1-P) * (P**i) * W(i)/(1-Pdrop),
+                (0, L))
 
             # Equation (7)
             pci = suml(lambda n: Q(n) * (1 - 1/CW_avg)**n, (2, N-1))
 
             # Equation (9)
-            pcs = suml(lambda n: Q(n) * n * (1/CW_avg) * (1 - 1/CW_avg)**(n-1), (2, N-1))
+            pcs = suml(
+                lambda n: Q(n) * n * (1/CW_avg) * (1 - 1/CW_avg)**(n-1),
+                (2, N-1))
 
             pcc = 1 - pci - pcs
 
@@ -139,25 +145,31 @@ class Felemban():
 
             # Equation (1)
             #tau_newp =(1 - P**(L+1)) / ((1 - P) * sum([1 + (1/(1-Pf)) * sum([(W(j) - k)/W(j) for k in range(1,W(j))]) * P**j for j in range(0,L+1)]))
-            tau_new = (1 - P**(L+1)) / ((1 - P) * suml(lambda j: (1 + (1/(1-Pf)) * suml(lambda k: (W(j) - k)/W(j), (1,W(j)-1))) * P**j, (0,L)))
+            tau_new = (1 - P**(L+1)) / ((1 - P) * suml(
+                lambda j: (1 + (1/(1-Pf)) * suml(
+                    lambda k: (W(j) - k)/W(j),
+                    (1, W(j)-1))
+                ) * P**j,
+                (0, L)))
 
             # tau_i = alpha*tau_{i-1} + (1-alpha) * tau_new
             tau_old = tau
             tau = alpha * tau_old + (1 - alpha) * tau_new
-            if abs(tau - tau_old) <= epsilon: 
+            if abs(tau - tau_old) <= epsilon:
                 break
 
         return tau, P, Pf
 
-    def U(self, bps=1e6, access_mode="basic", payload=8192, slot_idle=50):
+    def U(self, bps=1e6, access_mode="basic", payload=8192,
+        slot_idle=50):
         """
         Normalized channel throughput.
 
         Keyword arguments:
         bps -- channel bit rate in bits per second (default=1Mbps)
         access_mode -- either "basic" or "rts" (default="basic")
-        payload -- size of packet without headers, in bits (default=8192)
-        slot_idle -- time of an idle slot, in microseconds (default=50)
+        payload -- packet payload, in bits (default=8192)
+        slot_idle -- idle slot time, in microseconds (default=50)
         """
         channel_bit_rate = bps
 
