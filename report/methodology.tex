@@ -6,10 +6,10 @@ To evaluate the theoretical model there must first exist some set of values prod
 
 The general methodology of the model evaluation consists of iteration between selection of model parameters and router metrics until both datasets could be compared. Metrics were in most cases also analysed if they behaved as expected, were accurate or precise.
 
-\section{Model Parameters}
+\section{Parameters}
 The first step was to analyse the theoretical models.
 
-To run the Felemban-Ekici model the following properties are required:
+A python implementation of the Felemban-Ekici model can be found in listing \ref{lst:efmodel} and requires a set of constants, specified below:
 
 \begin{itemize}
 	\item \emph{N}, the number of network nodes
@@ -19,21 +19,29 @@ To run the Felemban-Ekici model the following properties are required:
 	\item $L$, the \texttt{ShortRetryLimit}
 \end{itemize}
 
-The Felemban-Ekici model provides metrics such as normalized throughput ($U$), channel access delay and probability of packet collision. Thus, in order to evaluate the model, a set of equivalent metrics must be collected from the router.
+The Felemban-Ekici model provides normalized throughput ($U$), channel access delay and probability of packet collision. Thus, in order to evaluate the model, a set of equivalent variables must be collected from the router.
 
-\section{Router Interface}
+\section{Interface}
 
-On the router side, three programs, which provide access to network interface data, were tested and evaluated:
+Network interface data can be accessed through numerous clients and interfaces.
+Three programs stand out:
 
-\begin{enumerate}
-	\item ubus - openwrt interface
-	\item qcsapi - quantenna interface
-	\item wl - driver interface
-\end{enumerate}
+\begin{itemize}
+	\item \texttt{ubus} - openwrt interface
+	\item \texttt{qcsapi} - quantenna interface
+	\item \texttt{wl} - driver interface
+\end{itemize}
 
-In the end, ubus was chosen as it was found to be more consistent than the qcsapi.
+\texttt{ubus} interfaces with the native driver using the \texttt{ubusd} daemon, no documentation available, uses JSON formatted input and output.
 
-\section{Router Metrics}
+The \texttt{qcsapi} is documented but, when called from a shell script found on the router, suffers from a number of output errors. It is, however, the only interface capable of reporting the signal-to-noise ratio (SNR).
+
+\texttt{wl} is a bit of both - some parts are documented, some are available and
+others not, while there certainly exists undocumented features.
+
+After a few test sessions \texttt{ubus} was chosen as it did not suffer from the output bugs found in \texttt{qcsapi}, and was easier to interface with than \texttt{wl}.
+
+\section{Metrics}
 Selecting a set of metrics which are equivalent to the model parameters.
 
 This required a good understanding oh how the constraints of the model affected the selection of router metrics, e.g. the model separates CTS-RTS and Basic mode while the router automatically decides which to use based on packet payload size, which isn't available to any tool.
@@ -47,13 +55,14 @@ In order to evaluate the models we needed these metrics:
 \item physical tx/rx rates
 \end{itemize}
 
-\section{Metric Analysis}
+\section{Metric analysis}
 
 We must analyse the validity of the reported parameters.
 
 Do this with experimentation in the radio lab.
 
-We want to analyse the reported values for RSSI, SNR, broken \& valid IEEE 802.11 frames.
+We want to analyse the reported values for RSSI, SNR, broken \& valid IEEE
+802.11 frames.
 
 Using quantenna and wl API:s to query:
 \begin{itemize}
@@ -61,3 +70,68 @@ Using quantenna and wl API:s to query:
     \item \texttt{ubus call wireless.ssid.stats get}
     \item \texttt{ubus call wireless.radio.stats get}
 \end{itemize}
+
+\subsection{Traffic counters}
+
+As noted above, one of the \emph{model parameters} is normalised throughput,
+defined in \cite{felemban} as
+
+\begin{equation}
+U = \frac{P_{success}T_{payload}}{P_{success}T_{payload} + (P_{busy} -
+P_{success})T_{collision} + (1 - P_{busy})T_{idle}}
+\end{equation}
+
+where $P_x$ is probability of $x$ and $T_y$ time of $y$, e.g. probability of successful transmission or time to send payload over channel.
+
+There are no direct equivalent \emph{router metrics} available. Instead traffic counters such as $TX_{packets}$,
+$RX_{packets}$, $TX_{bytes}$ and $RX_{bytes}$, are required to compute an average throughput, $N$
+
+\begin{equation}
+N = \frac{TX_{bytes} + RX_{bytes}}{t}
+\end{equation}
+
+\subsection{RSSI experiments}
+
+Received Signal Strength Indicator (RSSI) is an important, and tricky, value. It
+is important because it is often the only indicator of signal strength, and
+tricky due to high variance between two chips, from same or different vendors,
+suggesting that variance stems from a combination of hardware and software
+factors \cite{lui}.
+
+In order to establish whether the RSSI metric could be used or not, analysis had
+to be done to verify the behavior, accuracy and variance of the reported values.
+This was done in a shielded lab with low-to-no external interference and no self
+interference from reflection.
+
+Figure \ref{fig:rssi_setup} shows how the router, antenna and laptop were
+set-up. Three experiment sessions were carried out to measure RSSI, about 5
+minutes per session, with two different spectrum analysers.
+
+The first test established the baseline rssi values when the system (laptop) was
+idle, i.e. any network load originated from background services. The second test
+was conducted using \texttt{iperf3} to push as much network load as possible,
+see listings \ref{lst:router}, \ref{lst:client} and \ref{lst:rssi} for relevant
+scripts. The third test was a control test with a different spectrum analyser,
+but otherwise identical to the second test.
+
+Scripts for parsing the spectrum analyser data and related heat map generator
+are detailed in listings \ref{lst:mdrparse} and \ref{lst:mdrplot}.
+
+The \emph{spectrum analyser data} was plotted as a heat map; frequency vs. time
+vs. signal strength. This graph shows both how signal strength varies over time
+and frequency. In contrast, the \emph{router metrics} only specify one RSSI
+value and thus the resulting plot compares RSSI vs. time. The graphs can be
+analysed individually for insight into system behavior and compared to see how
+they relate.
+
+\begin{figure}
+\center
+\includegraphics[width=0.9\textwidth]{images/rssi_setup.png}
+\caption{TG799 router and measurement antenna side by side, 1 meter from laptop}
+\label{fig:rssi_setup}
+\end{figure}
+
+\section{Evaluation}
+
+Armed with a solid set of \emph{router metrics} data collection could begin.
+Different scenarios were planned and tested.
