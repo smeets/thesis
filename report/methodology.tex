@@ -21,7 +21,15 @@ A python implementation of the Felemban-Ekici model can be found in listing \ref
 
 The Felemban-Ekici model provides normalized throughput ($U$), channel access delay and probability of packet collision. Thus, in order to evaluate the model, a set of equivalent variables must be collected from the router.
 
-\section{Interface}
+\section{Experimental Model Evaluation}
+
+The first round of model evaluation was conducted using data collected in the in-house laboratory. Clients captured their network traffic with Wireshark and compared the data with the \texttt{jana} client logs.
+
+\section{Model Evaluation with Real-World Data}
+
+The second round of model evaluation was based on data from end users. This required tools for accessing the network interface statistics, matching a set of \emph{router metrics} with the \emph{model parameters} and analysis of the selected \emph{router metrics} to guard against bugs.
+
+\subsection{Interface}
 
 Network interface data can be accessed through numerous clients and interfaces.
 Three programs stand out:
@@ -41,7 +49,7 @@ others not, while there certainly exists undocumented features.
 
 After a few test sessions \texttt{ubus} was chosen as it did not suffer from the output bugs found in \texttt{qcsapi}, and was easier to interface with than \texttt{wl}.
 
-\section{Metrics}
+\subsection{Metrics}
 Selecting a set of metrics which are equivalent to the model parameters.
 
 This required a good understanding oh how the constraints of the model affected the selection of router metrics, e.g. the model separates CTS-RTS and Basic mode while the router automatically decides which to use based on packet payload size, which isn't available to any tool.
@@ -55,7 +63,7 @@ In order to evaluate the models we needed these metrics:
 \item physical tx/rx rates
 \end{itemize}
 
-\section{Metric analysis}
+\subsection{Metric analysis}
 
 We must analyse the validity of the reported parameters.
 
@@ -131,7 +139,7 @@ they relate.
 \label{fig:rssi_setup}
 \end{figure}
 
-\section{Evaluation}
+\subsection{Evaluation}
 
 Armed with a solid set of \emph{router metrics} data collection could begin.
 Different scenarios were planned and tested.
