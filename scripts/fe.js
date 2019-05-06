@@ -145,44 +145,65 @@ function solve() {
     return tau
 }
 
+const TH   = () => (272 + 128) / (rate * 1e6)
+const TP   = () => (8 * 1024) / (rate * 1e6)
+const TACK = () => (112 + 128) / (rate * 1e6)
+// https://en.wikipedia.org/wiki/DCF_Interframe_Space
+//            b   a   g   n24   n50/ac\
+// slot [us]  20  9   9   9     9
+// sifs [us]  10  16  10  10    16
+const TI   = () => 50 * 1e-6
+const TS   = () => {
+    let sifs = 28 * 1e-6 
+    let difs = sifs + 2 * TI()
+    return difs + TH() + TP() + sifs + TACK()
+}
+const TC   = TS
+
 function U(tau) {
+    const Ti = TI()
+    const Tp = (8 * 1024)/(rate * 1e6)
 
- //    slot_idle=50
- // # IEEE frame sizes
- //        MAC = 272 * 8       # bits
- //        PHY = 128 * 8       # bits
- //        ACK = 112 * 8 + PHY # bits
- //        RTS = 160 * 8 + PHY # bits
- //        CTS = 112 * 8 + PHY # bits
-
- //        # IEEE guard times
- //        DIFS = 128*1e-6 # s
- //        SIFS = 28*1e-6 # s
-    MAC_HEADER = 272
-    PHY_HEADER = 128
-    ACK        = 112 + PHY_HEADER
-
-    DIFS = 128 * 1e-6
-    SIFS = 24 * 1e-6
-
-    const Tack = ACK / (rate * 1e6)
-    const Th = (MAC_HEADER+PHY_HEADER)/(1e6)
-    const Ti = 50*1e-6
-    const Tp = 8192/(rate * 1e6)
-
-    const Ts = DIFS + Th + Tp + SIFS + Tack
-    const Tc = Ts
-
-    const PsTp = Ps(tau) * Tp                // P(send) * Time(payload)
-    const PsTs = Ps(tau) * Ts                // P(send) * Time(send)
-    const PcTc = (Pbusy(tau) - Ps(tau)) * Tc // P(coll) * Time(collision)
-    const PiTi = (1 - Pbusy(tau)) * Ti       // P(idle) * Time(idle)
+    const PsTp = Ps(tau) * Tp                  // P(send) * Time(payload)
+    const PsTs = Ps(tau) * TS()                // P(send) * Time(send)
+    const PcTc = (Pbusy(tau) - Ps(tau)) * TC() // P(coll) * Time(collision)
+    const PiTi = (1 - Pbusy(tau)) * Ti         // P(idle) * Time(idle)
 
     return PsTp / (PcTc + PsTs + PiTi)
 }
 
-console.log("N", "U[b]", "P[b]", "U[f]", "P[f]", "U", "P")
+function CAD(tau) {
+    let DI = TI()
+    let DS = (1 / (1 - Pss())) * TS() + DI
+    let DC = sum(0, L, i => i * Math.pow(Pcc(tau), i)) * TC() + 
+             (Pcs(tau) / (1-Pcc(tau))) * DS +
+             (Pci(tau) / (1-Pcc(tau))) * DI
+    
+    let Pd = 1 - solvePf(tau)
+    let Fb = (Pei(tau)/Pd)*DI + 
+             (Pes(tau)/Pd)*DS + 
+             (Pec(tau)/Pd)*DC
+    
+    let pnb = 1
+    let Ft = (1 - CWinv(tau)) * ((Pei(tau)/pnb)*DI + 
+                                 (Pes(tau)/pnb)*DS +
+                                 (Pec(tau)/pnb)*DC)
 
+    let F = (1 - tau)* Fb + tau * Ft
+    let T = (1 / (1 - Pdrop(tau))) *
+            sum(0, L, i => (1-Ptau(tau))*Ptau(tau)**i * (TS() + TC() + sum(0, i, j => ((W[j]-1)/2) * F)))
+    // console.log("N = ", N)
+    // console.log('? = ', (1 / (1 - Pdrop(tau))), Pdrop(tau))
+    // console.log('s = ', sum(0, L, i => (1-Ptau(tau))*Math.pow(Ptau(tau), i) * (TS() + i*TC() + sum(0, i, j => ((W[j]-1)/2) * F))))
+    return T
+}
+
+// N=5
+// console.log(CAD(solve()))
+// return
+let hdr = ["N", "U[b]", "P[b]", "U[f]", "P[f]", "U", "P", "C"]
+
+console.log(hdr.join(','))
 
         // 5    10    15    20    25    30    35    40    45    50    55    60
 var FeU = [0.68, 0.65, 0.62, 0.60, 0.58, 0.56, 0.55, 0.54, 0.53, 0.52, 0.51, 0.50]
@@ -207,6 +228,8 @@ for (N = 5; N <= 60; N = N + 5) {
     process.stdout.write(U(tau).toString())
     process.stdout.write(",")
     process.stdout.write(Ptau(tau).toString())
+    process.stdout.write(",")
+    process.stdout.write(CAD(tau).toString())
     process.stdout.write("\n")
 }
 
