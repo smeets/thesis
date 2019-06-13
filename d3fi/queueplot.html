@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style> /* set the CSS */
+
+body { font: 12px Arial;}
+
+path { 
+  stroke: steelblue;
+	stroke-width: 2;
+	fill: none;
+}
+
+.axis path,
+.axis line {
+	fill: none;
+	stroke: grey;
+	stroke-width: 1;
+	shape-rendering: crispEdges;
+}
+
+</style>
+
+<body>
+
+<!-- load the d3.js library -->	
+<script src="d3.v3.min.js"></script>
+
+<script>
+
+// Set the dimensions of the canvas / graph
+var	margin = {top: 50, right: 20, bottom: 40, left: 100},
+	width = 600 - margin.left - margin.right,
+	height = 220 - margin.top - margin.bottom;
+
+// Parse the time / time
+var	parseTime = v => +v;
+
+// Set the ranges
+var	x = d3.time.scale().range([0, width]);
+var	y = d3.scale.linear().range([height, 0]);
+
+// Define the axes
+var	xAxis = d3.svg.axis().scale(x)
+	.orient("bottom").ticks(10);
+
+var	yAxis = d3.svg.axis().scale(y)
+	.orient("left").ticks(5);
+
+function makeChart(title, ylabel) {
+	var chart = d3.select("body")
+		.append("svg")
+			.attr("width", width + margin.left + margin.right)
+			.attr("height", height + margin.top + margin.bottom)
+		.append("g")
+			.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+	
+	chart.append("text")
+		    .attr("x", width / 2 )
+		    .attr("y", -20)
+		    .style("text-anchor", "middle")
+		    .text(title)
+
+	chart.append("text")
+	    .attr("x", width / 2 )
+	    .attr("y",  height + margin.bottom*0.8)
+	    .style("text-anchor", "middle")
+	    .text("sample");
+
+	chart.append("text")
+	    .attr("transform", "rotate(-90)")
+	    .attr("y", 0-margin.left*0.75)
+	    .attr("x",0 - (height / 2))
+	    .attr("dy", "1em")
+	    .style("text-anchor", "middle")
+	    .text(ylabel); 
+	return chart
+
+}
+    
+// Adds the svg canvas
+var	chart1 = makeChart("qdisc length", "packets")
+var chart5 = makeChart("tx failed", "packets")
+var chart3 = makeChart("sndbuf", "bytes")
+var	chart4 = makeChart("tx retries", "packets")
+var	chart2 = makeChart("qdisc dropped", "packets")
+var	chart6 = makeChart("qdisc requeued", "requeued")
+
+function plotLine(chart, data, key) {
+	var	valueline = d3.svg.line()
+	.x(function(d) { return x(d.time); })
+	.y(function(d) { return y(d[key]); });
+
+	// Scale the range of the data
+	x.domain(d3.extent(data, function(d) { return d.time; }));
+	y.domain([0, d3.max(data, function(d) { return d[key]; })]);
+
+	// Add the valueline path.
+	chart.append("path")
+		.attr("class", "line")
+		.attr("d", valueline(data));
+
+	// Add the X Axis
+	chart.append("g")
+		.attr("class", "x axis")
+		.attr("transform", "translate(0," + height + ")")
+		.call(xAxis);
+
+	// Add the Y Axis
+	chart.append("g")
+		.attr("class", "y axis")
+		.call(yAxis);
+}
+
+function clearChart(chart) {
+	chart.selectAll("path").remove()
+	chart.selectAll(".axis").remove()
+}
+
+function plotQueueData(error, data) {
+	if (error) {
+		console.log(error)
+		return
+	}
+
+	if (data.length > 2*60) {
+		data = data.slice(-2*60)
+	}
+
+	clearChart(chart1)
+	clearChart(chart2)
+	clearChart(chart3)
+	clearChart(chart4)
+	clearChart(chart5)
+	clearChart(chart6)
+
+	data.forEach(d => {
+		d.time     = +d.time;
+		d.packets  = +d.packets;
+		d.sndbuf   = +d.sndbuf;
+		d.txretry  = +d.txretry;
+		d.dropped  = +d.dropped
+		d.txfailed = +d.txfailed
+		d.requeued = +d.requeued
+	});
+
+	var first = Object.assign({}, data[0])
+	data.forEach(function (d) {
+		d.dropped  -= first.dropped
+		d.txretry  -= first.txretry
+		d.txfailed -= first.txfailed
+		d.requeued -= first.requeued
+	})
+
+	plotLine(chart1, data, 'packets')
+	plotLine(chart2, data, 'dropped')
+	plotLine(chart3, data, 'sndbuf')
+	plotLine(chart4, data, 'txretry')
+	plotLine(chart5, data, 'txfailed')
+	plotLine(chart6, data, 'requeued')
+}
+
+setInterval(() => d3.csv("data1.csv", plotQueueData), 1000)
+
+</script>
+</body>
