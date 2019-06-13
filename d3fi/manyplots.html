@@ -28,7 +28,7 @@ path {
 
 <div class="avgbox">
 <div>
-<p id="pps"></p>
+<p id="avg-tx-rate"></p>
 <p id="avg-qdisc-len"></p>
 <p id="avg-nic-len"></p>
 </div>
@@ -57,7 +57,7 @@ path {
 
 // Set the dimensions of the canvas / graph
 var	margin = {top: 50, right: 20, bottom: 40, left: 100},
-	width = 1400 - margin.left - margin.right,
+	width = 600 - margin.left - margin.right,
 	height = 220 - margin.top - margin.bottom;
 
 // Set the ranges
@@ -103,10 +103,14 @@ function makeChart(title, ylabel) {
 }
     
 // Adds the svg canvas
-var	chart1 = makeChart("pkts enqueued", "packets")
-var chart3 = makeChart("pkts sent", "packets")
-var	chart2 = makeChart("pkts dropped", "packets")
-var chart4 = makeChart("pkts requeued", "packets")
+var	chart1 = makeChart("pkts in qdisc", "packets")
+var	chart7 = makeChart("pkts in nic", "packets")
+var chart3 = makeChart("sndbuf in use", "bytes")
+var chart8 = makeChart("txrate", "kbits per second")
+var chart5 = makeChart("tx failed", "packets")
+var	chart4 = makeChart("tx retries", "packets")
+var	chart2 = makeChart("qdisc dropped", "packets")
+var	chart6 = makeChart("qdisc requeued", "requeued")
 
 function plotLine(chart, data, key, zero) {
 	var	valueline = d3.svg.line()
@@ -117,8 +121,6 @@ function plotLine(chart, data, key, zero) {
 			else
 				return y(d[key]); 
 		});
-
-	// console.log(`data[0]${key} =`, data[0][key])
 
 	// Scale the range of the data
 	x.domain(d3.extent(data, function(d) { return d.time; }));
@@ -151,66 +153,99 @@ function clearChart(chart) {
 	chart.selectAll(".axis").remove()
 }
 
-var firstsentcount = 0
-var firstmark = 0
 var data = []
-var first = undefined
 function plotQueueData(error, newdata) {
 	if (error) {
 		console.log(error)
 		return
 	}
 
-	if (!newdata.length) {
-		console.log('no data')
-		return
-	}
+	if (!newdata.length) return
 
 	clearChart(chart1)
 	clearChart(chart2)
 	clearChart(chart3)
 	clearChart(chart4)
+	clearChart(chart5)
+	clearChart(chart6)
+	clearChart(chart7)
+	clearChart(chart8)
 
 	newdata.forEach(d => {
 		d.time     = +d.time;     // sequential id
 		d.packets  = +d.packets;  // pkts in qdisc
 		d.bytes    = +d.bytes;    // bytes in qdisc
+		d.sndbuf   = +d.sndbuf;   // bytes
+		d.txrate   = (+d.txrate)/1000;   // kbps
+		d.txretry  = +d.txretry;  // accumlative tx retries
 		d.dropped  = +d.dropped   // accumulative pkts dropped in qdisc
+		d.txfailed = +d.txfailed  // accumulative tx retry failed
 		d.requeued = +d.requeued  // accumulative pkts requeued in qdisc
 		d.sent     = +d.sent
+		var payload = d.bytes/(d.packets||0)
+		d.nicpkts  = Math.floor((d.sndbuf - d.bytes) / (payload + 800))
 	});
 
 	data = data.concat(newdata)
-	if (data.length > 5000)
-		data = data.slice(-5000)
+	if (data.length > 120)
+		data = data.slice(-120)
 
-	// var first = Object.assign({}, data[0])
-	// newdata.forEach(function (d) {
-	// 	d.dropped  -= first.dropped
-	// 	d.requeued -= first.requeued
-	// 	d.sent     -= first.sent
-	// })
+	var avgQdiscLen = 0,
+		avgTxRate = 0,
+		avgNICLen = 0,
+		avgPayload = 0
+	
+	var payloadPacketsCtr = 0
+	data.forEach(function (d) {
+		avgQdiscLen += d.packets
+		avgNICLen += d.nicpkts
+		avgTxRate += d.txrate
 
-	if (firstsentcount === 0) {
-		firstsentcount = data[data.length - 1].sent
-		firstmark = Date.now() - 10
-	}
+		if (d.packets > 0) {
+			avgPayload += d.bytes/d.packets
+			payloadPacketsCtr++
+		}
+	})
 
-	var pps = (data[data.length - 1].sent - firstsentcount) / ((Date.now() - firstmark) / 1e3)
+	avgQdiscLen /= data.length
+	avgNICLen /= data.length
+	avgTxRate /= data.length
+	avgPayload /= payloadPacketsCtr
 
-	document.getElementById('pps').textContent = `average pps = ${Math.floor(pps)}`
+	var estXmitTime = (((avgPayload + 400) * 8) / (avgTxRate * 1e3)) * 1e6
+	var txPacketsPerSample = Math.floor((data[data.length - 1].sent - data[0].sent) / data.length)
+	var realXmitTime = ((avgPayload + 400) / ((avgPayload+400) * txPacketsPerSample)) * 1e6
+	// var avgCollisionProb = data[data.length - 1].txretry / data[data.length - 1].sent
+	// var avgDropProb = data[data.length - 1].txfailed / data[data.length - 1].sent
+	var nicServeTime = (avgNICLen / txPacketsPerSample) * 1e3
+
+	document.getElementById('avg-tx-rate').textContent = `average device tx rate = ${(avgTxRate/1e3).toFixed(2)} Mbps`
+	document.getElementById('avg-qdisc-len').textContent = `average packets in qdisc = ${Math.floor(avgQdiscLen)}`
+	document.getElementById('avg-nic-len').textContent = `average packets in NIC = ${Math.floor(avgNICLen)}`
+	document.getElementById('tx-packets').textContent = `average tx packets/sample = ${txPacketsPerSample}`
+	document.getElementById('avg-payload').textContent = `average packet payload = ${Math.floor(avgPayload)} bytes`
+	document.getElementById('avg-throughput').textContent = `average throughput/sample = ${(avgPayload * txPacketsPerSample * 8 / 1e6).toFixed(2)} Mbps`
+	document.getElementById('est-xmit-time').textContent = `transmit time @ txrate = ${Math.floor(estXmitTime)} us`
+	document.getElementById('real-xmit-time').textContent = `transmit time @ throughput = ${Math.floor(realXmitTime)} us`
+	// document.getElementById('avg-coll-prob').textContent = `packet collision probability = ${avgCollisionProb}`
+	// document.getElementById('avg-pkt-drop').textContent = `packet drop probability = ${avgDropProb}`
+	document.getElementById('nic-serve-time').textContent = `average nic serve time = ${Math.floor(nicServeTime)} ms`
 
 	plotLine(chart1, data, 'packets')
 	plotLine(chart2, data, 'dropped', true)
-	plotLine(chart3, data, 'sent', true)
-	plotLine(chart4, data, 'requeued', true)
+	plotLine(chart3, data, 'sndbuf')
+	plotLine(chart4, data, 'txretry', true)
+	plotLine(chart5, data, 'txfailed', true)
+	plotLine(chart6, data, 'requeued', true)
+	plotLine(chart7, data, 'nicpkts')
+	plotLine(chart8, data, 'txrate')
 }
 
 function fetchData() { 
 	d3.csv("data", plotQueueData)
 }
 fetchData()
-setInterval(fetchData, 200)
+setInterval(fetchData, 1000)
 
 </script>
 </body>

@@ -2,9 +2,10 @@
 
 d3-based wifi logger
 
+[video](https://giant.gfycat.com/EqualResponsibleHammerkop.webm)
+
 ```bash
-$ python -m SimpleHTTPServer
-# cat /proc/net/udp --> get $SL
-$ ./data1.sh $SL $NETDEVICE > ./data1.csv
-# browse to localhost:8000/queueplot.html
+# cat /proc/net/udp --> get inode
+$ ./data1.sh $NETDEVICE $inode | node server.js
+# browse to localhost:8080/manyplots
 ```

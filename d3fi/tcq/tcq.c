@@ -232,17 +232,17 @@ size_t seek_str(char *str, char *what)
 	return step;
 }
 
-void parse_dump(char *dump, long *bbytes, long *inqueue, long *dropped, long *requeued)
+void parse_dump(char *dump, long *sent_pkts, long *bbytes, long *inqueue, long *dropped, long *requeued)
 {
 	size_t root = seek_str(dump, "qdisc mq 0: dev ");
 	size_t sent = seek_str(dump + root, "Sent") - 4;
 	size_t backlog = seek_str(dump + root, "backlog") - 7;
 
-	long bytes, pkts, olmt;
+	long bytes, olmt;
 	
 	sscanf(dump + root + sent, 
 		"Sent %ld bytes %ld pkt (dropped %ld, overlimits %ld requeues %ld)",
-		&bytes, &pkts, dropped, &olmt, requeued);
+		&bytes, sent_pkts, dropped, &olmt, requeued);
 	
 	sscanf(dump + root + backlog, 
 		"backlog %ldb %ldp requeues %ld",
@@ -287,29 +287,29 @@ int main(int argc, char const *argv[])
 	// then parse values from this memory region.
 	char buf[8096] = { 0 };
 	FILE *fd = fmemopen(buf, sizeof(buf), "w");
-	long backlog_bytes, backlog_pkts, pkts_dropped, pkts_requeued;
-	long long bb = 0;
-	long long bp = 0; 
+	long sent_pkts, backlog_bytes, backlog_pkts, pkts_dropped, pkts_requeued;
 	long samples = 0;
+	long prev_sent = 0, prev_pkts = 0;
 
-	fprintf(stderr, "backlog-bytes, backlog-pkts, pkts-dropped, pkts-requeued\n");
+	if (track)
+		fprintf(stderr, "time,");
+	fprintf(stderr, "sent,bytes,packets,dropped,requeued\n");
 	do {
 		dump_stats(fd, d);
-		parse_dump(buf, &backlog_bytes, &backlog_pkts, &pkts_dropped, &pkts_requeued);
-		if (!avg)
-			fprintf(stderr, "%ld, %ld, %ld, %ld\n", backlog_bytes, backlog_pkts, pkts_dropped, pkts_requeued);
+		parse_dump(buf, &sent_pkts, &backlog_bytes, &backlog_pkts, &pkts_dropped, &pkts_requeued);
+		bool changed = sent_pkts != prev_sent || backlog_pkts != prev_pkts;
+		if (track && changed)
+			fprintf(stderr, "%ld, ", samples);
+		if (changed)
+			fprintf(stderr, "%ld, %ld, %ld, %ld, %ld\n", sent_pkts, backlog_bytes, backlog_pkts, pkts_dropped, pkts_requeued);
 		rewind(fd);
-		if (track || avg) usleep(1000); // 1s
-		if (avg) {
-			samples++;
-			bb += backlog_bytes;
-			bp += backlog_pkts;
+		if (track) {
+			if (changed)
+				samples++;
+			prev_sent = sent_pkts;
+			prev_pkts = backlog_pkts;
 		}
-	} while (track || (avg && samples < 5000));
-
-	if (avg) {
-		fprintf(stderr, "%lld, %lld, %ld, %ld\n", bb/samples, bp/samples, 0L, 0L);
-	}
+	} while (track);
 
 	fclose(fd);
 	rtnl_close(&rth);
