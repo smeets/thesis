@@ -234,17 +234,17 @@ size_t seek_str(char *str, char *what)
 
 void parse_dump(char *dump, long *bbytes, long *inqueue, long *dropped, long *requeued)
 {
-	size_t wlp3s0_root = seek_str(dump, "qdisc mq 0: dev wlp3s0 root");
-	size_t sent = seek_str(dump + wlp3s0_root, "Sent") - 4;
-	size_t backlog = seek_str(dump + wlp3s0_root, "backlog") - 7;
+	size_t root = seek_str(dump, "qdisc mq 0: dev ");
+	size_t sent = seek_str(dump + root, "Sent") - 4;
+	size_t backlog = seek_str(dump + root, "backlog") - 7;
 
 	long bytes, pkts, olmt;
 	
-	sscanf(dump + wlp3s0_root + sent, 
+	sscanf(dump + root + sent, 
 		"Sent %ld bytes %ld pkt (dropped %ld, overlimits %ld requeues %ld)",
 		&bytes, &pkts, dropped, &olmt, requeued);
 	
-	sscanf(dump + wlp3s0_root + backlog, 
+	sscanf(dump + root + backlog, 
 		"backlog %ldb %ldp requeues %ld",
 		bbytes, inqueue, requeued);
 }
