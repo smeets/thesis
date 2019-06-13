@@ -118,8 +118,6 @@ function plotLine(chart, data, key, zero) {
 				return y(d[key]); 
 		});
 
-	// console.log(`data[0]${key} =`, data[0][key])
-
 	// Scale the range of the data
 	x.domain(d3.extent(data, function(d) { return d.time; }));
 	y.domain([0, d3.max(data, function(d) { 
@@ -183,13 +181,6 @@ function plotQueueData(error, newdata) {
 	data = data.concat(newdata)
 	if (data.length > 5000)
 		data = data.slice(-5000)
-
-	// var first = Object.assign({}, data[0])
-	// newdata.forEach(function (d) {
-	// 	d.dropped  -= first.dropped
-	// 	d.requeued -= first.requeued
-	// 	d.sent     -= first.sent
-	// })
 
 	if (firstsentcount === 0) {
 		firstsentcount = data[data.length - 1].sent
