@@ -1,3 +1,5 @@
+%!TEX root = base.tex
+
 \chapter{Experimental Methodology}
 
 This chapter describes rationale for the experimental approach used to evaluate
@@ -15,7 +17,7 @@ selection of model parameters and router metrics until both datasets could be
 compared. Metrics were in most cases also analysed if they behaved as expected,
 were accurate or precise.
 
-\section{Parameters}
+\section{Model Parameters}
 The first step was to analyse the theoretical models.
 
 A python implementation of the Felemban-Ekici model can be found in listing
@@ -40,21 +42,13 @@ in the paper.
 
 \section{Experimental Model Evaluation}
 
-The first round of model evaluation was conducted using data collected in the
-in-house laboratory. Clients captured their network traffic with Wireshark
-(tshark) and compared the data with the \texttt{jana} client logs.
+A study of the networking stack revealed an approach of how to measure backoff times.
 
-No realistic way of acquiring the timestamp when a packet leaves the NIC
-existed. No open source drivers for the machines available could be found.
+\section{Parameter Mapping}  
 
-Even though a non-trivial amount of effort has been done to reduce the effect of
-kernel-related events, the timings computed by these experiments are by
-definition not comparable to the equivalent \emph{model parameter}, and thus
-come with a huge disclaimer.
-
-As mentioned, experiments were performed using \texttt{jana} to set packet rates
-and payload sizes, and \texttt{tshark} to interact with pcap and retrieve the
-time right before the packet was handed over to the network interface.
+As mentioned, experiments were performed using \texttt{jana} to set packet
+rates and payload sizes, and \texttt{ubus} to interact with the router
+firmware to retrieve data.
 
 \section{Model Evaluation with Real-World Data}
 

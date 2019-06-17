@@ -1,3 +1,5 @@
+%!TEX root = base.tex
+
 \chapter{Background}
 
 This chapter provides an overview of the related topics for this master thesis.
@@ -57,12 +59,19 @@ A program, developed by the author of this thesis, for running network tests.
 Supports expontential, uniform and gamma distributed packet send rate and
 payload size. It is designed to be used together with packet capture software
 (e.g. Wireshark) which enables a user to estimate the time from a `sendmsg`
-syscall to the packet actually leaving the NIC. These features were developed to
-facilitate experimental, yet controlled, evaluation of the theoretical IEEE
+syscall to the packet actually leaving the NIC. These features were developed
+to facilitate experimental, yet controlled, evaluation of the theoretical IEEE
 802.11 performance models.
 
 \section{Linux Networking}
 
 A high level view of a packet's way from the userspace program, through the
 kernel and finally to the network interface responsible for physically
-transmitting it can be found in Figure XYZ.
+transmitting it can be found in \ref{fig:linux_egress}.
+
+\begin{figure}
+\center
+\includegraphics[width=0.9\textwidth]{images/linux-egress-overview.png}
+\caption{TG799 router and measurement antenna side by side, 1 meter from laptop}
+\label{fig:linux_egress}
+\end{figure}
