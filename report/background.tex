@@ -22,14 +22,13 @@ A custom firmware was used to gain root access.
 
 \section{IEEE 802.11}
 
-The ubiquitous set of LAN standards for wireless communication. Much progress
-has been made since their first introduction in 1999 with IEEE 802.11 b, with
-almost yearly additions to the family.
+As mentioned in the introduction, the IEEE 802.11 standard defines the
+\emph{distributed coordination function} (DCF). This section aims to give the
+reader enough understanding of the DCF to follow along in the arguments and
+discussions. The reader is refered to the original 802.11 standard for a
+complete definition \cite{654749}.
 
-Even though most additions implement new features on the physical layer they can
-be abstracted away by the theoretical models and as such the specific IEEE
-802.11 version used is less important than other key parameters, which we will
-discuss in the methodology section.
+
 
 \section{ubus - the OpenWrt micro bus architecture}
 
@@ -71,7 +70,7 @@ transmitting it can be found in \ref{fig:linux_egress}.
 
 \begin{figure}
 \center
-\includegraphics[width=0.9\textwidth]{images/linux-egress-overview.png}
+\includegraphics[width=0.9\textwidth]{images/linux-egress-overview.eps}
 \caption{TG799 router and measurement antenna side by side, 1 meter from laptop}
 \label{fig:linux_egress}
 \end{figure}
