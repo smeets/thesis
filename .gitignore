@@ -2,3 +2,14 @@ report/tmp
 report.pdf
 __pycache__
 *.o
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.lof
+*.log
+*.lot
+base.pdf
+*.fls
+*.toc
+*.gz
