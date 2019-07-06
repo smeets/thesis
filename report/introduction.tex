@@ -2,21 +2,25 @@
 
 \chapter{Introduction}
 
-In 2014 a report on Wi-Fi adoption found that 25\% of households, all over the
-world, had Wi-Fi networks set up. In households with fixed-line broadband
-access, 65\% had set up a Wi-Fi network\cite{smith}. The report also states that
-the number of Wi-Fi-enabled devices is projected to increase.
+Wi-Fi seems to be the wireless home network protocol of the (forseeable)
+future. In 2014 a report on Wi-Fi adoption found that 25\% of households, all
+over the world, had Wi-Fi networks set up. In households with fixed-line
+broadband access, 65\% had set up a Wi-Fi network\cite{smith}. The report also
+states that the number of Wi-Fi-enabled devices is projected to increase.
 
-Naturally, consumers today have higher expectations regarding network
-throughput than the IEEE 802.11 standard was designed for back in 1997. In
-recent years, the Wi-Fi label has become hugely popular and the number of
-Wi-Fi-capable devices have skyrocketed, especially in urban areas and
-neighbourhoods. The corresponding increase is radio activity puts the Wi-Fi
-protocol, and its medium access protocols in particular, under preassure.
-Wi-Fi implements \emph{Carrier-sense multiple access} (CSMA)—"listen before
-speaking"—in a \emph{distributed coordination function} (DCF) to reduce
-probability of collisions happening in the first place and what to do when
-collisions occur. 
+Consumers today have higher expectations regarding network throughput than the
+original IEEE 802.11 standard was designed for back in 1997. In recent years,
+the Wi-Fi label has become hugely popular and the number of Wi-Fi-capable
+devices have skyrocketed, especially in urban areas and neighbourhoods. The
+protocol that once was aimed at corporate sector is now almost everywhere
+around us, in vastly different use-cases than for which it first was designed.
+
+As Wi-Fi usage has increased, the corresponding increase in radio activity
+puts the protocol, and its medium access mechanisms in particular, under ever
+more pressure. Wi-Fi implements \emph{Carrier-sense multiple access/Collision
+avoidance} (CSMA/CA)—"listen before speaking"—in a \emph{distributed
+coordination function} (DCF) to reduce the likelihood of collisions happening
+in the first place what to do when collisions occur. 
 
 Accurately modelling the Wi-Fi communication and related performance
 characteristics is an active field of research and today there are various
@@ -24,59 +28,37 @@ proposed models which perform well in simulations. This thesis focuses on a
 branch of models presented in \cite{bianchi} which models the \emph{DCF} using
 a markov chain-based approach. Modelling the performance of Wi-Fi networks is
 beneficial in many cases, especially (re)configuration—where the ability to
-estimate impact of different parameters is crucial. 
+estimate impact of different parameters is crucial. This thesis aims to test
+the foundational assumptions made in \cite{bianchi}—markov chain approximation
+of the \emph{DCF}, poisson-distributed packet rates and payload sizes—using an
+experimental methodology with data measured from physical devices. The model
+evaluated is an improved version presented in \cite{felemban}, not the
+original from \cite{bianchi}.
 
-Even though newer routers are able to automatically (re)configure themselves
-based on analysis of neighbouring networks, they are not guaranteed to be
-optimal since they have a local view of the network. Older routers rely on
-manual configuration, often factory defaults. With existing Wi-Fi models it is
-possible to simulate the impact of configuration settings. However, it is
-unknown how actual hardware implementations conform to the standard, on which
-the theoretical models are based. Furthermore, it's not pratical to suggest
-that end-users run simulations themselves to improve network performance.
-
-This thesis aims to test the foundational assumptions made in
-\cite{bianchi}—markov chain, poisson-distributed packet rates and payload
-sizes—using an experimental methodology with data measured from physical
-devices. The model evaluated is not the original one from \cite{bianchi},
-instead an improved version presented in \cite{felemban} will be used.
+To meet a wide variety of customer expectations in scenarios such as VoIP,
+low-latency gaming, ultra-high definition streaming and many network nodes,
+Wi-Fi has evolved dramatically in complexity, resulting in a multitude of
+configurable parameters. Even though newer routers are able to (somewhat)
+automatically (re)configure themselves based on analysis of neighbouring
+networks, they are not guaranteed to be optimal since they have a local view
+of the network (i.e. one point-of-view). Older routers rely on manual
+configuration, often factory defaults. With existing, theoretical, Wi-Fi
+models it is possible to simulate the impact of configuration settings.
+However, it is unknown how actual hardware implementations conform to the
+standard, on which the theoretical models are based. Furthermore, it's not
+pratical to suggest that end-users run simulations themselves to improve
+network performance. Knowing if the models in \cite{felemban} are accurate in
+production networks could potentially be of enourmous benefit for end-users
+and ISPs alike. Imagine each router embedding and periodically running the
+model with locally sourced data, automatically alerting the end-user or ISP of
+potential performance problems and possible interventions.
 
 The second part of this thesis evaluates whether in-router telemertry can be
-used as input to the evaluated model.
+used as input to the evaluated model. [TODO]
 
 The third and final part presents a proof-of-concept implementation of such an
-input mapping.
+input mapping. [TODO]
 
-% This
-% configuration is not strictly an issue with the standard, but rather with how
-% the routers are being deployed. One can think of the deployment process as
-% being decentralised—each household purchases and configures their own router.
-
-
-% Centralised configuration is still not on the map for the foreseeable future. Expert systems are already in-place. The task becomes on how to improve existing systems---can we come up with a system which guarantees that a recommended change results in an improvement? This would require extensive simulation of the network and the ability to predict the effect of a change in a configuration parameter.
-% em —
-
-% Recommend configuration based on both detailed and wide view of network performance.
-
-% To recommend a change it must lead to improvement in some aspect.
-
-% How to be sure of this? Model the network and simulate what happens when the change is made.
-
-% This requires competent Wi-Fi models.
-
-% Must have clear definition of a competent Wi-Fi model is.
-
-% Wi-Fi models with good performance in simulated tests need not be as good in the real world.
-
-% So we have to test this, and we need the data to do it.
-
-% Telenor now has a good platform for us to get the data.
-
-% But can we trust it? Perhaps the logging is inaccurate?
-
-% So we need to analyse the quality of the data.
-
-%  - is it accurate?
-%  - is it precise?
-
-% Experiments will be conducted and results will impact model testing and evaluation.
+The layout of each chapter in this report will follow the same order as
+described above: model evaluation, parameter mapping and model evaluation
+round 2.
