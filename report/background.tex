@@ -30,17 +30,15 @@ desynchronise nodes. This delay is called back-off time
 algorithm which requires time to be quantized into discrete \emph{time-slots},
 each $9$ to $50$ $\mu s$ long, depending on the standard. 
 
-
 While in back-off, nodes listen on the medium for a full \emph{slot} and, if
 no activity has been sensed, decrements the back-off counter. If nodes detect
 activity on the medium during a slot, the counter is not decremented (counter
-freezing). 
-
-Upon reaching zero the node may attempt to (re)transmit. If no \texttt{ACK}
-has been received after a certain duration (\texttt{ACK-Timeout}) the node
-enters further back-off (see \ref{fig:cwsizes}) and restarts its journey to
-zero again. The node has a fixed number of attempts to (re)transmit the frame,
-\texttt{ShortRetryLimit} \cite{654749}, and drops the frame once exceeded.
+freezing). Upon reaching zero the node may attempt to (re)transmit. If no
+\texttt{ACK} has been received after a certain duration (\texttt{ACK-Timeout})
+the node waits another DIFS, enters further back-off (see \ref{fig:cwsizes})
+and restarts its journey back to zero again. The node has a fixed number of
+attempts to retransmit the frame, \texttt{ShortRetryLimit} \cite{654749}, and
+drops the frame once exceeded.
 
 \begin{figure}
 \center
@@ -77,9 +75,16 @@ W_j = \left\{
 \right.
 \end{equation}
 
-This behavior is known as the basic access mode and, while very simple,
-suffers when a normal situation occurs on the network-when there are nodes in
-the network that the node doesn't see, aka hidden nodes. Since 
+The description above details one of three multiple access schemes in IEEE
+802.11—``basic mode''. During CSMA/CA each node listens for activity locally
+and can therefore fail to detect nodes whose signal is too weak to be
+received, causing what's known as the \emph{hidden node} problem. In
+IEEE 802.11, only the access point (AP) is guaranteed to have knowledge of all
+connected stations (STAs). The second multiple access scheme requires that
+STAs first acquire the right to transmit, using a \emph{request-to-send} (RTS)
+message. If the STA is given permission, the AP will respond with a
+\emph{clear-to-send} (CTS) message. This access scheme is called RTS/CTS and
+increases performance in scenarios with multiple ``hidden nodes''. [TODO REF?]
 
 \section{TG799-vac}
 
