@@ -2,34 +2,66 @@
 
 \chapter{Background}
 
-This report touches a wide range of topics, technologies and systems, and this
-chapter briefly introduces them and provides a summary of their, for this
-report, key points.
+This chapter briefly introduces the technologies and tools that were used. As
+explained in the introduction, the primary goal of this thesis was to evaluate
+the usefulness of the model presented in \cite{felemban} by comparing the
+channel access time of the model with an estimation, derived in Chapter 4. As
+will be explained in Chapter 4, obtaining exact measurements is not trivial
+and we therefore present information helpful in understanding the forthcoming
+chapters of this thesis. 
+
+In this chapter, we first present a brief overview of the IEEE 802.11
+protocol, with increased emphasis on the \emph{distributed coordination
+function}, to form a basis for understanding the Ekici-Felemban model, as well
+as our measurement setup.
+
+Since we will use Linux-based devices to perform measurements it will be
+important to have some understanding of the Linux kernel's networking system.
+As we are particularly interested in measuring the time to send a packet, we
+describe the network stack components which control and process an outbound
+(egress) UDP packet, limited to 1500 bytes in order to not incur PHY-layer
+fragmentation.
+
+Subsequently we provide an overview of the hardware used in this thesis, the
+TG799-vac router, its OpenWrt system and how we interact with the firmware
+using the micro bus system architecture. 
+
+The following section describes why Wireshark, a well-known and widely used
+open source tool for capturing and inspecting network data, had to be replaced
+by more special-purpose programs.
+
+Finally we describe the tool that was developed to replace Wireshark—Jana—and
+compare it with existing tools.
 
 \section{IEEE 802.11}
 
 The ubiquitous family of wireless network protocols and ammendments, such as
-IEEE 802.11g and IEEE 802.11x, commonly known as Wi-Fi. More specifically IEEE
+IEEE 802.11g and IEEE 802.11x, commonly known as Wi-Fi. Specifically, IEEE
 802.11 defines the PHY and MAC layers of the network stack. Each ammendment
 introduces additions, redactions and changes to these layers. It is beyond the
 scope of this report to provide a detailed overview of the, sometimes quite
 significant, differences between ammendments. Of special interest is the
-\emph{distributed coordination function} which remains relatively unchanged,
-primarily for backwards compatibility reasons. For a more complete definition
-of the \emph{distributed coordination function} (DCF) the reader is referred
-to \cite{654749}, \cite{5307322} and \cite{6687187}. 
+\emph{Distributed Coordination Function} (DCF) which remains relatively
+unchanged, primarily for backwards compatibility reasons. For a more complete
+definition of the \emph{Distributed Coordination Function} (DCF) the reader is
+referred to \cite{654749}, \cite{5307322} and \cite{6687187}. 
 
-As noted earlier, IEEE 802.11 implements a \emph{Carrier-Sense Multiple
-Access} (CSMA) medium access control (MAC) scheme with a binary exponential
-backoff algorithm for \emph{collision avoidance} (CA). The CSMA/CA algorithm
-is run locally on each network node and is called the \emph{Distributed
-Coordination Function} (DCF). Figure \ref{fig:dcfgraph} describes the access
-and backoff mechanisms using a flowgraph.
+In order to effectively allow multiple clients to access and utilize a shared
+medium, a medium access control (MAC) protocol can be implemented. The MAC
+protocol governs \emph{when} clients interact with the underlying physical
+medium (PHY-layer protocol specifies \emph{how}).
+
+IEEE 802.11 implements a \emph{Carrier-Sense Multiple Access/Collision
+avoidance} (CSMA/CA) medium access control (MAC) scheme with a binary
+exponential back-off algorithm. The CSMA/CA algorithm is run locally on each
+network node and is called the \emph{Distributed Coordination Function} (DCF).
+Figure \ref{fig:dcfgraph} describes the access and back-off mechanisms of the
+DCF as a flowgraph.
 
 \begin{figure}
 \center
 \includegraphics[width=0.8\textwidth]{images/ieee-80211-dcf.pdf}
-\caption{Schematic flowgraph of the \emph{distributed coordination function} (DCF), where $j$ is the current transmit attempt, $CW$ the current contention window size, $W_j$ the contention window size at attempt $j$ and $BO$ the back-off counter.}
+\caption{Schematic flowgraph of the DCF, where $j$ is the current transmit attempt, $CW$ the current contention window size, $W_j$ the contention window size at attempt $j$ and $BO$ the back-off counter.}
 \label{fig:dcfgraph}
 \end{figure}
 
@@ -39,19 +71,21 @@ listen on the channel and wait until no activity has been detected for a
 duration, the \emph{DCF Interframe Space} (DIFS). Since this effectively
 synchronizes the nodes waiting to transmit, a random delay is introduced to
 desynchronise nodes. This delay is called back-off time
-($T_{\mathit{backoff}}$) and belongs to the \emph{collision avoidance}
-algorithm which requires time to be quantized into discrete \emph{time-slots},
-each $9$ to $50$ $\mu s$ long, depending on the standard. 
+($T_{\mathit{backoff}}$) and relates to the \emph{collision avoidance}
+algorithm. The back-off procedure quantizes time into discrete
+\emph{time-slots}, each $50$ to $9$ $\mu s$ long, depending on the IEEE
+802.11 ``version''.
 
 While in back-off, nodes listen on the medium for a full \emph{slot} and, if
 no activity has been sensed, decrements the back-off counter. If nodes detect
 activity on the medium during a slot, the counter is not decremented (counter
 freezing). Upon reaching zero the node may attempt to (re)transmit. If no
 \texttt{ACK} has been received after a certain duration (\texttt{ACK-Timeout})
-the node waits another DIFS, enters further back-off (see \ref{fig:cwsizes})
-and restarts its journey back to zero again. The node has a fixed number of
-attempts to retransmit the frame, \texttt{ShortRetryLimit} \cite{654749}, and
-drops the frame once exceeded.
+the node waits another DIFS, enters further back-off and restarts its journey
+back to zero again. The node has a fixed number of attempts to retransmit the
+frame, \texttt{ShortRetryLimit} \cite{654749}, and drops the frame once
+exceeded. The exponential increase of the back-off counter is visualised in
+Figure \ref{fig:cwsizes}.
 
 \begin{figure}
 \center
@@ -62,22 +96,30 @@ drops the frame once exceeded.
 
 Time spent in back-off for each (re)transmission attempt $j$ is described in
 equation \ref{eq:tbackoff}, where \emph{SlotTime} is defined in \cite{654749}
-and $\mathcal{U}(0,W_j-1)$ is a uniformly sampled value between $0$ and the
-contention window size $W_{j}-1$, i.e. the maximum number of time-slots
-(exclusive, since 0 is a valid back-off counter). 
-
-The contention window \emph{size} at transmission attempt $j$, $W_{j}$, is
-defined in equation \ref{eq:cwj}, where $L$ is the number of retransmssion
-attempts before a packet is dropped (\texttt{ShortRetryLimit}),
-$\mathit{CW}_{min}$ and $\mathit{CW}_{max}$ are minimum and maximum number of
-time-slots of the \emph{contention window}, respectively, and $m$ is $\log_2
-\frac{\mathit{CW}_{max}}{\mathit{CW}_{min}}$. The defined values of $j$ are
-the initial attempt ($j=0$) and an extra $L$ attempts before termination,
-which resolves to $0 \leq j \leq L$.
+and $\mathcal{U}(0,W_j-1)$ is a uniformly sampled integer value between $0$
+and the contention window size $W_{j}-1$, i.e. the maximum number of
+time-slots (exclusive, since 0 is a valid back-off value). 
 
 \begin{equation} \label{eq:tbackoff}
 T^j_{\mathit{backoff}} = \mathit{SlotTime} \times \mathcal{U}(0,W_j-1)
 \end{equation}
+
+The contention window configuration is commonly expressed by two parameters,
+$CW_{min}$ and $CW_{max}$. As seen in Figure \ref{fig:cwsizes}, the initial
+contention window size is $CW_{min}$ and each subsequent transmission attempt
+will double the previous window size, with a maximum value $CW_{max}$. The
+transmission attempt $m$ where the window size becomes $\mathit{CW}_{max}$ is
+defined in Equation \ref{eq:mlog}.
+
+\begin{equation} \label{eq:mlog}
+m = \log_2 \frac{\mathit{CW}_{max}}{\mathit{CW}_{min}}
+\end{equation}
+
+Equation \ref{eq:cwj} defines the contention window size at attempt $j$, where
+$L$ is the maximum number of retransmission attempts
+(\texttt{ShortRetryLimit}). The defined values of $j$ are the initial attempt
+($j=0$) and an extra $L$ attempts before termination, which resolves to $0
+\leq j \leq L$.
 
 \begin{equation} \label{eq:cwj}
 W_j = \left\{
@@ -88,22 +130,19 @@ W_j = \left\{
 \right.
 \end{equation}
 
-The description above details one of three multiple access schemes in IEEE
-802.11—``basic mode''. During CSMA/CA each node listens for activity locally
-and can therefore fail to detect nodes whose signal is too weak to be
-received, causing what's known as the \emph{hidden node} problem. In IEEE
-802.11, only the access point (AP) is guaranteed to have knowledge of all
-connected stations (STAs).
+The description above details one of two relevant ``access modes'' (MACs) in
+IEEE 802.11—``basic mode''. During CSMA/CA each node listens for activity
+locally and can therefore fail to detect nodes whose signal is too weak to be
+received, causing what's known as the \emph{hidden node} problem.
 
 The second multiple access scheme requires that STAs first acquire the right
 to transmit, using a \emph{request-to-send} (RTS) message. If the STA is given
 permission, the AP will respond with a \emph{clear-to-send} (CTS) message.
 This access scheme is called RTS/CTS and potentially increases performance in
 scenarios with multiple ``hidden nodes''. The RTS/CTS protocol assumes that
-all STAs  have similar tx/rx capabilities.
-
-An overview of the required interframe spaces (IFS) and protocol packets for 
-``basic'' and ``RTS/CTS'' modes can be found in Figure \ref{fig:timings}. 
+all STAs  have similar tx/rx capabilities. An overview of the required
+interframe spaces (IFS) and protocol packets for ``basic'' and ``RTS/CTS''
+modes and how they compare, can be found in Figure \ref{fig:timings}. 
 
 \begin{figure}
 \center
@@ -116,53 +155,71 @@ An overview of the required interframe spaces (IFS) and protocol packets for
 \section{Linux Networking}
 
 The Linux kernel has a complex networking subsystem which is beyond the scope
-of this report to detail. A schematic, high level view of a packet's way from 
-userspace program, through the kernel and into the network interface responsible 
-for physically transmitting it, can be found in Figure \ref{fig:linux_egress}. 
-There are 5 main components in the figure: userspace, kernel, sockets, queueing 
+of this report to detail. Since we will be using Linux-based machines in our
+tests and measurements this section will present a refresh on the Linux
+networking stack. Due to the measurements needed, only the outbound (egress)
+path is described.
+
+A schematic, high level view of a packet's way from  userspace program,
+through the kernel and into the network interface responsible  for physically
+transmitting it, can be found in Figure \ref{fig:linux_egress}.  There are 5
+main components in the figure: userspace, kernel, sockets, queueing 
 discipline (qdisc), driver and network interface card (NIC). Each component is
-more complex than described and interested readers are referred to \cite{knet},
-\cite{pcsending} and \cite[Chapter~17]{ldd}.
+more complex than described and interested readers are referred to
+\cite{knet}, \cite{pcsending} and \cite[Chapter~17]{ldd}. The flow through
+Figure \ref{fig:linux_egress} and the 5 components is described below:
 
-\begin{enumerate}
-    
-    \item A \textbf{userspace} program initializes, binds and attempts to send
-    data through a socket using system calls \texttt{socket(2)}, \texttt{bind(2)} 
-    and \texttt{send(2)}, \texttt{sendto(2)} or \texttt{sendmsg(2)}.
+\textbf{A userspace} program initializes, binds and attempts to send
+data through a socket using system calls \texttt{socket(2)}, \texttt{bind(2)} 
+and \texttt{send(2)}, \texttt{sendto(2)} or \texttt{sendmsg(2)}.
 
-    \item The \textbf{linux kernel} allocates a per-socket kernel buffer (\texttt{skb}), 
-    where related kernel (bookeeping), socket and packet data is stored. The initial
-    size of the \texttt{skb} depends on the \texttt{net.core.wmem\_default} and 
-    \texttt{net.core.wmem\_max} kernel parameters. The \texttt{send(2)}, \texttt{sendto(2)} and 
-    \texttt{sendmsg(2)} syscalls must requests memory from the \texttt{skb} belonging to the 
-    socket in use, before proceeding through the packet processing stack (UDP/TCP, IP, etc) 
-    and finally enqueuing the packet in the queueing discipline (qdisc). The syscalls
-    either blocks or fails, with \texttt{EWOULDBLOCK} or \texttt{EAGAIN}, when the 
-    packet does not fit into the send buffer (\texttt{skb}), depending on the I/O 
-    mode of the socket (blocking or non-blocking).
+\textbf{The linux kernel} allocates a per-socket kernel buffer
+(\texttt{skb}),  where related kernel (bookeeping), socket and packet data is
+stored. The initial size of the \texttt{skb} depends on the
+\texttt{net.core.wmem\_default} and  \texttt{net.core.wmem\_max} kernel
+parameters. The \texttt{send(2)}, \texttt{sendto(2)} and  \texttt{sendmsg(2)}
+syscalls must requests memory from the \texttt{skb} belonging to the  socket
+in use, before proceeding through the packet processing stack (UDP/TCP, IP,
+etc)  and finally enqueuing the packet in the queueing discipline (qdisc). The
+syscalls either blocks or fails, with \texttt{EWOULDBLOCK} or \texttt{EAGAIN},
+when the  packet does not fit into the send buffer (\texttt{skb}), depending
+on the I/O  mode of the socket (blocking or non-blocking).
 
-    \item The \textbf{queueing discipline} (qdisc) system is the internal queueing system 
-    of the linux kernel. A qdisc is a configurable, per-network device queueing system with a 
-    default ``pfifo\_fast'', prioritized fifo, queue, see Figure \ref{fig:pfifofast}. As 
-    packets arrive the qdisc signals the driver, using a scheduler, that data is available. 
-    The qdisc can be queried and configured using the \texttt{tc(8)} (traffic control),
-    \texttt{ip(8)} and \texttt{ifconfig(8)} programs. 
+\textbf{The queueing discipline} (qdisc) system is the internal
+queueing system  of the linux kernel. A qdisc is a configurable, per-network
+device queueing system with a  default ``pfifo\_fast'', prioritized fifo,
+queue, see Figure \ref{fig:pfifofast}. As  packets arrive the qdisc signals
+the driver, using a scheduler, that data is available.  The qdisc can be
+queried and configured using the \texttt{tc(8)} (traffic control),
+\texttt{ip(8)} and \texttt{ifconfig(8)} programs. There is a reconfigurable
+CPU core-to-qdisc mapping that specifies which CPUs can deliver packets to
+a specific qdisc. This mapping can be configured using \texttt{ethtool(8)}.
 
-    \item The \textbf{driver} interfaces between the kernel and network device hardware and
-    can be considered a program itself (kernel module). Drivers considered in this thesis
-    all use an internal ring buffer for egress packets, called the ``TX-Ring''. The driver
-    pulls packets from the qdisc into the ``TX-Ring'' and signals the NIC that packets are
-    ready to be sent. Memory consumed by a packet is defered until some time after transmit
-    or drop. The Linux kernel supports a feature called ``packet taps'' which enable kernel
-    modules to capture packets as they enter or exit the kernel. The outbound taps are called 
-    at the end of the Linux kernel's outbound packet processing path, right before control of 
-    the packet is handed over to the driver.
+\textbf{The driver} interfaces between the kernel and network device
+hardware/firmware and can be considered a program itself (kernel module).
+Drivers used throughout this thesis all use an internal ring buffer for egress
+packets, called the ``TX-Ring''. The driver pulls packets from the qdisc into
+the ``TX-Ring'' and signals the NIC that packets are ready to be sent. Memory
+consumed by a packet is defered until some time after transmit or drop. 
 
-    \item The \textbf{network interface card} (NIC) which primarily sends and receives packets. 
-    The internal design documents of many NICs are not publicly available and open source
-    drivers only hint at the design of important subsystems, such as buffers and prefetchers. 
+The Linux kernel supports a feature called ``packet taps'' which enable
+kernel modules to capture packets as they enter or exit the kernel. The
+outbound taps are called  at the end of the Linux kernel's outbound packet
+processing path, right before control of  the packet is handed over to the
+driver. 
 
-\end{enumerate}
+\textbf{The network interface card} (NIC) which primarily sends and
+receives packets.  The internal design documents of many NICs are not publicly
+available and open source drivers only hint at the design of important
+subsystems, such as buffers and prefetchers. 
+
+The NICs used in this thesis are commonly found in laptops and does not
+have a reconfigurable internal ``TX-Ring''. Common sense suggests that
+NICs use some internal buffering mechanism in addition to the ``TX-Ring''
+controlled by the driver. Since we have no way of differentiating between
+these two ``TX-Rings'' the ``TX-Ring'' depicted in Figure
+\ref{fig:linux_egress} should be seen as an abstraction of these two.
+
 
 \begin{figure}
 \center
@@ -177,6 +234,28 @@ more complex than described and interested readers are referred to \cite{knet},
 \caption{An overview of the default queueing discipline, \texttt{pfifo\_fast}. Packets are enqueued into band 0, 1 or 2 depending on queue configuration and packet TOS bits. Band 0 is highest priority and band 2 lowest. Queue length is counted in number of packets.}
 \label{fig:pfifofast}
 \end{figure}
+
+\section{Intel Wireless Wi-Fi Driver}
+
+All selected machines used to measure Wi-Fi statistics have Intel wireless
+network interface cards (NIC). On Linux these NICs are controlled by the ``Intel
+Wireless WiFi driver for Linux''—\texttt{iwlwifi}. 
+
+The \texttt{iwlwifi} driver supports both an older operation mode, dvm
+(\texttt{iwldvm}, as well as a newer, mvm (\texttt{iwlmvm}). The
+\texttt{iwlmvm} module, included as part of \texttt{iwlwifi}, in the Linux
+kernel source tree of version 4.13 was edited to enable logging of packet
+timing statistics with microsecond accuracy.
+
+Internally, the driver allocates a fixed number of ring buffers used for
+holding transmission frame descriptors, firmware commands and incoming frames.
+The memory of these ring buffers is shared between the host and the NIC by
+using DMA controllers but resides in host DRAM. By using a ring buffer the
+driver is able to queue up to 254 frame descriptors for transmission, and vice
+versa for receiving. This design dramatically reduces the per-frame
+communication overhead between driver and NIC in certain conditions, at the
+expense of increased latency due to queueing.
+
 
 \section{TG799-vac}
 
@@ -210,6 +289,8 @@ A program which acts as an interface to the bus daemon, \texttt{ubusd}.
 Modules are registered and organized by namespaces in \texttt{ubusd} which in
 turn is interacted with using \texttt{ubus}. A usage example can be found in
 Listing \ref{lst:ubusex}.
+
+Wl and quantenna api using same interface in ubus.
 
 This tool was used to read statistics from the TG799-vac device,
 such as tx rates, packet counters and medium availability.
