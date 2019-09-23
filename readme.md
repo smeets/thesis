@@ -1,5 +1,14 @@
 # thesis
 
+ - [ ] abstract
+ - [x] introduction
+ - [x] background
+ - [ ] previous work
+ - [ ] methodology
+ - [ ] results
+ - [ ] discussion
+ 
+
 ## references
 
  - [Performance Analysis of the IEEE 802.11 Distributed
