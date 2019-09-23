@@ -121,12 +121,21 @@ with equations for $\tau$ and $p$ and solves it numerically.
 
 With probabilities for $\tau$ and $p$, Bianchi continues to his core
 contribution—the normalised throughput. Denoted $S$, it is defined as ``the
-fraction of time the channel is used to transmit payload bits''. With
-probability for transmission $P_{tr}$ and transmission success $P_S$ (based on
-$\tau$ and $p$), mean payload size $E[P]$, the duration of an empty slot
-$\sigma$, and finally the average time the channel is sensed busy in case of
-successful transmission $T_{S}$ and transmission collision $T_{C}$, Bianchi
-presents an equation for $S$:
+fraction of time the channel is used to transmit payload bits''. 
+
+\begin{equation} \label{eq:ssbi}
+	S = \frac{E[\mathit{payload~information~transmitted~in~a~slot~time}]}{E[\mathit{length~of~slot~time}]}
+\end{equation}
+
+With $E[P]$ denoting mean payload size, probabilities for transmission
+$P_{tr}$ and transmission success $P_S$, the numerator in \ref{eq:ssbi}
+becomes $P_S P_{tr} E[P]$. In a similar fashion, the denominator in
+\ref{eq:ssbi} can be expressed as the sum of empty time slots, busy time slots
+and times slots with collisions. Let $\sigma$ be the duration of an empty
+slot, $T_{S}$ the average time the channel is sensed busy in case of
+successful transmission, and $T_{C}$ the average time the channel is sensed
+busy in case of collision for the non-colliding STAs. Now, Bianchi presents an
+equation for the normalized througput $S$
 
 \begin{equation} \label{eq:sbi}
 	S = \frac{P_S P_{tr} E[P]}{(1-P_{tr})\sigma + P_{tr} P_S T_S + P_{tr} (1-P_S) T_C}
@@ -140,13 +149,13 @@ between the ``access modes'' can thus captured by the variables $T_{S}$ and
 $T_{C}$
 
 \begin{align}  \label{eq:tbi}
-	\mathit{basic} & = \left\{
-	    \begin{aligned}
+	\mathit{basic} & \left\{
+		\begin{aligned}
 	        T^{bas}_{S} & = H + E[P] + \mathit{SIFS} + \delta + \mathit{ACK} + \mathit{DIFS} + \delta  \\
 	        T^{bas}_{C} & = H + E[P] + \mathit{DIFS} + \delta
 	    \end{aligned}
 	\right. \\
-	\mathit{RTS/CTS} & = \left\{
+	\mathit{RTS/CTS} & \left\{
 	    \begin{aligned}
 	        T^{rts}_{S} = & ~ \mathit{RTS} + \mathit{SIFS} + \delta + \mathit{CTS} + \mathit{SIFS} + \delta \\ & + H + E[P] + \mathit{SIFS} + \delta + \mathit{ACK} + \mathit{DIFS} + \delta  \\
 	        T^{rts}_{C} = & ~ \mathit{RTS} + \mathit{DIFS} + \delta
@@ -205,16 +214,13 @@ where $P$ is the conditional collision probability (equivalent to $p$) from
 Equation \ref{eq:pbi}.
 
 \begin{align}  \label{eq:tfe}
-	\mathit{basic} & = \left\{
-	    \begin{aligned}
-	        T^{bas}_{S} & = \mathit{DIFS} + T_h + T_p + \mathit{SIFS} + \mathit{ACK}  \\
-	        T^{bas}_{C} & = \mathit{DIFS} + T_h + T_p
-	    \end{aligned}
+	\mathit{basic} & \left\{
+	        T^{bas}_{C} = T^{bas}_{S} = \mathit{DIFS} + T_h + T_p + \mathit{SIFS} + \mathit{ACK}
 	\right. \\
-	\mathit{RTS/CTS} & = \left\{
+	\mathit{RTS/CTS} & \left\{
 	    \begin{aligned}
-	        T^{rts}_{S} = & ~ \mathit{RTS} + \mathit{SIFS} + \delta + \mathit{CTS} + \mathit{SIFS} + \delta \\ & + H + E[P] + \mathit{SIFS} + \delta + \mathit{ACK} + \mathit{DIFS} + \delta  \\
-	        T^{rts}_{C} = & ~ \mathit{RTS} + \mathit{DIFS} + \delta
+	        T^{rts}_{S} = & ~ \mathit{DIFS} + T_\mathit{RTS} + \mathit{SIFS} + T_\mathit{CTS} \\ & + \mathit{SIFS} + T_h + T_p + \mathit{SIFS} + \mathit{ACK}  \\
+	        T^{rts}_{C} = & ~ \mathit{DIFS} + T_\mathit{RTS} + \mathit{SIFS} + T_\mathit{CTS}
 	    \end{aligned}
 	\right.
 \end{align}
