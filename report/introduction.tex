@@ -15,33 +15,38 @@ devices have skyrocketed, especially in urban areas and neighbourhoods. The
 protocol that once was aimed at corporate sector is now almost everywhere
 around us, in vastly different use-cases than for which it first was designed.
 
-As Wi-Fi usage has increased, the corresponding increase in radio activity
-puts the protocol, and its medium access mechanisms in particular, under ever
-more pressure. 
+Alongside the explosive increase in Wi-Fi usage and availability, our usage
+patterns and requirements have undergone a similar change. On-demand video and
+music streaming, mobile gaming, Voice-over-IP and other new forms of internet
+services are all expected to run on this now ubiquitous wireless protocol.
+Wi-Fi has not stood still since its deployment, though. The last 20 years have seen
+extension after extension to expand, improve and adapt the protocol to the
+ever changing requirements of the future.
 
-%TODO
-something something optimising using congestion window?
+Ignoring the field of beamforming and related subjects, the primary task of a
+wireless network protocol is to share the underlying medium to all clients in
+an effective manner. As with all radio technologies, Wi-Fi is primarily
+constrained by the radio spectrum it can utilize. All available performance is
+derived from the clever exploitation of this physical medium. As Wi-Fi usage
+has increased, the corresponding increase in radio activity puts the protocol,
+and its medium access mechanisms in particular, under ever more pressure.
 
-\section{Outline} 
+\section{Outline}
 
 This introductory chapter describes the motivations to evaluate IEEE 802.11
 (Wi-Fi) performance models based on markov chain approximation of the
 distributed coordination function (DCF). A problem definition is also provided
 to clearly define the scope of this thesis.
 
-Chapter 2, background, provides an overview of related systems, protocols and
-hardware, followed by Chapter 3 which introduces the research field and prior
-works.
-
-Chapter 4 discusses the experimental methodology used to achieve the different
-goals.	
-
-Afterwards, Chapter 5 presents the results which are further discussed in
-Chapter 6.
+Chapter 2 provides a background to and overview of related systems, protocols
+and hardware. It is followed by Chapter 3 which introduces the research field
+and prior works. Chapter 4 discusses the experimental methodology used to
+achieve the different goals. Afterwards, Chapter 5 presents the results which
+are further discussed in Chapter 6.
 
 All source material can be found online at \url{https://github.com/smeets/thesis}.
 
-\section{Motivation} 
+\section{Motivation}
 
 To meet a wide variety of customer expectations in scenarios such as VoIP,
 low-latency gaming, ultra-high definition streaming and many network nodes,
@@ -50,7 +55,7 @@ configurable parameters. Even though newer routers are able to (somewhat)
 automatically (re)configure themselves based on analysis of neighbouring
 networks, they are not guaranteed to be optimal since they have a local view
 of the network (i.e. one point-of-view). Older routers rely on manual
-configuration, often factory defaults. 
+configuration, often factory defaults.
 
 Accurately modelling the Wi-Fi communication and related performance
 characteristics is an active field of research and today there are various
@@ -62,7 +67,7 @@ collisions occur.  This thesis focuses on a branch of models presented in
 \cite{bianchi} which models the \emph{DCF} using a markov chain-based
 approach. Modelling the performance of Wi-Fi networks is beneficial in many
 cases, especially (re)configuration—where the ability to estimate impact of
-different parameters is crucial. 
+different parameters is crucial.
 
 With existing, theoretical, Wi-Fi models it is possible to simulate the impact
 of configuration settings. However, it is unknown how actual hardware
@@ -73,7 +78,8 @@ in \cite{felemban} are accurate in production networks could potentially be of
 enourmous benefit for end-users and ISPs alike. Imagine each router embedding
 and periodically running the model with locally sourced data, automatically
 alerting the end-user or ISP of potential performance problems and possible
-interventions.
+interventions. Who knows, at some point in the future, devices might even
+attempt to resolve identified network problems themselves.
 
 \section{Problem Definition}
 
@@ -81,11 +87,39 @@ This thesis aims to test the foundational assumptions made in
 \cite{bianchi}—markov chain approximation of the \emph{DCF},
 poisson-distributed packet rates and payload sizes—using an experimental
 methodology with data measured from physical devices. The model evaluated is
-an improved version presented in \cite{felemban}, not the original from
-\cite{bianchi}.
+an improved version presented in \cite{felemban}.
 
-The second part of this thesis evaluates whether in-router telemertry can be
-used as input to the evaluated model. [TODO]
+This question, as with most deceptively simple-sounding questions, must first
+be taken apart. After resolving each part individually, the answer to the
+original question can then be constructed by joined together all parts.
+Derivation and integration.
 
-The third and final part presents a proof-of-concept implementation of such an
-input mapping. [TODO]
+\begin{itemize}
+\item \emph{Problem 1} - is the Felemban model from \cite{felemban} \emph{useful}?
+\item \emph{Problem 2} - what is a useful definition of \emph{useful}?
+\item \emph{Problem 3} - how should the definition of \emph{usefulness} be evaluated?
+\end{itemize}
+
+The problem definition also included work related the collection, evaluation
+and potential usage of data collected from a router itself.
+
+\begin{itemize}
+\item \emph{Problem 4} - what data should be collected?
+\item \emph{Problem 5} - how should this be done?
+\item \emph{Problem 6} - is this data \emph{useful}?
+\end{itemize}
+
+Finally, a proof-of-concept of such a system was to be implemented and evaluated.
+
+\begin{itemize}
+\item \emph{Problem 7} - use the collected data, or derivatives of it and run the
+model with this data as input
+\item \emph{Problem 8} - how does the observed network state (via collected router
+metrics) and the projected network state (from the model) compare?
+\end{itemize}
+
+As with most master thesis projects, many of these questions are answered
+beforehand by others. In the case of this particular thesis, these answers set
+us on a path that we had not expected. After reading this thesis it should
+hopefully become clear why some of these problems were left out and thus
+remain unanswered.
