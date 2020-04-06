@@ -9,7 +9,7 @@ particular, the studied model presented by Ekici \& Felemban \cite{felemban}
 will be discussed.
 
 As mentioned previously, the IEEE 802.11 family specifies the PHY and MAC
-layers of WLANs. Analysing the performance impact of these protocols, and 
+layers of WLANs. Analysing the performance impact of these protocols, and
 their numerous parameters, is key to improving network performance. There are
 two possible paradigms available: measuring/sampling or constructing an
 analytic model of the system/property. Measuring can be done directly on both
@@ -31,7 +31,7 @@ possibly in absurdum...
 
 In short, model authors try to describe a complex system by modelling key
 components in a constrained setting, and validate their model using other
-models which have been more thoroughly reviewed. 
+models which have been more thoroughly reviewed.
 
 Given this context, we first present the original Markov-Chain model from
 \cite{bianchi} and describe how it models IEEE 802.11 properties using the
@@ -56,7 +56,7 @@ Before going into detail about the Bianchi model, we start from the beginning.
 The underlying assumption of a MAC-layer-based model of IEEE 802.11 is that,
 in a setting with more than 2 STAs, the MAC protocol should be the system
 bottleneck. By extension, it is reasonable to model the performance of the
-network based on the DCF. 
+network based on the DCF.
 
 In \cite{bianchi}, Bianchi starts by limiting the proposed model analysis to
 fully-connected, single-hop networks in ``saturation''. The saturation
@@ -120,8 +120,9 @@ $\tau$ and $p$ are recursively defined. Bianchi constructs a nonlinear system
 with equations for $\tau$ and $p$ and solves it numerically.
 
 With probabilities for $\tau$ and $p$, Bianchi continues to his core
-contribution—the normalised throughput. Denoted $S$, it is defined as ``the
-fraction of time the channel is used to transmit payload bits''. 
+contribution—the normalised throughput. Denoted $S$, normalised throughput is
+defined as ``the fraction of time the channel is used to transmit payload
+bits''.
 
 \begin{equation} \label{eq:ssbi}
 	S = \frac{E[\mathit{payload~information~transmitted~in~a~slot~time}]}{E[\mathit{length~of~slot~time}]}
@@ -166,10 +167,11 @@ $T_{C}$
 
 From these equations Bianchi concludes that for any network of size $N$ there
 exists a troughput-optimal transmission probability $\tau$, achievable by
-tuning the congestion window sizes and $\mathit{CW_{min}}$ and $\mathit{CW_{max}}$.
+tuning the congestion window sizes and $\mathit{CW_{min}}$ and
+$\mathit{CW_{max}}$.
 
 To make the model tractable Bianchi simplifies many behaviours, of which two
-have received considerable efforts to implement. Some notable publications 
+have received considerable efforts to implement. Some notable publications
 are Wu \cite{1019305} and Chatzimisios \cite{1258379}, who proposed improved
 models that included the retransmission limit, followed by Zhang
 \cite{article} and Xiao \cite{1512111}, who proposed models that include
@@ -184,22 +186,23 @@ back-off counter freezing.
 
 \section{The Felemban-Ekici Model}
 
-A decade later, in 2011 specifically, Felemban \& Ekici published an extended
-version of Bianchi's model, where they significantly improved the model's
-accuracy by introducing a more accurate behaviour of the entry into backoff
-and the backoff countdown procedures \cite{felemban}.
+In 2011, a decade later, Felemban \& Ekici published an extended version of
+Bianchi's model, where they significantly improved the model's accuracy by
+introducing a more accurate behaviour of the entry into backoff and the
+backoff countdown procedures \cite{felemban}.
 
 An overview of the TNMC model from \cite{felemban} is presented in Figure
 \ref{fig:tnmc}. Some differences compared to Bianchi's TNMC are inclusion of
 retransmission limit (in state $\{0,L\}$, collision results in packet drop)
-and counter freezing $P_f$ (probability of state a $\{i,j\}$ transitioning to itself).
+and counter freezing $P_f$ (probability of state a $\{i,j\}$ transitioning to
+itself).
 
 The inclusion of retransmission limits results in a different expression of
 $\tau$ compared to Equation \ref{eq:xbi}. Recall from Equation \ref{eq:cwj}
 that $W_j$ is the size of the contention window at back-off stage $j$ and that
 $L$ is the short retry limit from \cite{654749}. Felemban \& Ekici solves
-$\tau$ similarly to \cite{bianchi} by finding the probability of the back-off
-counter reaching 0 in all back-off stages, expressed as
+$\tau$ similarly to Bianchi \cite{bianchi} by finding the probability of the
+back-off counter reaching 0 in all back-off stages, expressed as
 
 \begin{equation} \label{eq:xfe}
 	\tau = \frac{1-P^{L+1}}{
@@ -213,6 +216,10 @@ counter reaching 0 in all back-off stages, expressed as
 where $P$ is the conditional collision probability (equivalent to $p$) from
 Equation \ref{eq:pbi}.
 
+Somewhat contradictory, Felemban and Ekici obtains different values for the
+parameters $T_C$ and $T_S$, compared to Bianchi. This is probably explained by
+the different Wi-Fi generation targeted.
+
 \begin{align}  \label{eq:tfe}
 	\mathit{basic} & \left\{
 	        T^{bas}_{C} = T^{bas}_{S} = \mathit{DIFS} + T_h + T_p + \mathit{SIFS} + \mathit{ACK}
@@ -225,6 +232,15 @@ Equation \ref{eq:pbi}.
 	\right.
 \end{align}
 
+The equation for normalised throughput is different, but similar to Bianchi's.
+
+\begin{equation} \label{eq:ufe}
+	U = \frac{P_S T_p}{P_S T_S + (P_B - P_S)T_C + (1 - P_B) * \sigma}
+\end{equation}
+
+Where $P_S$ and $P_B$ correspond to the probabilities that a slot contains a
+successful transmission and that a slot is sensed busy, respectively.
+
 As shown in Figure \ref{fig:dcfgraph}, the DCF back-off process algorithm
 specifies that a node only decrements the back-off counter if the channel was
 sensed idle. In \cite{felemban}, the authors obtained an accurate countdown
@@ -235,15 +251,53 @@ Channel-Sense Markov Chain (CSMC). The counter freeze probability, $P_f$, is
 computed by finding the steady state probabilities of the CSMC by fixed point
 iteration.
 
-The addition of CSMC and $P_f$ increased the model's accuracy significantly
+The addition of the CSMC and $P_f$ increased the model's accuracy significantly
 compared to other models in various test conditions. In particular, the
 introduction of $P_f$ increased accuracy of the model when extended to
 \emph{unsaturated} networks.
 
 While the model proposed by Ekici-Felemban models the DCF more closely and
-accurately, several assumptions and omissions, in addition to constraints
-inherited from the markov chain approximation, makes the model a very
-interesting candidate for real-world testing. 
+accurately, several assumptions and omissions, inherited from \cite{bianchi},
+makes the model a very interesting candidate for real-world testing, namely:
+
+\begin{enumerate}
+
+	\item \textbf{Steady state} - the counter freeze probability $P_f$ is
+	computed by finding the steady state probabilities of the CSMC. The packet
+	transmission and conditional collision probabilities $\tau$ and $P$,
+	respectively, are also computed similarily by finding the steady states of
+	the TNMC. Transient behaviour is not included.
+
+	\item \textbf{Colliding nodes} - to simlify the equation for collision,
+	the maximum number of simultaneously colliding nodes is assumed to be 3.
+
+	\item \textbf{Wi-Fi b/g/n} - the original model from \cite{bianchi} was
+	presented for Wi-Fi b/g networks and the evaluated model from \cite{felemban}
+	for Wi-Fi n. Today both Wi-Fi ac and Wi-Fi ax exist. These newer generations
+	include support for beamforming and aggregation technologies that increase
+	the performance of the network in ways not considered in \cite{bianchi} or
+	\cite{felemban}.
+
+	\item \textbf{Independent packets} - to simlify the equation for the
+	conditional collision probability $P$, packet collisions are assumed to
+	independent.
+
+	\item \textbf{The capture effect} - a behaviour where a node successfully
+	transmitting a packet is more likely to win the race for the next transmission,
+	due to other nodes freezing their back-off counters, is not considered at all.
+
+\end{enumerate}
+
+Another key contribution made in \cite{felemban} was the presentation of an
+\emph{unsaturated model}. Recall that the Bianchi model assumed that the
+network was in \emph{saturation} conditions, i.e. all STAs always have
+something to send.
+
+The condition limits the number of networks and scenarios the model can be
+effectively applied to and thus limits the usefulness of the model. In
+\cite{felemban}, the authors extended their saturated model work in
+unsaturated networks, primarily by introducing packet transmission rate
+distributions.
 
 \begin{figure}
 \center
@@ -251,10 +305,3 @@ interesting candidate for real-world testing.
 \caption{Ekici-Felemban's Tagged-Node Markov Chain (TNMC) model of the IEEE 802.11 DCF. $P$ is packet collision probability, $P_d$ is probability to decrease backoff counter, $P_f = 1 - P_d$, $W_j$ is contention window size at attempt $j$ and $L$ is the Short Retry Limit}
 \label{fig:tnmc}
 \end{figure}
-
-\subsection{The Unsaturated Model}
-
-Recall that the original Bianchi model assumed that the network was in
-\emph{saturation} conditions, i.e. all STAs always have something in their
-send buffer. After presenting the improved model in \cite{felemban}, 
-extended to work in \emph{unsaturated} networks.
