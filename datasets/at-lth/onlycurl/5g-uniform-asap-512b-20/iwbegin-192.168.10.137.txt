@@ -1,0 +1,20 @@
+Station 12:13:31:b2:4c:ca (on wlan0)
+	inactive time:	0 ms
+	rx bytes:	3815790
+	rx packets:	20943
+	tx bytes:	2156037560
+	tx packets:	5625146
+	tx failed:	101703
+	signal:  	-45 [-45] dBm
+	tx bitrate:	180.0 MBit/s
+	rx bitrate:	150.0 MBit/s
+	authorized:	no
+	authenticated:	yes
+	associated:	yes
+	WMM/WME:	yes
+	TDLS peer:	yes
+	DTIM period:	2
+	beacon interval:100
+	short slot time:yes
+	connected time:	9153 seconds
+	current time:	18446744072633730643 ms

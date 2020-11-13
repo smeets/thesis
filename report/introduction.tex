@@ -1,4 +1,4 @@
-%!TEX root = base.tex
+%!TEX root = report.tex
 
 \chapter{Introduction}
 
@@ -14,27 +14,30 @@ the Wi-Fi label has become hugely popular and the number of Wi-Fi-capable
 devices have skyrocketed, especially in urban areas and neighbourhoods. The
 protocol that once was aimed at corporate sector is now almost everywhere
 around us, in vastly different use-cases than for which it first was designed.
+Beside home network use Wi- Fi networks are deployed for mobile network
+off-loading \cite{offloading}.
 
 Alongside the explosive increase in Wi-Fi usage and availability, our usage
 patterns and requirements have undergone a similar change. On-demand video and
 music streaming, mobile gaming, Voice-over-IP and other new forms of internet
 services are all expected to run on this now ubiquitous wireless protocol.
-Wi-Fi has not stood still since its deployment, though. The last 20 years have seen
+Wi-Fi has not stood still since its initial deployment, though. The last 20 years have seen
 extension after extension to expand, improve and adapt the protocol to the
 ever changing requirements of the future.
 
-Ignoring the field of beamforming and related subjects, the primary task of a
-wireless network protocol is to share the underlying medium to all clients in
-an effective manner. As with all radio technologies, Wi-Fi is primarily
-constrained by the radio spectrum it can utilize. All available performance is
-derived from the clever exploitation of this physical medium. As Wi-Fi usage
-has increased, the corresponding increase in radio activity puts the protocol,
-and its medium access mechanisms in particular, under ever more pressure.
+Ignoring the physical aspects involved, the primary task of a wireless network
+protocol is to share the underlying medium to all clients in an effective
+manner. As with all radio technologies, Wi-Fi is primarily constrained by the
+radio spectrum it can utilize. All available performance is derived from the
+clever exploitation of this physical medium. As Wi-Fi usage has increased, the
+corresponding increase in radio activity, and the resulting issues of media
+sharing and interference, puts the protocol, and its medium access mechanisms
+in particular, under ever more pressure.
 
 \section{Outline}
 
 This introductory chapter describes the motivations to evaluate IEEE 802.11
-(Wi-Fi) performance models based on markov chain approximation of the
+(Wi-Fi) performance models based on Markov chain approximation of the
 distributed coordination function (DCF). A problem definition is also provided
 to clearly define the scope of this thesis.
 
@@ -54,27 +57,35 @@ Wi-Fi has evolved dramatically in complexity, resulting in a multitude of
 configurable parameters. Even though newer routers are able to (somewhat)
 automatically (re)configure themselves based on analysis of neighbouring
 networks, they are not guaranteed to be optimal since they have a local view
-of the network (i.e. one point-of-view). Older routers rely on manual
+of the network (i.e. one point-of-view). Older devices rely on manual
 configuration, often factory defaults.
+
+% @ARTICLE{490421, author={M. M. -. {Cheng} and J. C. -. {Chuang}},
+% @journal={IEEE Journal on Selected Areas in Communications},
+% @title={Performance evaluation of distributed measurement-based dynamic
+% @channel assignment in local wireless communications}, year={1996},
+% @volume={14}, number={4}, pages={698-710}, doi={10.1109/49.490421}}
 
 Accurately modelling the Wi-Fi communication and related performance
 characteristics is an active field of research and today there are various
-proposed models which perform well in simulations. Wi-Fi implements
+proposed models which perform well in simulations \cite{bianchi}\cite{felemban}. Wi-Fi implements
 \emph{Carrier-sense multiple access/Collision avoidance} (CSMA/CA)—"listen
 before speaking"—in a \emph{distributed coordination function} (DCF) to reduce
 the likelihood of collisions happening in the first place what to do when
 collisions occur.  This thesis focuses on a branch of models presented in
-\cite{bianchi} which models the \emph{DCF} using a markov chain-based
+\cite{bianchi} which models the \emph{DCF} using a Markov chain-based
 approach. Modelling the performance of Wi-Fi networks is beneficial in many
 cases, especially (re)configuration—where the ability to estimate impact of
 different parameters is crucial.
 
 With existing, theoretical, Wi-Fi models it is possible to simulate the impact
-of configuration settings. However, it is unknown how actual hardware
-implementations conform to the standard, on which the theoretical models are
-based. Furthermore, it's not pratical to suggest that end-users run
-simulations themselves to improve network performance. Knowing if the models
-in \cite{felemban} are accurate in production networks could potentially be of
+of configuration settings. It is, however, unknown how well actual hardware
+implementations conform to the standard, which the theoretical models are
+based. Even assuming stellar adherence to the standard, there is worth knowing
+how well the proposed theoretical models translate to the physical world.
+Furthermore, it's not pratical to suggest that end-users run simulations
+themselves to improve network performance. Knowing if the models in
+\cite{felemban} are accurate in production networks could potentially be of
 enourmous benefit for end-users and ISPs alike. Imagine each router embedding
 and periodically running the model with locally sourced data, automatically
 alerting the end-user or ISP of potential performance problems and possible
@@ -84,42 +95,30 @@ attempt to resolve identified network problems themselves.
 \section{Problem Definition}
 
 This thesis aims to test the foundational assumptions made in
-\cite{bianchi}—markov chain approximation of the \emph{DCF},
+\cite{bianchi}—Markov chain approximation of the \emph{DCF},
 poisson-distributed packet rates and payload sizes—using an experimental
 methodology with data measured from physical devices. The model evaluated is
 an improved version presented in \cite{felemban}.
 
 This question, as with most deceptively simple-sounding questions, must first
-be taken apart. After resolving each part individually, the answer to the
-original question can then be constructed by joined together all parts.
-Derivation and integration.
+be taken apart:
 
 \begin{itemize}
-\item \emph{Problem 1} - is the Felemban model from \cite{felemban} \emph{useful}?
-\item \emph{Problem 2} - what is a useful definition of \emph{useful}?
-\item \emph{Problem 3} - how should the definition of \emph{usefulness} be evaluated?
+\item \emph{Problem 1} - primary question: is the Felemban model from \cite{felemban} \emph{useful}?
+\item \emph{Problem 2} - definition: what is a reasonable definition of \emph{useful}?
 \end{itemize}
 
 The problem definition also included work related the collection, evaluation
 and potential usage of data collected from a router itself.
 
 \begin{itemize}
-\item \emph{Problem 4} - what data should be collected?
-\item \emph{Problem 5} - how should this be done?
-\item \emph{Problem 6} - is this data \emph{useful}?
+\item \emph{Problem 3} - analysis: what data should be collected?
+\item \emph{Problem 4} - experiment: how should this be done?
+\item \emph{Problem 5} - evaluate: compare collected data with model and our definition from \emph{Problem 2}
 \end{itemize}
 
-Finally, a proof-of-concept of such a system was to be implemented and evaluated.
+In Chapter 4 we will present a definiton for \emph{Problem 2} as well as
+problem \emph{Problem 3} and \emph{Problem 4}. We show collected data for
+\emph{Problem 3} and \emph{Probme 4} in Chapter 5, and discuss these results
+with regards to \emph{Problem 5} and \emph{Problem 1} in Chapter 6.
 
-\begin{itemize}
-\item \emph{Problem 7} - use the collected data, or derivatives of it and run the
-model with this data as input
-\item \emph{Problem 8} - how does the observed network state (via collected router
-metrics) and the projected network state (from the model) compare?
-\end{itemize}
-
-As with most master thesis projects, many of these questions are answered
-beforehand by others. In the case of this particular thesis, these answers set
-us on a path that we had not expected. After reading this thesis it should
-hopefully become clear why some of these problems were left out and thus
-remain unanswered.

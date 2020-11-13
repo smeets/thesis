@@ -1,0 +1,2 @@
+"host","tx time 1","tx time 2","rx bytes","rx packets","tx bytes","tx packets","tx retries","tx failed"
+localhost,180,196,229927,1356,614809739,1050263,395,0

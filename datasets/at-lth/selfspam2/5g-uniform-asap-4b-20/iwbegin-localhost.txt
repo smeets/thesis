@@ -1,0 +1,18 @@
+Station 12:13:31:b2:4c:ca (on wlp3s0)
+	inactive time:	108 ms
+	rx bytes:	35692101
+	rx packets:	118514
+	tx bytes:	4105954639
+	tx packets:	40598108
+	tx retries:	942290
+	tx failed:	24936
+	signal:  	-45 [-45, -47] dBm
+	signal avg:	-45 [-45, -47] dBm
+	tx bitrate:	650.0 MBit/s VHT-MCS 7 80MHz short GI VHT-NSS 2
+	rx bitrate:	780.0 MBit/s VHT-MCS 8 80MHz short GI VHT-NSS 2
+	authorized:	yes
+	authenticated:	yes
+	preamble:	long
+	WMM/WME:	yes
+	MFP:		no
+	TDLS peer:	no

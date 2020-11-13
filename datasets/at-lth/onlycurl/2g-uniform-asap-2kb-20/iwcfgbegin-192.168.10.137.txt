@@ -1,0 +1,9 @@
+wlan0     IEEE 802.11  ESSID:"tn-123"  
+          Mode:Managed  Frequency:2.462 GHz  Access Point: 10:13:31:B2:4C:C1   
+          Bit Rate=72.2 Mb/s   Tx-Power=31 dBm   
+          Retry short limit:7   RTS thr:off   Fragment thr:off
+          Power Management:off
+          Link Quality=65/70  Signal level=-45 dBm  
+          Rx invalid nwid:0  Rx invalid crypt:0  Rx invalid frag:0
+          Tx excessive retries:6  Invalid misc:0   Missed beacon:0
+

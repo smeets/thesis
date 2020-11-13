@@ -1,0 +1,3 @@
+"host","tx time avg","tx time 50","ack fails","ack fails 50","rts fails","rts fail 50","rx bytes","rx packets","tx bytes","tx packets","tx retries","tx failed"
+localhost,128,96,3284,3,0,0,334696,1379,342964075,4571868,14255,0
+control,126,100,126,0,5,0,0,0,0,0,0,0

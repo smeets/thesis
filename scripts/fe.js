@@ -3,7 +3,7 @@ let L = 7 // short retry limit
 let CWmin = 32
 let CWmax = 1024
 let W = new Array(L+1).fill(1).map((e,i) => Math.min(Math.pow(2, i) * CWmin, CWmax))
-let rate = 1 // channel rate (Mbps)
+let rate = 75 // channel rate (Mbps)
 let D = 8184 // frame size (bit)
 let { MAC_HEADER, SERVICE, PHY_HEADER, ACK, DIFS, SIFS, BASIC_RATE, T_SLOT, B0 } = require('./config')
 
@@ -114,7 +114,7 @@ const solvePf = tau => {
     let Pd = PI
     return 1 - Pd
 }
-                   
+
 // no idea
 // 1-P**L+1
 const tauP = (P, Pf) => {
@@ -137,7 +137,7 @@ function solve() {
 
         let tauNew = tauP(p, pf)
         let tauNext = 0.5 * tau + 0.5 * tauNew
-        
+
         err = tauNext - tau
         tau = tauNext
     } while (Math.abs(err) > 1e-8)
@@ -154,7 +154,7 @@ const TACK = () => (112 + 128) / (rate * 1e6)
 // sifs [us]  10  16  10  10    16
 const TI   = () => 50 * 1e-6
 const TS   = () => {
-    let sifs = 28 * 1e-6 
+    let sifs = 28 * 1e-6
     let difs = sifs + 2 * TI()
     return difs + TH() + TP() + sifs + TACK()
 }
@@ -175,17 +175,17 @@ function U(tau) {
 function CAD(tau) {
     let DI = TI()
     let DS = (1 / (1 - Pss())) * TS() + DI
-    let DC = sum(0, L, i => i * Math.pow(Pcc(tau), i)) * TC() + 
+    let DC = sum(0, L, i => i * Math.pow(Pcc(tau), i)) * TC() +
              (Pcs(tau) / (1-Pcc(tau))) * DS +
              (Pci(tau) / (1-Pcc(tau))) * DI
-    
+
     let Pd = 1 - solvePf(tau)
-    let Fb = (Pei(tau)/Pd)*DI + 
-             (Pes(tau)/Pd)*DS + 
+    let Fb = (Pei(tau)/Pd)*DI +
+             (Pes(tau)/Pd)*DS +
              (Pec(tau)/Pd)*DC
-    
+
     let pnb = 1
-    let Ft = (1 - CWinv(tau)) * ((Pei(tau)/pnb)*DI + 
+    let Ft = (1 - CWinv(tau)) * ((Pei(tau)/pnb)*DI +
                                  (Pes(tau)/pnb)*DS +
                                  (Pec(tau)/pnb)*DC)
 
@@ -217,7 +217,7 @@ for (N = 5; N <= 60; N = N + 5) {
 
     process.stdout.write(N.toString())
     process.stdout.write(",")
-    process.stdout.write(bianchi.U(bTau).toString())
+    process.stdout.write(bianchi.U(N, bTau).toString())
     process.stdout.write(",")
     process.stdout.write(bianchi.Ptau(bTau).toString())
     process.stdout.write(",")

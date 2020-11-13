@@ -43,15 +43,16 @@ function solve(NN) {
     return tau
 }
 
-function U(tau) {
+function U(NN, tau) {
+    N = NN
+
     const P     = Ptau(tau)            // eq. 2 from felemban
     const Pidle = Math.pow(1 - tau, N) // inv. of Pbusy
     const PS    = N * tau * (1 - P)    // Ps from eq. 2 from felemban
-    
-    const Tsucc = (4*Math.ceil((D+MAC_HEADER+SERVICE)/(4*rate)) + DIFS + ACK/BASIC_RATE + 2*PHY_HEADER + SIFS + 2)/(1-B0) + T_SLOT
-    const Tcoll =  4*Math.ceil((D+MAC_HEADER+SERVICE)/(4*rate)) + DIFS + ACK/BASIC_RATE + 2*PHY_HEADER + SIFS + 1 + T_SLOT
+    const Tsucc = (Math.ceil((D+MAC_HEADER+SERVICE)/(rate)) + DIFS + ACK/BASIC_RATE + 2*PHY_HEADER + SIFS + 2)/(1-B0) + T_SLOT
+    const Tcoll =  Math.ceil((D+MAC_HEADER+SERVICE)/(rate)) + DIFS + ACK/BASIC_RATE + 2*PHY_HEADER + SIFS + 1 + T_SLOT
     const s = Pidle*T_SLOT + PS*Tsucc + (1-PS-Pidle)*Tcoll
-    return PS*D/s
+    return PS*Tsucc/s
 }
 
 // let tau = solve()

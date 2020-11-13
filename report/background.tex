@@ -1,37 +1,34 @@
-%!TEX root = base.tex
+%!TEX root = report.tex
 
 \chapter{Background}
 
-This chapter briefly introduces the technologies and tools that were used. As
-explained in the introduction, the primary goal of this thesis was to evaluate
-the usefulness of the model presented in \cite{felemban} by comparing the
-channel access time of the model with an estimation, derived in Chapter 4. As
-will be explained in Chapter 4, obtaining exact measurements is not trivial
-and we therefore present information helpful in understanding the forthcoming
-chapters of this thesis. 
+This chapter gives a brief introduction the technologies and tools that were
+used in this project. As explained in the introduction, the primary goal of
+this thesis was to evaluate the usefulness of the model presented in
+\cite{felemban} by comparing the channel access time of the model with an
+estimation, derived in Chapter 4. As will be explained in Chapter 4, obtaining
+exact measurements turned out to be non-trivial and we therefore present
+information helpful in understanding the forthcoming chapters of this thesis.
 
-In this chapter, we first present a brief overview of the IEEE 802.11
-protocol, with increased emphasis on the \emph{distributed coordination
-function}, to form a basis for understanding the Ekici-Felemban model, as well
-as our measurement setup.
+We begin with a brief overview of the IEEE 802.11 protocol and the
+\emph{distributed coordination function} in particular, to form a basis for
+understanding the Felemban-Ekici model, as well as our measurement setup.
 
 Since we will use Linux-based devices to perform measurements it will be
-important to have some understanding of the Linux kernel's networking system.
-As we are particularly interested in measuring the time to send a packet, we
-describe the network stack components which control and process an outbound
-(egress) UDP packet, limited to 1500 bytes in order to not incur PHY-layer
-fragmentation.
+important to also have some understanding of the Linux kernel's networking
+system. As we are particularly interested in measuring the time to send a
+packet, we describe the network stack components which control and process an
+outbound (egress) UDP packet, limited to 1500 bytes in order to not incur
+PHY-layer fragmentation.
 
 Subsequently we provide an overview of the hardware used in this thesis, the
 TG799-vac router, its OpenWrt system and how we interact with the firmware
-using the micro bus system architecture. 
+using the micro bus system architecture.
 
-The following section describes why Wireshark, a well-known and widely used
-open source tool for capturing and inspecting network data, had to be replaced
-by more special-purpose programs.
-
-Finally we describe the tool that was developed to replace Wireshark—Jana—and
-compare it with existing tools.
+Finally, we describe why Wireshark, a well-known and widely used open source
+tool for capturing and inspecting network data, had to be replaced by more
+special-purpose programs. We also introduce the program that was developed to
+perform our network experiments—Jana—and compare it with existing programs.
 
 \section{IEEE 802.11}
 
@@ -40,14 +37,14 @@ IEEE 802.11g and IEEE 802.11x, commonly known as Wi-Fi. Specifically, IEEE
 802.11 defines the PHY and MAC layers of the network stack. Each ammendment
 introduces additions, redactions and changes to these layers. It is beyond the
 scope of this report to provide a detailed overview of the, sometimes quite
-significant, differences between ammendments. Of special interest is the
-\emph{Distributed Coordination Function} (DCF) which remains relatively
+significant, differences between ammendments. Of special interest for our work
+is the \emph{Distributed Coordination Function} (DCF) which remains relatively
 unchanged, primarily for backwards compatibility reasons. For a more complete
 definition of the \emph{Distributed Coordination Function} (DCF) the reader is
-referred to \cite{654749}, \cite{5307322} and \cite{6687187}. 
+referred to \cite{654749}, \cite{5307322} and \cite{6687187}.
 
 In order to effectively allow multiple clients to access and utilize a shared
-medium, a medium access control (MAC) protocol can be implemented. The MAC
+medium, a medium access control (MAC) protocol is utilized. The MAC
 protocol governs \emph{when} clients interact with the underlying physical
 medium (PHY-layer protocol specifies \emph{how}).
 
@@ -66,7 +63,7 @@ DCF as a flowgraph.
 \end{figure}
 
 
-When nodes in a IEEE 802.11 network wants to transmit data they must first
+When nodes in a IEEE 802.11 network want to transmit data they must first
 listen on the channel and wait until no activity has been detected for a
 duration, the \emph{DCF Interframe Space} (DIFS). Since this effectively
 synchronizes the nodes waiting to transmit, a random delay is introduced to
@@ -98,7 +95,7 @@ Time spent in back-off for each (re)transmission attempt $j$ is described in
 equation \ref{eq:tbackoff}, where \emph{SlotTime} is defined in \cite{654749}
 and $\mathcal{U}(0,W_j-1)$ is a uniformly sampled integer value between $0$
 and the contention window size $W_{j}-1$, i.e. the maximum number of
-time-slots (exclusive, since 0 is a valid back-off value). 
+time-slots (exclusive, since 0 is a valid back-off value).
 
 \begin{equation} \label{eq:tbackoff}
 T^j_{\mathit{backoff}} = \mathit{SlotTime} \times \mathcal{U}(0,W_j-1)
@@ -142,7 +139,7 @@ This access scheme is called RTS/CTS and potentially increases performance in
 scenarios with multiple ``hidden nodes''. The RTS/CTS protocol assumes that
 all STAs  have similar tx/rx capabilities. An overview of the required
 interframe spaces (IFS) and protocol packets for ``basic'' and ``RTS/CTS''
-modes and how they compare, can be found in Figure \ref{fig:timings}. 
+modes and how they compare, can be found in Figure \ref{fig:timings}.
 
 \begin{figure}
 \center
@@ -163,14 +160,14 @@ path is described.
 A schematic, high level view of a packet's way from  userspace program,
 through the kernel and into the network interface responsible  for physically
 transmitting it, can be found in Figure \ref{fig:linux_egress}.  There are 5
-main components in the figure: userspace, kernel, sockets, queueing 
+main components in the figure: userspace, kernel, sockets, queueing
 discipline (qdisc), driver and network interface card (NIC). Each component is
 more complex than described and interested readers are referred to
 \cite{knet}, \cite{pcsending} and \cite[Chapter~17]{ldd}. The flow through
 Figure \ref{fig:linux_egress} and the 5 components is described below:
 
 \textbf{A userspace} program initializes, binds and attempts to send
-data through a socket using system calls \texttt{socket(2)}, \texttt{bind(2)} 
+data through a socket using system calls \texttt{socket(2)}, \texttt{bind(2)}
 and \texttt{send(2)}, \texttt{sendto(2)} or \texttt{sendmsg(2)}.
 
 \textbf{The linux kernel} allocates a per-socket kernel buffer
@@ -178,7 +175,7 @@ and \texttt{send(2)}, \texttt{sendto(2)} or \texttt{sendmsg(2)}.
 stored. The initial size of the \texttt{skb} depends on the
 \texttt{net.core.wmem\_default} and  \texttt{net.core.wmem\_max} kernel
 parameters. The \texttt{send(2)}, \texttt{sendto(2)} and  \texttt{sendmsg(2)}
-syscalls must requests memory from the \texttt{skb} belonging to the  socket
+syscalls must request memory from the \texttt{skb} belonging to the  socket
 in use, before proceeding through the packet processing stack (UDP/TCP, IP,
 etc)  and finally enqueuing the packet in the queueing discipline (qdisc). The
 syscalls either blocks or fails, with \texttt{EWOULDBLOCK} or \texttt{EAGAIN},
@@ -199,19 +196,20 @@ a specific qdisc. This mapping can be configured using \texttt{ethtool(8)}.
 hardware/firmware and can be considered a program itself (kernel module).
 Drivers used throughout this thesis all use an internal ring buffer for egress
 packets, called the ``TX-Ring''. The driver pulls packets from the qdisc into
-the ``TX-Ring'' and signals the NIC that packets are ready to be sent. Memory
-consumed by a packet is defered until some time after transmit or drop. 
+the ``TX-Ring'' and signals the NIC that packets are ready to be sent. The
+processing of freeing memory consumed by a packet is defered by an unknown
+time after the NIC signals the driver it has processed the packet.
 
 The Linux kernel supports a feature called ``packet taps'' which enable
 kernel modules to capture packets as they enter or exit the kernel. The
 outbound taps are called  at the end of the Linux kernel's outbound packet
 processing path, right before control of  the packet is handed over to the
-driver. 
+driver.
 
 \textbf{The network interface card} (NIC) which primarily sends and
 receives packets.  The internal design documents of many NICs are not publicly
 available and open source drivers only hint at the design of important
-subsystems, such as buffers and prefetchers. 
+subsystems, such as buffers and prefetchers.
 
 The NICs used in this thesis are commonly found in laptops and does not
 have a reconfigurable internal ``TX-Ring''. Common sense suggests that
@@ -224,7 +222,7 @@ these two ``TX-Rings'' the ``TX-Ring'' depicted in Figure
 \begin{figure}
 \center
 \includegraphics[width=0.9\textwidth]{images/linux-egress-overview.pdf}
-\caption{TG799 router and measurement antenna side by side, 1 meter from laptop}
+\caption{Schematic overview of a packet's way from userspace to the physical network interface.}
 \label{fig:linux_egress}
 \end{figure}
 
@@ -239,7 +237,7 @@ these two ``TX-Rings'' the ``TX-Ring'' depicted in Figure
 
 All selected machines used to measure Wi-Fi statistics have Intel wireless
 network interface cards (NIC). On Linux these NICs are controlled by the ``Intel
-Wireless WiFi driver for Linux''—\texttt{iwlwifi}. 
+Wireless WiFi driver for Linux''—\texttt{iwlwifi}.
 
 The \texttt{iwlwifi} driver supports both an older operation mode, dvm
 (\texttt{iwldvm}, as well as a newer, mvm (\texttt{iwlmvm}). The
@@ -255,7 +253,6 @@ driver is able to queue up to 254 frame descriptors for transmission, and vice
 versa for receiving. This design dramatically reduces the per-frame
 communication overhead between driver and NIC in certain conditions, at the
 expense of increased latency due to queueing.
-
 
 \section{TG799-vac}
 
@@ -274,12 +271,14 @@ a technique to increase the reliability of transmission.
 
 The router has been the default router provided by many Swedish ISPs and is
 therefore a good router to use in the experiments. A custom firmware provided
-by Telenor was used to gain root access.
+by Telenor was used to gain root access, otherwise no particular changes were
+made to keep the device in a ``natural'' condition, and should still be very
+similar to any random installation.
 
 \begin{figure}
 \center
 \includegraphics[width=0.5\textwidth]{images/tg799.png}
-\caption{The TG799 router from Technicolor}
+\caption{The TG799-vac router from Technicolor}
 \label{fig:tg799}
 \end{figure}
 
@@ -290,10 +289,9 @@ Modules are registered and organized by namespaces in \texttt{ubusd} which in
 turn is interacted with using \texttt{ubus}. A usage example can be found in
 Listing \ref{lst:ubusex}.
 
-Wl and quantenna api using same interface in ubus.
-
-This tool was used to read statistics from the TG799-vac device,
-such as tx rates, packet counters and medium availability.
+This tool was primarily used to read statistics from the TG799-vac device,
+such as tx rates, packet counters and medium availability, intended for ``in
+the wild'' evaluation of the model.
 
 \begin{lstlisting}[language=bash,caption={ubus call listing all access points on this device},label=lst:ubusex]
 $ ubus call wireless.accesspoint get
@@ -328,3 +326,34 @@ Specifically, network tests using expontential, uniform and gamma distributed
 packet send rates and payload sizes. This is in contrast to more powerful
 tools such as \texttt{pktgen} and \texttt{trafgen}, which offer better
 performance and more per-packet control at the expense of more configuration.
+\texttt{iperf3} is a network performance benchmark tool which we used for some
+experiments. However, it does not -- to our knowledge -- support inter-packet
+latency and payload distributions.
+
+As traffic patterns have a high impact on the network the idea was to see how
+the model performed under bursty condition, such as web browsing and content
+streaming, as well as constant-rate traffic such as video conferencing and
+gaming.
+
+The network test cycle is basically a ``ready, set, go!''-type of design: a
+server waits for clients to say hello, and--after all $N$ clients have been
+registered--broadcasts a ``set'' message which all clients echo back to the
+server, which again waits for $N$ ``set'' before broadcasting a ``go''
+message which marks the start of the network test. All clients wait
+approximately 1 second after they have received the ``go'' message before
+starting the packet generation, which decreases the likelihood of clients
+failing to start due to the start packet being lost. This simple approach
+proved resistant to partial network failures during the test wind-up stage.
+
+The transmitting UDP socket was configured as non-blocking in an attempt to
+emulate the inter-packet latency distribution as much as possible.
+
+For interested readers, we recommend browsing the various
+``Bufferbloat'' projects (\url{https://www.bufferbloat.net/projects/}), which
+links to at least two very promising tools:
+
+\texttt{IRTT} (\url{https://github.com/heistp/irtt}) -- ``IRTT measures round-trip time,
+one-way delay and other metrics using UDP packets sent on a fixed period, and
+produces both user and machine parseable output.''
+
+\texttt{Flent} -- ``The FLExible Network Tester'' (\url{https://flent.org/}).

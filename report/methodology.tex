@@ -1,107 +1,163 @@
-%!TEX root = base.tex
+%!TEX root = report.tex
 
-\chapter{Experimental Methodology}
+\chapter{Experimental Approaches}
 
 This chapter begins by presenting the overall rationale for the experimental
-approach used to evaluate the theoretical model. Subsequent sections will
-describe a particular experiment.
+approach used to evaluate the theoretical model.
 
-During the course of this master thesis project the primary challenge of
-analysing performance of Felemban-Ekici models was accurate capture of network
-performance statistics. In total, three different experiments were designed,
-evaluated and executed. From the onset only one experiment was thought to be
-needed, something that rather quickly was proven wrong. Each experiment lead
-to a deeper understanding of the network system and how various systems affect
-the results.
+The primary challenge of analysing the usefulness of the Felemban-Ekici model
+lies in the practical problem of accurately capturing network performance
+statistics. In total, three different experiments were designed, peformed and
+evaluated. Each subsequent experiment lead to a deeper understanding of the
+network system and how various systems interact and their effect on the
+results.
 
-To provide a better foundation for analysing the results presented in Chapter
-5, this chapter will, in addition to an overview, also try to provide some of
-the knowledge needed to grasp the characteristics of each experiment.
-Discussion of experiments and their results will be presented in the final
-chapter.
+Any experiment is, by design, constructed and designed in order to observe a
+property or behaviour. So that is where this chapter starts -- reasoning about
+different parameters of the Felemban-Ekici model. Armed with this set of
+parameters, experiment design then becomes a game of exploiting known system
+properties and behaviour to obtain a comparable data set.
 
-Finally, this chapter will describe the experimental evaluation of the model
-with real-world statistics.
+After selecting intresting properties of the model we then proceed to present
+all model evaluation experiments in a chronological order. For each experiment
+we try to map the underlying idea to information presented in Chapters 2 and
+3. The experiments will relate to an informal and incomplete model of the
+system under test and should therefore be read at least twice to answer
+questions such as ``if we assume the model to be true, is the experiment
+itself sound?'' and ``is the model itself a good enough approximation?''. In
+an attempt to spare the reader from inferring incorrect information based on
+experiment models, each experiment will be also presented with a short
+analysis regarding its soundness.
+
+After describing all model evaluation experiments we continue to present the
+experiments designed to test if the stats collected from \texttt{ubus} on the
+TG-799 firmware showed any obvious problems.
+
+Finally, we describe a proof-of-concept experiment to evaluate the
+Felemban-Ekici model that we ultimately could not perform.
+
 
 \section{Overview}
 
-As mentioned in the introduction, in order to solve the primary problem it has
-to be partitioned into more manageable pieces. The problem discussed in this
-section is ``\emph{Problem 3} - how should the definition of \emph{usefulness}
-be evaluated?''.
+As mentioned in the introduction, in order to solve the primary problem as
+described in Section 1.3 it has to be partitioned into more manageable pieces.
+The problem discussed in this section is ``\emph{Problem 2} - what is a
+reasonable definition of \emph{useful}?''.
 
 The premise is as follows: in order to evaluate a theoretical model there must
 first exist some set of data provided by the model itself, and an equivalent
-set of data to compare against.
+set of data to compare against. In this report, the data provided by the model
+are referred to as the \emph{model metrics}. The other dataset, the comparison
+set, is gathered from a specific device and referred to as the \emph{captured
+metrics}.
 
-In this report, the data provided by the model are referred to as the
-\emph{model metrics}. The other dataset, the comparison set, is gathered from
-a specific device and referred to as the \emph{captured metrics}.
+Since both the original model from Bianchi and Felemban-Ekici models have
+strong performance claims backed by evaluations done with simulators the
+stated parameters and their behaviour can be considered fact--the models
+accurately model IEEE 802.11 performance. What remains unknown is how well
+these models perform outside simulations -- on physical hardware using
+(imperfect) software drivers. One could argue that since IEEE 802.11 is a
+specification all hardware and software that claim to follow that spec. should
+be considered equivalent to the spec. and by extension simulators as well.
+However, this is in fact an assumption that can serve as a conjecture and
+needs to be proven or disproven.
 
-The general methodology of the model evaluation consists of iteration between
-selection of model metrics and captured metrics until both datasets can be
-compared.
+By this reasoning an answer to the original question can be formed:
 
-Thus the answer appears to be: \emph{Construct an experiment and collect
-metrics that have either a direct or indirect counterpart in the theoretical
-model. If these metrics match numerically the theoretical model is useful. If
-these metrics don't match numerically the theoretical model can still be
-considered useful if the trends of these metrics match. If not, the model is
-not useful.}
+\begin{itemize}
 
-So the methodology essentially is designing experiments based on knowledge of
-a device and its system, to obtain a set of \emph{captured metrics} that can
-be compared with a similar set of \emph{model metrics}.
+    \item[\textbf{Q}] \emph{Problem 2} - what is a reasonable definition of \emph{useful}?
+
+    \item[\textbf{A}] Construct an experiment and collect metrics that have
+either a direct or indirect equivalent in the theoretical model. If these
+metrics match numerically the theoretical model is useful. If these metrics
+don't match numerically the theoretical model can still be considered useful
+if the trends of these metrics match. If neither of these statments hold, the
+model is not useful.
+
+\end{itemize}
+
+The experimental methodology essentially boils down to designing experiments,
+based on knowledge of a device and its system, in such a way that the
+experiment resulted in a set of \emph{captured metrics} that were comparable
+with a predefined set of \emph{model metrics}.
 
 \section{Model Metrics}
 
-As stated earlier, in order to know what to capture we must first select relevant
-metrics from the model. A first step is to list some model parameters:
+As stated earlier, in order to know what to capture we must first select
+relevant metrics from the model and the protocol itself. After reading through
+\cite{felemban} some variables and parameters are of particular interest:
 
 \begin{itemize}
-	\item \emph{N} -- the number of network nodes
-	\item $CW_{min}$ and $CW_{max}$ -- contention window min and max size
-	\item \emph{E[D]} -- the mean payload size
-	\item channel bit rate
-	\item $L$ -- the \texttt{ShortRetryLimit}
+	\item \emph{N} -- number of network nodes
+	\item \emph{D} -- per-packet payload size distribution
+  \item $U$ -- normalized throughput (wrt. channel bit rate)
+  \item $P$ -- conditional packet collision probability
+  \item $T$ -- channel access delay
 	\item RTS/CTS -- the model presents models with basic access, RTS/CTS and a
 	hybrid access scheme using a payload threshold
 \end{itemize}
 
+In addition to these, there are also some parameters and variables that are
+used in \cite{felemban} but originate from IEEE 802.11 itself:
+
+\begin{itemize}
+    \item channel bit rate
+    \item $L$ -- the \texttt{ShortRetryLimit}
+    \item $CW_{min}$ and $CW_{max}$ -- contention window min and max size
+\end{itemize}
+
+
 There are, of course, other parameters in the model, and certainly many more
 parameters in the implementations of IEEE 802.11 (e.g. power saving, distance,
 line-of-sight). These are, for the sake of tractability and real-world
-usefulness, ignored and may contribute to significant errors. Our
-argumentation is that any theoretical model must make decisions on what to
-include in its scope, and any omissions are to be considered errors by model
-divergence rather than circumstantial errors by environment. I.e. any error
-thought to be due to variance outside model scope should be considered error
-due to model design.
+usefulness, ignored and may contribute to significant errors (although such
+errors have yet to be discovered in simulations).
 
 As described earlier, the Felemban-Ekici model provides normalized throughput
-($U$), channel access delay and conditional packet collision probability.
+($U$), channel access delay ($T$) and conditional packet collision probability
+($P$).
 
-Normalized throughput is constructed upon the conditional packet collision
-probabilities, payload distribution and a variant of channel access delay.
+Normalized throughput ($U$) is constructed upon the conditional packet
+collision probability ($P$), payload size distribution ($D$) and a variant of
+channel access delay, see Equation \ref{eq:ufe}.
 
-Thus the to most important \emph{model metrics} are \emph{conditional packet
-collision probability} (i.e. the probability that a packet collides during
-transmission) and \emph{channel access delay}, defined as ``the time from the
-packet becoming the head of the queue until the acknowledgment frame is
-received.''.
+Thus the most important \emph{model metrics} are \emph{conditional packet
+collision probability} ($P$) -- the probability that a packet collides during
+transmission -- and \emph{channel access delay} ($T$), defined as ``the time
+from the packet becoming the head of the queue until the acknowledgment frame
+is received.''.
 
-\emph{Conditional packet collision probability} is not an easy metric to
-obtain since it is a very low-level metric.
+\emph{Conditional packet collision probability} ($P$) is a simple metric,
+``count the number of transmission attempts and collisions'', but not an easy
+metric to obtain since it occurs at a very low level in the networking stack.
+A possible alternative is the \emph{packet drop probability} $P^{L+1}$ -- the
+probability of exceeding the short retry limit. The Linux networking system
+reliably reports transmission success and failure, but not attempts.
 
-The \emph{channel access delay} can be obtained by measuring the total time
+The \emph{channel access delay} ($T$) can be obtained by measuring the total time
 described in Figure \ref{fig:timings}. Such a solution would require radio
 equipment not available for this thesis. A key insight is that, in a
 controlled experiment, most of the parameters in Figure \ref{fig:timings}
-actually are constant. The only dynamic parameter is the time spent in
+are actually constant. The only dynamic parameter is the time spent in
 backoff, $T_{\text{BACKOFF}}$.
 
-With a set of \emph{model metrics}, it now becomes a game of trying to exploit
-the device to obtain a set of comparable \emph{captured metrics}.
+To summarize,
+
+\begin{itemize}
+
+    \item[\textbf{Q}] \emph{Problem 3} - what data should be collected?
+
+    \item[\textbf{A}] The number of network nodes ($N$), conditional
+    packet drop probability $P^{L+1}$, channel access delay ($T$), payload
+    size $D$, channel bit rate, retry limit ($L$) and
+    contention window sizes $CW_{min}$ and $CW_{max}$.
+
+\end{itemize}
+
+With a set of well-defined \emph{model metrics} we need to collect equivalent
+data ponts for, we now move on to describe the experiments, which provide an
+answer to ``\emph{Problem 4} - how should this be done?''.
 
 % TODO: flytta till diskussion
 % However, after implementing the model, severe differences regarding the
@@ -116,166 +172,392 @@ the device to obtain a set of comparable \emph{captured metrics}.
 % 	\item jana + wireshark pcap time capture (naive) -- A first attempt at
 % 	capturing network timing statistics using Wireshark (libpcap).
 
-The first experiment designed used the industry-standard Wireshark program to
-capture outgoing packet information. Built on libpcap, Wireshark uses a Linux
-kernel feature called "packet taps" to "capture" packets. A timestamp for each
-packet capture is recorded, along with other packet data, in a pcap logfile.
+The first experiment was based on the industry-standard Wireshark program to
+capture outgoing packets. Built on libpcap, Wireshark uses a Linux kernel
+feature called "packet taps" to "capture" packets. Wireshark records the
+packet itself and some related timing data in a log file in a ``pcap'' format.
 
 Naively, the corresponding \emph{channel access delay} was thought to be
 obtainable to comparing the timestamps between a send program's call to
-\texttt{sendto} and the ``capture time'' reported by Wireshark. This would, in
-fact, be comparable to the complete timeline from Figure \ref{fig:timings}. No
-\emph{captured metric} comparable to \emph{conditional packet collision
-probability} could be constructed, simply due to the fact that Wireshark is
-too high-level to know about IEEE 802.11 frame transmission failures.
+\texttt{sendto} and the ``capture time'' reported by Wireshark, as seen in
+Figure \ref{fig:wstiming} (experiment timing model, i.e. ``the model which
+makes the experiment work''). This would, in fact, be comparable to the
+complete timeline from Figure \ref{fig:timings}. No \emph{captured metric}
+comparable to \emph{conditional packet collision probability} could be
+constructed, simply due to the fact that Wireshark is too high-level to know
+about IEEE 802.11 frame transmission failures.
 
-The experiment was designed thusly:
+\begin{figure}
+\center
+\includegraphics[width=0.7\textwidth]{images/wireshark-experiment-overview.pdf}
+\caption{Experiment 1: Wireshark, experiment design vs actual timing models}
+\label{fig:wstiming}
+\end{figure}
+
+The experiment was designed as follows:
 
 \begin{enumerate}
-	\item one server running a \texttt{jana} server (`jana -s 1 -t 60`)
-	\item one client running a \texttt{jana} client in saturation mode (`jana -c <server> -t 60`)
-	\item <client> logs timestamp before and after calling `sendto`
-	\item wireshark (or `tshark`) running on client, captures outgoing packets to <server>
+  \item device \texttt{R}, a TG799-vac router
+	\item device \texttt{S}, connected via ethernet to \texttt{R}, running \texttt{jana} in server mode
+	\item device \texttt{C}, connected via Wi-Fi to \texttt{R}, running \texttt{jana} in client mode with
+  no specified inter-packet latency distribution (a.k.a saturation mode)
+	\item wireshark running on \texttt{C}, captures outgoing packets to \texttt{S}
 \end{enumerate}
 
-By combining the timestamps ``before-sendto'' and ``packet-capture'', we,
-by-definition have obtained the time it took to transmit this packet.
+On \texttt{C}, placing the socket in non-blocking mode (\texttt{O\_NONBLOCK}),
+\texttt{jana} can detect whenever the socket buffer is full and avoid
+measuring the time it took for the kernel to free some memory for the blocked
+packet.
 
-However, this design has a deep flaw which is not apparent without deeper
-insight into the networking stack. As explained earlier, the ``packet tap''
-feature from which Wireshark obtains packets is actually triggered when the
-packet exits the kernel queueing system (qdisc) and handed over to the driver
-for transmission. In addition, if the tap was triggered after packet
-transmission this would, for throughput reasons, not be done per-packet and
-thus include a significant error.
+With valid values for $T_\text{send}$ and $T_\text{sent}$, we can obtain the
+time it took to transmit this packet, or something roughly equivalent to the
+\emph{Channel access delay} by taking the difference $T_\text{sent} -
+T_\text{send}$
 
-By placing the socket in ``non-blocking mode'', \texttt{jana} circumvents a
-classic problem relating to the send buffert being full, resulting in a
-blocking call until the kernel has freed up memory. A process that can take a
-\emph{very} long time, relatively speaking.
+However, the $T_\text{sent}$ timestamp obtained from Wireshark/libpcap is not
+what one would expect and for our purposes this divergence between what we
+expected and what libpcap delivered was too great to contiune this line of
+experimentation. In Chapter 6 we will discuss the underlying reasons for this
+in more detail.
 
-Of course it took some time to realise that the data obtained from this design
-was incorrect.
+\section{Experiment 2: Queueing the Network System} \label{sec:experiment2}
 
-\section{Experiment 2: Queueing the Network System}
+As the Wireshark-based approach seemingly crashed into a hard wall, insights
+gleaned from the numerous attempts made to salvage it hinted at a more
+theoretical and academic design. \emph{What if we modelled the whole
+networking stack as a queueing system? Wouldn't the properties we were looking
+for simply be properties of this system?}
 
-% \item jana + qdisc + sndbuf (hacker) -- A second attempt at capturing
-% 	network timing statistics by modelling the Linux kernel's network system
-% 	as a queuing system.
-
-After a few weeks of research and thinking a new way of modelling the egress
-path was found.
-
-
-% \begin{itemize}
-
-
-
-%
-
+The insight that finally ties these loose ideas together, is that a
+kernel-owned buffer, known as the \texttt{sndbuf}, owns the memory of each
+packet currently being transmitted or received on a particular socket. The
+full lifecycle is shown in Figure \ref{fig:linux_egress} and is summarized
+here. Some code calls into \texttt{sendto} or \texttt{sendmsg}, which attempts
+to allocate memory from the \texttt{sndbuf}, before potentially running tcp,
+udp or ip processing filters and finally enqueueing the packet in the qdisc.
+The kernel manages pumping packets from the qdisc into the NIC driver. After
+transmission, the NIC driver/hardware signals the kernel that packets were
+transmitted or dropped. The kernel puts these packets on a ``to free'' list
+and eventually frees the related memory, allowing new packets to be allocated
+from the \texttt{sndbuf}.
 
 
-% 	\item TG799-vac: metrics quality -- The primary testing device provides
-% 	network-related statistics via \texttt{ubus}. A first due dilligence smoke test
-% 	was performed to reveal any significant issues with the reported data. I.e.
-% 	"can we trust what we get?"
+\begin{figure}
+\center
+\includegraphics[width=0.9\textwidth]{images/the-network-queue.pdf}
+\caption{Experiment 2: Modelling the egress path of a packet as a queueing system}
+\label{fig:exp2_overview}
+\end{figure}
 
-% 	\item TG799-vac rssi quality -- A special-case test for the reported RSSI
-% 	(Relative Signal Strength Indicator) metric to find any obvious errors.
+Modelling the network stack as a M/M/1/K system with K queue length, where K
+is
 
-% 	\item Ekici-Felemban in the wild -- Map \emph{model metrics} to \emph{captured
-% 	metrics} from a TG799-vac using \texttt{ubus}, and evaluate against dataset
-% 	obtained from a production network.
-% \end{itemize}
+\begin{equation}
+K = \frac{\mathtt{sndbuf}}{E[D] + \mathit{kernel~overhead}}
+\end{equation}
 
-% The \emph{conditional packet collision probability} can be empirically obtained by
-% finding the number of transmission collisons and transmission attempts:
+where $E[D]$ is the average payload size and \emph{kernel overhead} a constant
+per-packet bookeeping overhead.
 
-% \[
-% 	P(\text{collision}\|\text{transmission}) = \frac{tx_{collisions}}{tx_{success}+tx_{collisions}}
-% \]
+The qdisc queue length is known, and the number of packets currently in the
+qdisc system can be queried. Packets can either be owned by the qdisc or the
+NIC and so, by assuming that the \texttt{sndbuf} is full, the number of
+packets in the NIC queue system can be computed as
 
-% Similarly, the \emph{model metric} \emph{channel access delay} can be obtained
-% by measuring the total time described in Figure \ref{fig:timings}.
+\begin{equation}
+\label{eq:sndbuf}
+L_\text{NIC} = K - L_\text{qdisc}
+\end{equation}
+
+We know have an equation for the number of packets in the NIC queue system of
+Figure \ref{fig:exp2_overview}. Recall Little's Law, $L = \lambda W$, which,
+in this context, states that the average number of packets $L$ in the
+networking system is equal to the generation rate multiplied by the average
+time $W$ each packet spends in the networking system. This law is applicable
+to any arrival process and service distribution, and crucially, it's also
+applicable to any subsystems as well.
+
+With Little's Law we can obtain the service time $W_\text{NIC}$ of a packet,
+i.e the average time a packet spends at the server. The exact definition of
+$W_\text{NIC}$, assuming a stable flow of packets and mostly full
+\texttt{sndbuf}, becomes
+
+% \begin{equation}
+\begin{align}
+\label{eq:wnic1}
+    L_\text{NIC} &= \lambda_\text{NIC} W_\text{NIC}         && \text{Little's Law}\nonumber\\
+    W_\text{NIC} &= \frac{L_\text{NIC}}{\lambda_\text{NIC}} && \text{isolate service time}~W_\text{NIC}\nonumber\\
+    W_\text{NIC} &= \frac{K - L_\text{qdisc}}{\lambda_\text{NIC}} && \text{substitute}~L_\text{NIC}~\text{from Equation \ref{eq:sndbuf}}
+\end{align}
+% \end{equation}
+
+Furthermore, $W_\text{NIC}$ can be deconstructed as shown in Figure
+\ref{fig:timings} plus a term for time spent waiting in the queue, and
+provides the final link how $W_\text{NIC}$ relates to the variable we are
+looking for, $T_\text{BACKOFF}$
+
+\begin{align}
+\label{eq:wnic}
+W_\text{NIC} =&~T_\text{QUEUE} + T_\text{DIFS} + T_\text{BACKOFF} \nonumber\\
+              &+ T_\text{PHY} + T_\text{MAC} + T_\text{FRAME}\\
+              &+ T_\text{SIFS} + T_\text{ACK}\nonumber
+\end{align}
+
+%todo :add these to background IEEE section Recall that \texttt{SIFS} and
+Where $T_\text{QUEUE}$ is the time spent waiting to be served, $T_\text{DIFS}$
+and $T_\text{SIFS}$ are the interframe spaces defined in IEEE 802.11 and set
+by the access point \cite{654749}, $T_\text{PHY}$ the preamble, $T_\text{MAC}$
+time to send MAC header and $T_\text{ACK}$ the time for a special \texttt{MAC}
+packet. Simply, \texttt{DIFS} and \texttt{SIFS} depend on network
+configuration whereas \texttt{PHY}, \texttt{MAC}, \texttt{FRAME} and
+\texttt{ACK} primarily depend on channel bit rate, guard interval and time
+quantization ($T_\texttt{slot}$).
+
+Some practical problems had to be resolved:
+
+\begin{enumerate}
+
+  \item Fast polling of the qdisc queue, solved by hacking the \texttt{tc}
+(traffic control) program, see
+\url{https://github.com/smeets/thesis/tree/master/d3fi/tcq}
+
+  \item A full qdisc will sliently drop new packets, solved by increasing the
+  max queue length using \texttt{ifconfig txqueuelen}
+
+  \item The NIC should at all times be maxed out, solved by increasing the
+\texttt{sndbuf} size by increasing kernel parameters
+\texttt{/proc/sys/net/core/wmem\_max} (UDP \texttt{sndbuf} maximum size) and
+\texttt{/proc/sys/net/core/wmem\_default} (UDP \texttt{sndbuf} default size)
+to 10 MB. Combined with a large qdisc size this should allow the kernel to
+always have packets to pump into the NIC.
+
+\end{enumerate}
+
+The complete experiment:
+
+\begin{enumerate}
+
+  \item Start a UDP-spam process, see
+  \url{https://github.com/smeets/thesis/tree/master/d3fi/ethx.py}
+
+  \item Get the active inode from \texttt{/proc/net/udp}
+
+  \item Log data from the specified iface and inode, see
+  \url{https://github.com/smeets/thesis/tree/master/d3fi/data1.sh}, using data
+  from \texttt{tcq}, \texttt{ethtool} and \texttt{procfs} device \texttt{/proc/net/udp}
+
+  \item Send log data into a web server,
+  \url{https://github.com/smeets/thesis/tree/master/d3fi/server.js}, which
+  stores the data and makes it available to a browser
+
+  \item A browser on the local host that loads a page from above server and
+  periodically fetches new log data
+
+\end{enumerate}
+
+The primary issue with this approach is related to how the kernel keeps
+already transmitted packets for an unknown amount of time before freeing the
+packet data in batches, increasing overall system throughput.
 
 
 \section{Experiment 3: Hacking on the driver}
 
-% 	\item jana + iwlwifi driver (smart) -- A third stab at capturing network
-% 	timing statistics by modifying the \texttt{iwlwifi} Wi-Fi driver.
+Compared to the previous attempt, a more practical approach would be to try
+and observe whenever packets are handed over to the NIC from qdisc and handed
+over from the NIC back to the kernel. Sampling this process would then give an
+estimate for the number of packets enqueued in the NIC.
 
-\section{Parameter Mapping}
+This is in fact how the third and final experiment started: \emph{``Where in
+the kernel can we log qdisc $\rightarrow$ NIC and NIC $\rightarrow$ kernel
+handover events?''}. The anwer, of course, is \emph{``in the NIC driver''}.
 
-As mentioned, experiments were performed using \texttt{jana} to set packet
-rates and payload sizes, and \texttt{ubus} to interact with the router
-firmware to retrieve data.
+While exploring in-tree wireless drivers a suspicious field appeared in a
+driver for intel wireless NICs (\texttt{iwlwifi}),
+\texttt{wireless\_media\_time}, described as
 
-\section{Model Evaluation with Real-World Data}
+% \begin{lstlisting}[language=c++,caption={snippet from tx.h},label=lst:iwlwifi]
+% /* @wireless_media_time:
+%  *  for non-agg: RTS + CTS + frame tx attempts time + ACK.
+%  *  for agg: RTS + CTS + aggregation tx time + block-ack time.
+%  *  in usec.
+% \end{lstlisting}
 
-The second round of model evaluation was based on data from end users. This
-required tools for accessing the network interface statistics, matching a set of
-\emph{router metrics} with the \emph{model parameters} and analysis of the
-selected \emph{router metrics} to guard against bugs.
 
-\subsection{Interface}
+\begin{verbatim}
+* @wireless_media_time:
+ *  for non-agg: RTS + CTS + frame tx attempts time + ACK.
+ *  for agg: RTS + CTS + aggregation tx time + block-ack time.
+ *  in usec.
+\end{verbatim}
 
-Network interface data can be accessed through various different interfaces. In
-this thesis two programs were tried during exploratory testing, \texttt{ubus}
-and \texttt{quantenna api}. In the end \texttt{ubus} was chosen due to its
-broader range of statistics (both 2.4 and 5.0 GHz modems) and consistency of its
-output (no corrupt/invalid JSON was found).
-
-\subsection{ubus Metrics}
-Selecting a set of metrics which are equivalent to the model parameters.
-
-This required a good understanding oh how the constraints of the model affected
-the selection of router metrics, e.g. the model separates CTS-RTS and Basic mode
-while the router automatically decides which to use based on packet payload
-size, which isn't available to any tool.
-
-In order to evaluate the models we needed these metrics:
+and while this description appears to include some components from Figure
+\ref{fig:timings}, the comment is too vague to form any definition. Some
+notes:
 
 \begin{itemize}
-\item rssi
-\item nodes
-\item logical tx/rx rates
-\item physical tx/rx rates
+
+\item ``wireless media time'' should, in our opinion, refer to the total
+duration the wireless medium was used. This implies that backoff is not
+included and that frame transmission time is included. However, the comment
+indicates the opposite.
+
+\item Consumer Wi-Fi networks often use a hybrid access mode, defaulting to
+basic and only sending RTS/CTS frames if the payload size exceeds some
+threshold. In our case this threshold is greater than the maximum amount of
+payload a IEEE 802.11 frame can contain, which implies that RTS/CTS will never
+be used in our setup.
+
+\item ``frame tx attempts time'' could include any combination of BACKOFF, PHY,
+MAC and FRAME components. It is possible to probe some of these components,
+e.g. varying payload size should give a corresponding impact if FRAME is
+included, BACKOFF can be proved by changing number of STAs.
+
 \end{itemize}
 
-\subsection{Metric analysis}
+In any case, the primary objective is to observe if this field is of use.
+Figuring out exactly what ``frame tx attempts time'' is tricky. We can,
+however, run multiple experiments with varying payload sizes and active
+network clients to see if backoff or time spent transmitting data are
+included.
 
-We must analyse the validity of the reported parameters.
 
-Do this with experimentation in the radio lab.
+\begin{figure}
+\center
+\includegraphics[width=0.9\textwidth]{images/exp3-overview.pdf}
+\caption{Experiment 3: Hacking the Wi-Fi driver setup overview}
+\label{fig:exp3_overview}
+\end{figure}
 
-We want to analyse the reported values for RSSI, SNR, broken \& valid IEEE
-802.11 frames.
 
-Using quantenna and wl API:s to query:
+Our testbed, as shown in Figure \ref{fig:exp3_overview}, consists of
+
+\begin{enumerate}
+  \item a TG-799 router
+  \item one desktop, running the jana server (connected via ethernet)
+  \item 20 Raspberry Pi 4, acting as network load generators (connected via Wi-Fi)
+  \item one laptop with modified Wi-Fi driver (connected via Wi-Fi)
+  \item one control laptop with modified Wi-Fi driver (connected via Wi-Fi)
+\end{enumerate}
+
+The two laptops used the modified Wi-Fi driver to log the
+\texttt{wireless\_media\_time} throughout the test. Both laptops ran the jana
+client, sending UDP packets to the server running on the desktop, which was
+connected via ethernet. An ethernet connection was chosen since Wi-Fi uses a
+shared medium, which means that communication is simplex. By connecting the
+server via ethernet, we can assume that the cost of forwarding packets from
+Wi-Fi to Ethernet is so low that it can be ignored for our experiments. In
+addition to the two laptops we set up a number Raspberry Pi 4s to also run the
+jana client and send UDP packets to the jana server, with the intention
+increase the load on the CSMA algorithm and risk of Wi-Fi frame collisions,
+which in turn affects the backoff process.
+
+The experiment was parameterized on payload size and number of active jana
+clients. Packet generation distribution was fixed to ``as many as possible''.
+
+The hypothesis is that varying payload size would reveal if
+\texttt{wireless\_media\_time} contained any transmission timings, and varying
+the number of active jana clients (i.e varying medium contention) would reveal
+any backoff timings.
+
+The number of clients were ${5,10,15,20}$ and payload sizes varied from 1 byte
+to 32 kilobytes (1, 2, 4, 8, ...). Note that the maximum IEEE 802.11 frame
+size is around 1460 bytes, so any packet jana generates with a payload larger
+than approximately 1KB will result in multiple IEEE 802.11 frames being
+transmitted. Intuitively, the per-frame wireless media time should remain
+constant while the per-packet latency should increase linearly with the number
+of frames requires to fully transmit the packet.
+
+
+
+\section{Evaluating: In the Wild}
+
+Evaluating the model under controlled conditions (``in the lab'') is only one
+part of the analysis. How the model performs ``in the wild'' is a natural next
+step and in this section we will describe the methodology behind our model
+evaluation, ``in the wild''.
+
+Since we cannot expect end-users to load logging programs we must either run a
+logger on a network client or log directly from the router. We do not have
+access to a programmable radio so we will attempt to acquire metrics directly
+from the router.
+
+The network interface metrics can be accessed through various different
+interfaces. In this thesis two programs were tried during exploratory testing,
+\texttt{ubus} and \texttt{quantenna api}. In the end \texttt{ubus} was chosen
+due to its broader range of statistics (both 2.4 and 5 GHz modems, compared to
+only 5 GHz for quantenna) and consistency of its output (no corrupt/invalid
+JSON was detected, compared to some corrupted output for quantenna). Since
+both interfaces report metrics from the same sources (from kernel, driver and
+firmware) we should get roughly equivalent data points no matter the
+interface.
+
+In conclusion, network performance metrics will be collected by periodically
+calling the \texttt{ubus} program on the router.
+
+\subsection{Selecting ubus metrics}
+
+After deciding \emph{how} to collect data, it is time to decide \emph{what}
+data to collect.
+
+As mentioned earlier, the model parameters form our comparison set. Data
+collected during testing needs to map directly or indirectly to the comparison
+set. It makes sense, then, to start with model parameters and try to find
+equivalent metrics.
+
 \begin{itemize}
-    \item \texttt{ubus call wireless.radio.monitor get}
-    \item \texttt{ubus call wireless.ssid.stats get}
-    \item \texttt{ubus call wireless.radio.stats get}
+
+    \item \emph{network nodes (N)} - maps directly to number of connected network clients. We exclude
+    the router from this number as it will never attempt to transmit volountarily.
+
+    \item \emph{channel bit rate} - the bit rate used to transmit and receive.
+    Expressed in physical tx/rx rates in most drivers and indicated by the
+    Modulation and Coding Scheme (MCS) index. It is important to note that even if
+    IEEE 802.11 n can transmit up to 600 Mbps, the advertised bit rate will depend
+    on signal strength, number of MIMO antennas, guard interval, bandwidth and
+    other factors. Therefore, it is better to log the physical tx/rx rates
+    actually used instead of using the theoretical maximum.
+
+    \item \emph{normalized throughput (U)} - is estimated in the model as average time
+    spent transmitting payload vs. total system time. This is roughly equal to the average
+    throughput of the system divded by the advertised channel bit rate. Average network throughput
+    can be obtained by computing $ 8 \frac{ \text{RX}_\text{ bytes } }{ \text{time} } $ (from router's point of view).
+
+    \item \emph{packet collision probability (P)} - refers to the IEEE 802.11
+    frame collision probability and as far as we researched, must be obtained from
+    the NIC. Our NIC does not provide this information. An alternative is to count
+    the number of dropped packets, i.e. packets dropped by the NIC due to
+    exceeding the maximum number of retransmission attempts. The model defines
+    this property as $P^{L+1}$, where $P$ is the conditional collision probability
+    and $L$ the retry limit.
+
 \end{itemize}
 
-\subsection{Traffic counters}
+In addition to these metrics, we decided to include the Received Signal
+Strength Indicator (RSSI), a vendor-specific metric which can be used to gauge
+signal strength, in case our experiments showed any unexpected behaviour.
 
-As noted above, one of the \emph{model parameters} is normalised throughput,
-defined in \cite{felemban} as
+\subsection{Analysing ubus metrics}
 
-\begin{equation}
-U = \frac{P_{success}T_{payload}}{P_{success}T_{payload} + (P_{busy} -
-P_{success})T_{collision} + (1 - P_{busy})T_{idle}}
-\end{equation}
+As good scientists we should not take data at face value. Thus we decided to
+conduct some experiments to sanity check the reported metrics. For each
+selected metric a test was performed to try and uncover any unexpected
+behavior.
 
-where $P_x$ is probability of $x$ and $T_y$ time of $y$, e.g. probability of successful transmission or time to send payload over channel.
+\begin{itemize}
 
-There are no direct equivalent \emph{router metrics} available. Instead traffic counters such as $TX_{packets}$,
-$RX_{packets}$, $TX_{bytes}$ and $RX_{bytes}$, are required to compute an average throughput, $N$
+    \item \emph{network nodes (N)} - read directly from \texttt{ubus} output
 
-\begin{equation}
-N = \frac{TX_{bytes} + RX_{bytes}}{t}
-\end{equation}
+    \item \emph{channel bit rate} - physical rx/tx rates read directly from \texttt{ubus}
+
+    \item \emph{normalized throughput (U)} - the $\texttt{RX}_\texttt{bytes}$ was read directly from \texttt{ubus}
+
+    \item \emph{packet collision probability (P)} - dropped backets read directly from \texttt{iwconfig}
+
+\end{itemize}
+
+The test: log periodically on a router running iperf3 in server mode with one client
+running iperf3 in client mode during 12 hours.
+
 
 \subsection{RSSI experiments}
 
@@ -311,9 +593,16 @@ value and thus the resulting plot compares RSSI vs. time. The graphs can be
 analysed individually for insight into system behavior and compared to see how
 they relate.
 
+We did not have time to get the second spectrum analyser to output data as a
+fuse went during our first attempt with it and we had to wait for it to be
+fixed. On the other hand, this spectrum analyser was used to calibrate and
+estimate the attenuation of the antenna cable. In the end this analyser was
+mainly used to eyeball that the first spectrum analyser was somewhat correct
+and to estimate cable attenuation.
+
 \begin{figure}
 \center
-\includegraphics[width=0.9\textwidth]{images/rssi_setup.png}
+\includegraphics[width=0.9\textwidth]{images/rssi-exp.pdf}
 \caption{TG799 router and measurement antenna side by side, 1 meter from laptop}
 \label{fig:rssi_setup}
 \end{figure}
@@ -321,4 +610,18 @@ they relate.
 \subsection{Evaluation}
 
 Armed with a solid set of \emph{router metrics} data collection could begin.
-Different scenarios were planned and tested.
+
+To compare our collected data against the model we first implemented the model
+as a program, see Listing \ref{lst:efmodel} in the Appendix. As a preliminary
+test of the implementation we tried to compare our model with the numbers
+published in \cite{felemban}, and were surprised that only the
+\emph{conditional collision probability} was correct: neither \emph{normalized
+throughput} nor \emph{channel access delay} were correct. Since this could be
+caused by different parametrisation we attempted to find possible parameters
+using a brute-force approach, but this resulted in skewed and unsound
+parameters. So we reached out to the authors of the model in order to try and
+obtain the original source code. After a week we got a reply that it could
+take a while to dig stuff that old up and waited, but nothing arrived and we
+received no response to subsequent email attempts.
+
+Thus it became impossible for us to evaluate the model.

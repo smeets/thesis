@@ -1,0 +1,18 @@
+Station 10:13:31:b2:4c:c1 (on wlp3s0)
+	inactive time:	128 ms
+	rx bytes:	7364789
+	rx packets:	42976
+	tx bytes:	2819575920
+	tx packets:	26789722
+	tx retries:	9965
+	tx failed:	0
+	signal:  	-29 [-41, -29] dBm
+	signal avg:	-28 [-41, -28] dBm
+	tx bitrate:	115.6 MBit/s MCS 13 short GI
+	rx bitrate:	117.0 MBit/s MCS 14
+	authorized:	yes
+	authenticated:	yes
+	preamble:	long
+	WMM/WME:	yes
+	MFP:		no
+	TDLS peer:	no

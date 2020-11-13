@@ -1,9 +1,32 @@
-%!TEX root = base.tex
+%!TEX root = report.tex
 
 \chapter*{Abstract}
 
-Performance of Wi-Fi networks have traditionally been studied and analysed using analytical models. Due to the complexity of wireless communication the existing Wi-Fi network models are often constrained and simplified in order to be mathematically tractable.
+The performance characteristics of Wi-Fi networks have traditionally been
+studied and analysed using analytical models and simulations. Due to the
+complexity of wireless communication the existing analytical Wi-Fi network
+models rely on certain network constraints and simplifications in order to be
+mathematically tractable.
 
-We evaluated these models using a specific set of parameters, collected by Swedish Internet Service Provider (ISP) Telenor from their production gateways, to analyse how accurate the models simulate reality, regardless of their original constraints.\cite{bianchi}
+Still, analytical Wi-Fi network models have been proven to mimic Wi-Fi network
+simulation models closely. There are, however, no empirical tests to confirm
+that these findings still hold in practical scenarios.
 
-We found that these models are completely accurate. So accurate that we had to eat some potatoes to calm down.
+We set out to evaluate one prominent model, based on the work of Bianchi
+\cite{bianchi}, in two scenarios: in the controlled lab and in the wild. The lab
+experiments showed that while the model is difficult to adapt to modern Wi-Fi
+networks there is a correlation between the model data and lab data.
+
+It turned out that gathering valid lab data is a hard problem without access
+to the hardware in question and a large portion of the thesis effort went into
+attempting to sample low-level network information. The first attempt was
+based on Wireshark, the second on modelling the Linux network system as a
+queueing system and third and final attempt using a modified Wi-Fi driver. The
+Wireshark-based solution failed due to Linux delivering packets to Wireshark
+before they are actually transmitted. The queuing system approach was
+discovered to contain timing errors. Our modified Wi-Fi driver shows some
+promise, however after extensive tests we could not determine whether the
+obtained data was accurate or not.
+
+
+

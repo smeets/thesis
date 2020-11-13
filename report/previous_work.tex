@@ -1,11 +1,11 @@
-%!TEX root = base.tex
+%!TEX root = report.tex
 
 \chapter{Previous Work}
 
 Modelling of Wi-Fi performance has been an active field of research and this
 chapter provides an introduction to the modeling approach described by Bianchi
 \cite{bianchi} and subsequent efforts to improve it made by others. In
-particular, the studied model presented by Ekici \& Felemban \cite{felemban}
+particular, the studied model presented by Felemban \& Ekici \cite{felemban}
 will be discussed.
 
 As mentioned previously, the IEEE 802.11 family specifies the PHY and MAC
@@ -13,8 +13,8 @@ layers of WLANs. Analysing the performance impact of these protocols, and
 their numerous parameters, is key to improving network performance. There are
 two possible paradigms available: measuring/sampling or constructing an
 analytic model of the system/property. Measuring can be done directly on both
-physical hardware and software simulations whereas analytical models provide
-performance figures as solutions of equations.
+physical hardware and software simulations whereas analytical models typically
+provide performance figures as solutions of equations.
 
 The complete behavior of the IEEE 802.11 standards have yet to be captured by
 any single analytic model, and researchers instead take the standard
@@ -30,10 +30,10 @@ credibility, which further requires scrutiny of the validation itself,
 possibly in absurdum...
 
 In short, model authors try to describe a complex system by modelling key
-components in a constrained setting, and validate their model using other
+components in a simplified setting, and validate their model using other
 models which have been more thoroughly reviewed.
 
-Given this context, we first present the original Markov-Chain model from
+Given this context, we first present the original Markov chain model from
 \cite{bianchi} and describe how it models IEEE 802.11 properties using the
 DCF, some significant and intentional simplifications made and a narrow
 selection of subsequent contributions made by others $refs$. % TODO: ADD REFS
@@ -47,9 +47,9 @@ properties useful in forthcoming chapters.
 In \cite{bianchi}, Bianchi presented a novel approach to modeling IEEE 802.11
 performance by creating a Markov chain model of the \emph{Distributed
 Coordination Function} (DCF). Bianchi defines three important properties:
-transmission probability, normalised throughput and channel access delay. This
-section provides a summary of the original model and definitions useful in
-later chapters.
+transmission probability ($\tau$), normalised throughput ($S$) and channel
+access delay ($T$). This section provides a summary of the original model and
+definitions useful in later chapters.
 
 Before going into detail about the Bianchi model, we start from the beginning.
 
@@ -180,7 +180,7 @@ back-off counter freezing.
 \begin{figure}
 \center
 \includegraphics[width=0.9\textwidth]{images/bianchi-model.png}
-\caption{Bianchi's \emph{Tagged-Node Markov Chain} model of the IEEE 802.11 DCF where $p$ is the collision probability, $W_i$ the contention window size at attempt $i$ ($0 \leq i \leq m$) and $m$ from Equation \ref{eq:mlog}.}
+\caption{Bianchi's \emph{Tagged-Node Markov chain} model of the IEEE 802.11 DCF where $p$ is the collision probability, $W_i$ the contention window size at attempt $i$ ($0 \leq i \leq m$) and $m$ from Equation \ref{eq:mlog}.}
 \label{fig:btnmc}
 \end{figure}
 
@@ -213,8 +213,8 @@ back-off counter reaching 0 in all back-off stages, expressed as
 		)(1-P)}
 \end{equation}
 
-where $P$ is the conditional collision probability (equivalent to $p$) from
-Equation \ref{eq:pbi}.
+where $P$ is the conditional collision probability (equivalent to $p$ in
+Bianchi's paper) from Equation \ref{eq:pbi}.
 
 Somewhat contradictory, Felemban and Ekici obtains different values for the
 parameters $T_C$ and $T_S$, compared to Bianchi. This is probably explained by
@@ -232,7 +232,7 @@ the different Wi-Fi generation targeted.
 	\right.
 \end{align}
 
-The equation for normalised throughput is different, but similar to Bianchi's.
+The equation for normalised throughput is indeed also different, but still similar to Bianchi's.
 
 \begin{equation} \label{eq:ufe}
 	U = \frac{P_S T_p}{P_S T_S + (P_B - P_S)T_C + (1 - P_B) * \sigma}
@@ -244,10 +244,10 @@ successful transmission and that a slot is sensed busy, respectively.
 As shown in Figure \ref{fig:dcfgraph}, the DCF back-off process algorithm
 specifies that a node only decrements the back-off counter if the channel was
 sensed idle. In \cite{felemban}, the authors obtained an accurate countdown
-probability ($P_d$) by introducing an additional markov chain to model the
+probability ($P_d$) by introducing an additional Markov chain to model the
 channel-sensing process and estimating the probability of \emph{not} counting
 down, i.e. probability of counter freeze ($P_f$). This chain is called
-Channel-Sense Markov Chain (CSMC). The counter freeze probability, $P_f$, is
+Channel-Sense Markov chain (CSMC). The counter freeze probability, $P_f$, is
 computed by finding the steady state probabilities of the CSMC by fixed point
 iteration.
 
@@ -256,9 +256,9 @@ compared to other models in various test conditions. In particular, the
 introduction of $P_f$ increased accuracy of the model when extended to
 \emph{unsaturated} networks.
 
-While the model proposed by Ekici-Felemban models the DCF more closely and
+While the model proposed by Felemban-Ekici models the DCF more closely and
 accurately, several assumptions and omissions, inherited from \cite{bianchi},
-makes the model a very interesting candidate for real-world testing, namely:
+make the model a very interesting candidate for real-world testing, namely:
 
 \begin{enumerate}
 
@@ -302,6 +302,6 @@ distributions.
 \begin{figure}
 \center
 \includegraphics[width=1\textwidth]{images/tnmc-dcf.pdf}
-\caption{Ekici-Felemban's Tagged-Node Markov Chain (TNMC) model of the IEEE 802.11 DCF. $P$ is packet collision probability, $P_d$ is probability to decrease backoff counter, $P_f = 1 - P_d$, $W_j$ is contention window size at attempt $j$ and $L$ is the Short Retry Limit}
+\caption{Felemban-Ekici's Tagged-Node Markov chain (TNMC) model of the IEEE 802.11 DCF. $P$ is packet collision probability, $P_d$ is probability to decrease backoff counter, $P_f = 1 - P_d$, $W_j$ is contention window size at attempt $j$ and $L$ is the Short Retry Limit}
 \label{fig:tnmc}
 \end{figure}

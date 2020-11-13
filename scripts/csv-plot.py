@@ -17,6 +17,8 @@ data = {
     'qrxp': []
 }
 
+# time,tx_bytes,tx_pkts,tx_discard,tx_wifi_sent_be,tx_wifi_sent_bk,tx_wifi_sent_vi,tx_wifi_sent_vo,tx_wifi_drop_be,tx_wifi_drop_bk,tx_wifi_drop_vi,tx_wifi_drop_vo,tx_err,tx_unicast,tx_multicast,tx_broadcast,tx_phy_rate,tx_mgmt,tx_mcs_index,tx_nss,tx_bw,tx_sgi,rx_bytes,rx_pkts,rx_discard,rx_err,rx_unicast,rx_multicast,rx_broadcast,rx_unknown,rx_phy_rate,rx_mgmt,rx_ctrl,rx_mcs_index,rx_nss,rx_bw,rx_sgi,hw_noise,snr,rssi,bw
+
 with open(sys.argv[1]) as csvfile:
     txrx_data = csv.reader(csvfile)
     for time, rssi in txrx_data:
