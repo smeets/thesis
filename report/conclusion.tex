@@ -232,14 +232,14 @@ Felemban-Ekici paper with 1 KB payload at 1 Mbps (over 802.11 n).
 \begin{figure}[tbp]
   \centering
   \includegraphics[width=0.8\textwidth]{images/rescaled_u_2g.pdf}
-  \caption{Rescaled, normalized network throughput for 802.11 n.}
+  \caption{Rescaled, (measured) normalized network throughput for 802.11 n compared with Felemban-Ekici.}
   \label{fig:rescaled_tput_2g}
 \end{figure}
 
 \begin{figure}[tbp]
   \centering
   \includegraphics[width=0.8\textwidth]{images/rescaled_u.pdf}
-  \caption{Rescaled, normalized network throughput for 802.11 ac.}
+  \caption{Rescaled, (measured) normalized network throughput during 802.11 ac compared with Felemban-Ekici.}
   \label{fig:rescaled_tput_5g}
 \end{figure}
 
@@ -266,8 +266,55 @@ the model would have been for our network configurations.
 
 \section{Future work}
 
-- Userland networking: fewer syscalls, single ownership
+\begin{itemize}
 
-- Programmable radio: alternative approach, perhaps worth it
+\item As seen in the network overview (Figure \ref{fig:linux_egress}) and
+noticed during experiment 2, system call overhead and the userland/kernel
+split have serious implications for latency-sensative measurements. An area
+worth exploring is known as ``userland networking'' -- a technique common in
+high-performance packet processing in which a userland application is allowed
+exclusive access of a network device. Bypassing the kernel removes potential
+bottlenecks such as context switches, memory allocation and copying,
+scheduling and multithreading. In theory, this technique can reduce the number
+of system calls of an application. More importantly, such an application can
+design the communication between NIC and userland as a ring buffer,
+eliminating the cost associated with memory allocation and deallocation
+experienced in Experiment 2 (the unknown number of \texttt{to-be-freed}
+packets).
 
-- Machine learning:
+\item An alternative approach to bypassing the kernel, is to bring the
+userland program \emph{into} the kernel. The Berkley Packet Filter (BPF) is a
+register-based filter evaluator designed for packet filtering
+\cite{10.5555/1267303.1267305}. It has since been extended and redesigned
+under the ``extended BPF'' (eBPF) moniker and as an in-kernel virtual machine
+with filters, taps and hooks all over the kernel. In short, the eBPF machine
+can run arbitrary code inside the kernel, triggered by specific events. In
+theory, this should allow for more accurate measurement of the packet
+transmission process.
+
+
+\item Continuing on the started path with a modified Wi-Fi driver, it would be
+useful to also perform similar tests where the \texttt{jana} server also has
+to reply back to the clients. These tests should more closely mimic the TCP
+protocol upon which most of today's networking rely. Measuring the round trip
+time (RTT) of packets and comparing the measured values with a modeled RTT (
+based on IEEE 802.11 and TCP), could lead to some interesting results.
+
+
+\item And as is common practice today, when in doubt, throw machine learning
+at the problem. While machine learning cannot enable more accurate
+measurements, a machine-learning model could be trained to predict network
+behaviour based on a large set of collected and labeled (as in, metric X
+indicate outcome Y) metrics. A model may also be constructed for determining
+possible user-friendly interventions (move device closer to router, the
+channel is currently observing heavy interference so switch channel), however
+an expert system (guided by real-time metrics) would probably be sufficient.
+The system could be designed to run on each device (distributed) or on a
+trusted machine (centralised). A centralised machine would have more
+information to act on when issuing interventions back to users and,
+potentially, directly to the Wi-Fi routers. Such a system could easily be
+extended to record the outcome of such interventions (e.g. significantly
+better or worse), possibly allowing for collection of data for unsupervised
+machine learning.
+
+\end{itemize}

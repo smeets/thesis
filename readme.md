@@ -8,6 +8,7 @@
 - [x] methodology
 - [½] results
 - [½] discussion
+- [x] future work
 
 ## other
 
