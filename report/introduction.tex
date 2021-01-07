@@ -2,40 +2,6 @@
 
 \chapter{Introduction}
 
-Wi-Fi seems to be the wireless home network protocol of the (forseeable)
-future. In 2014 a report on Wi-Fi adoption found that 25\% of households, all
-over the world, had Wi-Fi networks set up. In households with fixed-line
-broadband access, 65\% had set up a Wi-Fi network\cite{smith}. The report also
-states that the number of Wi-Fi-enabled devices is projected to increase.
-
-Consumers today have higher expectations regarding network throughput than the
-original IEEE 802.11 standard was designed for back in 1997. In recent years,
-the Wi-Fi label has become hugely popular and the number of Wi-Fi-capable
-devices have skyrocketed, especially in urban areas and neighbourhoods. The
-protocol that once was aimed at corporate sector is now almost everywhere
-around us, in vastly different use-cases than for which it first was designed.
-Beside home network use Wi- Fi networks are deployed for mobile network
-off-loading \cite{offloading}.
-
-Alongside the explosive increase in Wi-Fi usage and availability, our usage
-patterns and requirements have undergone a similar change. On-demand video and
-music streaming, mobile gaming, Voice-over-IP and other new forms of internet
-services are all expected to run on this now ubiquitous wireless protocol.
-Wi-Fi has not stood still since its initial deployment, though. The last 20 years have seen
-extension after extension to expand, improve and adapt the protocol to the
-ever changing requirements of the future.
-
-Ignoring the physical aspects involved, the primary task of a wireless network
-protocol is to share the underlying medium to all clients in an effective
-manner. As with all radio technologies, Wi-Fi is primarily constrained by the
-radio spectrum it can utilize. All available performance is derived from the
-clever exploitation of this physical medium. As Wi-Fi usage has increased, the
-corresponding increase in radio activity, and the resulting issues of media
-sharing and interference, puts the protocol, and its medium access mechanisms
-in particular, under ever more pressure.
-
-\section{Outline}
-
 This introductory chapter describes the motivations to evaluate IEEE 802.11
 (Wi-Fi) performance models based on Markov chain approximation of the
 distributed coordination function (DCF). A problem definition is also provided
@@ -49,7 +15,66 @@ are further discussed in Chapter 6.
 
 All source material can be found online at \url{https://github.com/smeets/thesis}.
 
+\section{Background}
+
+% WiFI nätverk är en viktig del för att ge konnektivitet i hemmiljö, en väldigt
+% stor del av hushåll använder en WiFI router för att koppla upp både datorer,
+% TV, musikanläggningar och smarta prylar mot nätet. Det har varit känt en
+% längre tid att WiFi kan ge en dålig prestanda (QoS) vilket gör användare
+% missnöjda. Situationen blir bara värre med ökad strömning av TV och video samt
+% videokonferenser vid ökat hemarbete.
+
+Wi-Fi seems to be the wireless home network protocol of the (forseeable)
+future. In 2014 a report on Wi-Fi adoption found that 25\% of households, all
+over the world, had Wi-Fi networks set up. In households with fixed-line
+broadband access, 65\% had set up a Wi-Fi network\cite{smith}. The report also
+states that the number of Wi-Fi-enabled devices is projected to increase.
+
+Consumers today have higher expectations regarding network throughput than the
+original IEEE 802.11 standard was designed for back in 1997. In recent years,
+the Wi-Fi label has become hugely popular and the number of Wi-Fi-capable
+devices have skyrocketed, especially in urban areas and neighbourhoods. The
+protocol that once was aimed at corporate sector is now almost everywhere
+around us, in vastly different use-cases than for which it first was designed.
+Beside home network use, Wi- Fi networks are deployed for mobile network
+off-loading \cite{offloading}.
+
+Alongside this explosion of households relying on a Wi-Fi router to connect
+their everyday electronics (computers, phones, TVs) and ``smart devices''
+(i.e. internet-connected devices), our usage patterns and quality expectations
+have similarly increased: video streaming in 1080p and even UHD (4K) is now
+possible on many platforms.
+
+It has become widely known among consumers that Wi-Fi can exhibit poor
+performance (for a multitude of reasons). A user streaming video
+(throughput-sensative) to their TV will have a significant impact on the
+quality of service another user on the same network experiences on their video
+conference (latency \& jitter-sensative). As more people attempt to work
+remotely this type of network contention can only be expected to become more
+common.
+
+Ignoring the physical aspects involved, the primary task of a wireless network
+protocol is to share the underlying medium to all clients in an effective
+manner. As with all radio technologies, Wi-Fi is primarily constrained by the
+radio spectrum it can utilize. All available performance is derived from the
+clever exploitation of this physical medium. As Wi-Fi usage has increased, the
+corresponding increase in radio activity, and the resulting issues of media
+sharing and interference, puts the protocol, and its medium access mechanisms
+in particular, under ever more pressure.
+
 \section{Motivation}
+
+% Vi ställer oss frågan om det går att mäta prestandan i WiFI nätverket och från
+% dessa mätningar identifiera om tjänsteleveransen är tillräckligt bra för att
+% stödja de tjänster som används för tillfället. Om detta är möjligt kan man i
+% förlängningen utveckla algoritmer som WiFI routrar använder för att
+% automatiskt konfigurera sig så att prestandan blir tillräcklig.
+
+The performance of a household Wi-Fi network is not solely determined a router
+or the broadband connection. Factors such as network configuration (channel
+settings, guard intervals, access modes), environment (noisy neighbours?), and
+clients (old Wi-Fi versions?) have a major impact on the network performance
+perceived by users.
 
 To meet a wide variety of customer expectations in scenarios such as VoIP,
 low-latency gaming, ultra-high definition streaming and many network nodes,
@@ -60,23 +85,27 @@ networks, they are not guaranteed to be optimal since they have a local view
 of the network (i.e. one point-of-view). Older devices rely on manual
 configuration, often factory defaults.
 
+If possible, could measuring (the right) Wi-Fi performance metrics shed some
+light on why the perceived network performance is poor? Could the performance
+metrics be used to construct expert-type systems? Would these metrics be
+useful in the development of autonomous (re)configuration algorithms, embedded
+in a router?
+
 % @ARTICLE{490421, author={M. M. -. {Cheng} and J. C. -. {Chuang}},
 % @journal={IEEE Journal on Selected Areas in Communications},
 % @title={Performance evaluation of distributed measurement-based dynamic
 % @channel assignment in local wireless communications}, year={1996},
 % @volume={14}, number={4}, pages={698-710}, doi={10.1109/49.490421}}
 
-Accurately modelling the Wi-Fi communication and related performance
-characteristics is an active field of research and today there are various
-proposed models which perform well in simulations \cite{bianchi}\cite{felemban}. Wi-Fi implements
-\emph{Carrier-sense multiple access/Collision avoidance} (CSMA/CA)—"listen
-before speaking"—in a \emph{distributed coordination function} (DCF) to reduce
-the likelihood of collisions happening in the first place what to do when
-collisions occur.  This thesis focuses on a branch of models presented in
-\cite{bianchi} which models the \emph{DCF} using a Markov chain-based
-approach. Modelling the performance of Wi-Fi networks is beneficial in many
-cases, especially (re)configuration—where the ability to estimate impact of
-different parameters is crucial.
+
+% Vi undersöker hur man skall gå tillväga för att samla in användardata på
+% Linuxplattformen då denna utgör basen i de allra flesta WiFI produkter på
+% marknaden, och därför är av speciellt intresse. Vi undersöker sedan om den
+% insamlade informationen är tillräcklig för att tillämpa på en modell som är
+% lovande för att bestämma prestandastatus i nätverket (Felemban). Modellen
+% bygger på en del antaganden som gör det osäkert om den är tillämpningsbar på
+% en verklig mix av parametrar och vi vill därför i förlängningen undersöka om
+% modellen är användbar för detta syfte.
 
 With existing, theoretical, Wi-Fi models it is possible to simulate the impact
 of configuration settings. It is, however, unknown how well actual hardware
@@ -91,6 +120,23 @@ and periodically running the model with locally sourced data, automatically
 alerting the end-user or ISP of potential performance problems and possible
 interventions. Who knows, at some point in the future, devices might even
 attempt to resolve identified network problems themselves.
+
+
+
+
+Accurately modelling the Wi-Fi communication and related performance
+characteristics is an active field of research and today there are various
+proposed models which perform well in simulations
+\cite{bianchi}\cite{felemban}. Wi-Fi implements \emph{Carrier-sense multiple
+access/Collision avoidance} (CSMA/CA)—"listen before speaking"—in a
+\emph{distributed coordination function} (DCF) to reduce the likelihood of
+collisions happening in the first place what to do when collisions occur.
+This thesis focuses on a branch of models presented in \cite{bianchi} which
+models the \emph{DCF} using a Markov chain-based approach. Modelling the
+performance of Wi-Fi networks is beneficial in many cases, especially
+(re)configuration—where the ability to estimate impact of different parameters
+is crucial.
+
 
 \section{Problem Definition}
 
