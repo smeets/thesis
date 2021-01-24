@@ -286,11 +286,11 @@ packets).
 userland program \emph{into} the kernel. The Berkley Packet Filter (BPF) is a
 register-based filter evaluator designed for packet filtering
 \cite{10.5555/1267303.1267305}. It has since been extended and redesigned
-under the ``extended BPF'' (eBPF) moniker and as an in-kernel virtual machine
-with filters, taps and hooks all over the kernel. In short, the eBPF machine
-can run arbitrary code inside the kernel, triggered by specific events. In
-theory, this should allow for more accurate measurement of the packet
-transmission process.
+under the ``extended BPF'' (eBPF) moniker as an in-kernel virtual machine with
+filters, taps and hooks all over the kernel. In short, the eBPF machine can
+run arbitrary code inside the kernel, triggered by specific events. In theory,
+this should allow for more accurate measurement of the packet transmission
+process.
 
 
 \item Continuing on the started path with a modified Wi-Fi driver, it would be
@@ -298,7 +298,7 @@ useful to also perform similar tests where the \texttt{jana} server also has
 to reply back to the clients. These tests should more closely mimic the TCP
 protocol upon which most of today's networking rely. Measuring the round trip
 time (RTT) of packets and comparing the measured values with a modeled RTT (
-based on IEEE 802.11 and TCP), could lead to some interesting results.
+based on IEEE 802.11 and TCP) could also lead to some interesting results.
 
 
 \item And as is common practice today, when in doubt, throw machine learning
@@ -313,7 +313,7 @@ The system could be designed to run on each device (distributed) or on a
 trusted machine (centralised). A centralised machine would have more
 information to act on when issuing interventions back to users and,
 potentially, directly to the Wi-Fi routers. Such a system could easily be
-extended to record the outcome of such interventions (e.g. significantly
+extended to record the outcome of any interventions (e.g. significantly
 better or worse), possibly allowing for collection of data for unsupervised
 machine learning.
 
