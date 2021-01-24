@@ -3,8 +3,8 @@
 \chapter{Introduction}
 
 This introductory chapter describes the motivations to evaluate IEEE 802.11
-(Wi-Fi) performance models based on Markov chain approximation of the
-distributed coordination function (DCF). A problem definition is also provided
+(Wi-Fi) performance models based on Markov Chain approximation of the
+Distributed Coordination Function (DCF). A problem definition is also provided
 to clearly define the scope of this thesis.
 
 Chapter 2 provides a background to and overview of related systems, protocols
@@ -13,7 +13,7 @@ and prior works. Chapter 4 discusses the experimental methodology used to
 achieve the different goals. Afterwards, Chapter 5 presents the results which
 are further discussed in Chapter 6.
 
-All source material can be found online at \url{https://github.com/smeets/thesis}.
+All source material available online at \url{https://github.com/smeets/thesis}.
 
 \section{Background}
 
@@ -46,12 +46,11 @@ have similarly increased: video streaming in 1080p and even UHD (4K) is now
 possible on many platforms.
 
 It has become widely known among consumers that Wi-Fi can exhibit poor
-performance (for a multitude of reasons). A user streaming video
-(throughput-sensative) to their TV will have a significant impact on the
-quality of service another user on the same network experiences on their video
-conference (latency \& jitter-sensative). As more people attempt to work
-remotely this type of network contention can only be expected to become more
-common.
+performance (for a multitude of reasons). A user streaming video (sensitive to
+throughput) to their TV will have a significant impact on the quality of
+service another user on the same network experiences on their video conference
+(sensitive to latency \& jitter). As more people attempt to work remotely this
+type of network contention can only be expected to become more common.
 
 Ignoring the physical aspects involved, the primary task of a wireless network
 protocol is to share the underlying medium to all clients in an effective
@@ -73,8 +72,8 @@ in particular, under ever more pressure.
 The performance of a household Wi-Fi network is not solely determined a router
 or the broadband connection. Factors such as network configuration (channel
 settings, guard intervals, access modes), environment (noisy neighbours?), and
-clients (old Wi-Fi versions?) have a major impact on the network performance
-perceived by users.
+clients (e.g. hardware and Wi-Fi generation) have a major impact on the
+network performance perceived by users.
 
 To meet a wide variety of customer expectations in scenarios such as VoIP,
 low-latency gaming, ultra-high definition streaming and many network nodes,
@@ -87,7 +86,7 @@ configuration, often factory defaults.
 
 If possible, could measuring (the right) Wi-Fi performance metrics shed some
 light on why the perceived network performance is poor? Could the performance
-metrics be used to construct expert-type systems? Would these metrics be
+metrics be used to construct expert-type systems? And would these metrics be
 useful in the development of autonomous (re)configuration algorithms, embedded
 in a router?
 
@@ -107,59 +106,53 @@ in a router?
 % en verklig mix av parametrar och vi vill därför i förlängningen undersöka om
 % modellen är användbar för detta syfte.
 
-With existing, theoretical, Wi-Fi models it is possible to simulate the impact
-of configuration settings. It is, however, unknown how well actual hardware
-implementations conform to the standard, which the theoretical models are
-based. Even assuming stellar adherence to the standard, there is worth knowing
-how well the proposed theoretical models translate to the physical world.
-Furthermore, it's not pratical to suggest that end-users run simulations
-themselves to improve network performance. Knowing if the models in
-\cite{felemban} are accurate in production networks could potentially be of
-enourmous benefit for end-users and ISPs alike. Imagine each router embedding
-and periodically running the model with locally sourced data, automatically
-alerting the end-user or ISP of potential performance problems and possible
-interventions. Who knows, at some point in the future, devices might even
-attempt to resolve identified network problems themselves.
-
-
-
-
 Accurately modelling the Wi-Fi communication and related performance
 characteristics is an active field of research and today there are various
-proposed models which perform well in simulations
+proposed models (both analytical and ) which perform well in simulations
 \cite{bianchi}\cite{felemban}. Wi-Fi implements \emph{Carrier-sense multiple
 access/Collision avoidance} (CSMA/CA)—"listen before speaking"—in a
-\emph{distributed coordination function} (DCF) to reduce the likelihood of
-collisions happening in the first place what to do when collisions occur.
-This thesis focuses on a branch of models presented in \cite{bianchi} which
-models the \emph{DCF} using a Markov chain-based approach. Modelling the
-performance of Wi-Fi networks is beneficial in many cases, especially
-(re)configuration—where the ability to estimate impact of different parameters
-is crucial.
+\emph{Distributed Coordination Function} (DCF) to reduce the likelihood of
+collisions happening in the first place, and what to do when collisions occur.
+A branch of models are built on the approximation of the DCF as a Markov
+Chain. Furthermore, the models are often constrainted by assumptions,
+neccesary for mathematical tractablility, that cast doubt on the models
+ability to perform in the physical world.
+
+Evaluating if the models, despite their assumptions, are useful for
+determining network performance could potentially be of enourmous benefit for
+consumers, business and ISPs alike. Imagine each router embedding and
+periodically running the model with locally sourced data, automatically
+alerting the end-user or ISP of potential performance problems and possible
+interventions. Who knows, at some point in the future, devices might even
+attempt to cooperatively (and autonoumously!) resolve identified network
+problems.
 
 
-\section{Problem Definition}
+\section{Method and Problem Definitions}
 
-This thesis aims to test the foundational assumptions made in
-\cite{bianchi}—Markov chain approximation of the \emph{DCF},
-poisson-distributed packet rates and payload sizes—using an experimental
-methodology with data measured from physical devices. The model evaluated is
-an improved version presented in \cite{felemban}.
+This thesis aims to evaluate how well the branch of Markov Chain-based models,
+originally presented in \cite{bianchi}, perform in the physical world. The
+model evaluated is an improved version presented in \cite{felemban}.
 
 This question, as with most deceptively simple-sounding questions, must first
 be taken apart:
 
 \begin{itemize}
-\item \emph{Problem 1} - primary question: is the Felemban model from \cite{felemban} \emph{useful}?
-\item \emph{Problem 2} - definition: what is a reasonable definition of \emph{useful}?
+
+\item \emph{Problem 1} - primary question: is the Felemban-Ekici model from
+\cite{felemban} \emph{useful} for determining Wi-Fi network performance?
+
+\item \emph{Problem 2} - definition: what is a reasonable definition of
+\emph{useful} in this context?
+
 \end{itemize}
 
-The problem definition also included work related the collection, evaluation
+The problem definition also includes work related the collection, evaluation
 and potential usage of data collected from a router itself.
 
 \begin{itemize}
 \item \emph{Problem 3} - analysis: what data should be collected?
-\item \emph{Problem 4} - experiment: how should this be done?
+\item \emph{Problem 4} - experiment: how should the necessary data be collected?
 \item \emph{Problem 5} - evaluate: compare collected data with model and our definition from \emph{Problem 2}
 \end{itemize}
 
