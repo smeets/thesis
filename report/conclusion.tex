@@ -65,84 +65,32 @@ system) and a full NIC, we can model $K$ as $K = L_\text{qdisc} + 256 +
 
 One can argue that for the hardware queue to have any impact on the other
 queues, it would have to be of similar size. Otherwise, it should be safe to
-assume an (soft)interrupt-based solution: driver manages known packets and
-hardware signals which have been sent. Thus the total queue size of the NIC is
+assume an interrupt-based solution: a driver manages known packets and
+hardware signals which have been sent using (soft) interrupt requests (IRQ),
+i.e. no dedicated hardware buffer. Thus the total queue size of the NIC is
 determined by the driver, in our case $256$ packets, simplifying $K =
 L_\text{qdisc} + 256 + \texttt{to-be-freed}$. This exposes the core issue with
 the original queue model: there is no separation between ``in queue, waiting
 to be served'' and ``served, waiting to be freed''.
 
 In the program which logged $L_\text{qdisc}$, we could observe how many
-packets were fed into the driver ``at once''. Our tests show around multiple,
-10+, packets being handed over to the driver. This confirms that the driver is
-able to keep the internal buffer/queue fully saturated, but does not shed
-any light on the size of \texttt{to-be-freed}.
+packets were fed into the driver ``at once''. Our tests show that multiple,
+10+, packets being handed over to the driver between timestamps $<10 \mu s$.
+This confirms that the driver is able to keep the internal buffer/queue fully
+saturated, but does not shed any light on the size of \texttt{to-be-freed}.
 
-With no clear understanding of the potential size of \texttt{to-be-freed}.
+We can estimate the range of \texttt{to-be-freed} to $[K - L_\text{qdisc}, K -
+256 - L_\text{qdisc}] = [307, 563]$, depending on the amount of packets in the
+NIC waiting to be transmitted. Reworking Table \ref{tab:exp2data}
+($L_\texttt{NIC} = [1, 256]$) we now obtain a $W_\texttt{NIC} =
+\frac{256}{\lambda_\texttt{NIC}} \approx [240~\mu s, 62~ms]$, again depending
+on the amount of packets in the NIC waiting to be transmitted.
 
-% TODO: explain why to-be-freed must be known for this experiment to work
-
-% Recall Little's Law $L = \lambda W$, increasing $L$ must give a relatively
-% similar increase in either the arrival rate $\lambda$ or service time $W$.
-% Since the arrival rate is fixed, it must be the service time $W$. Finally,
-% recall that service time includes the time a packet spends waiting in the
-% queue. This was originally expressed as a time $T_\text{QUEUE}$ component. By
-% splitting the NIC queue system into a cascaded driver and hardware,
-% $\lambda_\text{pktgen} \rightarrow \text{driver} \rightarrow \text{hardware}
-% \rightarrow \lambda_\text{xmit}$.
-
-% $L_\text{driver} \approx 256$, then the service times of the two systems can
-% be expressed as $W_\text{driver} = 256 W_\text{hardware}$, assuming that the
-% driver system is a bottleneck.
-
-% Furthermore, by assuming that $L_\text{hardware} \approx 1$, i.e. a system
-% with queue length zero, all time spent in the system is due to service, which
-% in the case of the hardware system exactly matches the definition of
-% \emph{channel access delay}. This can be simplified further, since the arrival
-% rate of a bottlenecked queueing system is equal to the service rate,
-% $\lambda_\text{NIC} = \lambda_\text{pktgen} = \lambda_\text{xmit}$.
-
-% \begin{equation}
-% W_\text{hardware} = \frac{1}{\lambda_\text{hardware}} = \frac{1}{\lambda_\text{xmit}} = \frac{1}{\lambda_\text{pktgen}}
-% \end{equation}
-
-% Equation \ref{eq:wnic}, rewritten for $W_\text{hardware}$, becomes
-
-% \begin{align}
-% W_\text{hardware} =&~T_\text{DIFS} + T_\text{BACKOFF} \nonumber\\
-%               &+ T_\text{PHY} + T_\text{MAC} + T_\text{FRAME}\\
-%               &+ T_\text{SIFS} + T_\text{ACK}\nonumber
-% \end{align}
-
-
-
-% \item jana + qdisc + sndbuf (hacker) -- A second attempt at capturing
-%   network timing statistics by modelling the Linux kernel's network system
-%   as a queuing system.
-
-
-%   \item TG799-vac: metrics quality -- The primary testing device provides
-%   network-related statistics via \texttt{ubus}. A first due dilligence smoke test
-%   was performed to reveal any significant issues with the reported data. I.e.
-%   "can we trust what we get?"
-
-%   \item TG799-vac rssi quality -- A special-case test for the reported RSSI
-%   (Relative Signal Strength Indicator) metric to find any obvious errors.
-
-%   \item Felemban-Ekici in the wild -- Map \emph{model metrics} to \emph{captured
-%   metrics} from a TG799-vac using \texttt{ubus}, and evaluate against dataset
-%   obtained from a production network.
-% \end{itemize}
-
-% The \emph{conditional packet collision probability} can be empirically obtained by
-% finding the number of transmission collisons and transmission attempts:
-
-% \[
-%   P(\text{collision}\|\text{transmission}) = \frac{tx_{collisions}}{tx_{success}+tx_{collisions}}
-% \]
-
-% Similarly, the \emph{model metric} \emph{channel access delay} can be obtained
-% by measuring the total time described in Figure \ref{fig:timings}.
+In conclusion, this experiment, under assumption of saturation, no hardware
+buffer on the NIC, $L_\texttt{NIC} = 256$ packets, can successfully measure
+the range of $W_\texttt{NIC}$. As mentioned earlier, comparing the obtained
+values from our experiment with the Felemban-Ekici model is prevented due to
+different network speeds and configurations.
 
 \subsection{Experiment 3: Hacking on the driver}
 

@@ -19,7 +19,9 @@ could only block due to a full \texttt{sndbuf}.
 \begin{figure}[tbp]
   \centering
   \includegraphics[width=1.2\textwidth]{images/delay-vs-syscall.png}
-  \caption{Scatter plot of $T_\text{delay}$ and $T_\text{syscall}$ ($\mu s$) for each packet sent. Tests go from left to right, with each column being one test with a total of 3 different machines (and thus three rows). The first number in each legend is the packet payload size.}
+  \caption{Scatter plot of $T_\text{delay}$ and $T_\text{syscall}$ ($\mu s$) for each packet sent.
+  Tests go from left to right, with each column being one test with a total of 3 different machines (and thus three rows).
+  The first number in each legend is the packet payload size.}
   \label{fig:sysdelay}
 \end{figure}
 
@@ -27,7 +29,8 @@ could only block due to a full \texttt{sndbuf}.
 
 In Table~\ref{tab:exp2data} we present the recorded NIC serve rate
 $\lambda_{\mathtt{NIC}}$, \texttt{qdisc} queue length $L_{\mathtt{qdisc}}$,
-specified \texttt{sndbuf} and packet \texttt{payload} size.
+specified \texttt{sndbuf} and packet \texttt{payload} size. The values were
+obtained from a session with the system under test + 20 raspberry pi 4s.
 
 \begin{table}[tbp]
   \centering
@@ -52,8 +55,7 @@ W_\mathtt{NIC} &= \frac{L_{\mathtt{NIC}}}{\lambda_\text{NIC}} = \frac{563}{4108}
 
 Notice how $W_\mathtt{NIC}$ determines that under a fully loaded scenario, it
 would take more than 100 \emph{milli}seconds to transmit 1 KB using UDP. Our
-definition of \texttt{overhead}: IP + IEEE 802.11 + kernel. This definition is
-not completely accurate, but should be accurate enough for our purposes.
+definition of \texttt{overhead}: IP + IEEE 802.11 + kernel bookkeeping.
 
 \section{Experiment 3}
 
@@ -71,9 +73,10 @@ used, each client sent packets ``as fast as possible''.
 It is important to note that, during this experiment, we could not control the
 presence of nearby networks. However, the experiment was performed during
 after-hours when no one was left at the office to run any traffic-heavy
-applications. Furthermore, unmanaged software updates can download arbitrary
-amounts of data, and should show up as a significant outlier (much less
-throughput, and higer \texttt{wireless\_media\_time}) for a certain test.
+applications. Additionally, any signficant traffic caused by unmanaged
+software updates should show up as a significant outlier (much less
+throughput, and higher \texttt{wireless\_media\_time}) for during an affected
+experiment run.
 
 In addition, running 60 tests ($15$ payload sizes $\times$ 4 host sizes) for
 IEEE 802.11 $n$ \emph{and} $ac$, takes a couple of hours and should therefore
