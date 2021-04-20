@@ -53,7 +53,7 @@ $L_\text{NIC}$ (and $W_\text{NIC}$) in our experiments. However, this fact
 does not imply that there are not any more packets in the NIC. Recall that the
 NIC queueing system actually consists of a driver/firmware queue and a
 hardware queue. The hardware queue on most consumer chips is \emph{probably}
-either fixed and very limited in size, or non-existant (flash memory \emph{is}
+either fixed and very limited in size, or non-existant (RAM \emph{is}
 expensive).
 
 After additional analysis of the source code of Intel's open source Wi-Fi
@@ -249,7 +249,7 @@ time (RTT) of packets and comparing the measured values with a modeled RTT (
 based on IEEE 802.11 and TCP) could also lead to some interesting results.
 
 
-\item And as is common practice today, when in doubt, throw machine learning
+\item And as is common practice today: when in doubt, throw machine learning
 at the problem. While machine learning cannot enable more accurate
 measurements, a machine-learning model could be trained to predict network
 behaviour based on a large set of collected and labeled (as in, metric X
@@ -265,4 +265,18 @@ extended to record the outcome of any interventions (e.g. significantly
 better or worse), possibly allowing for collection of data for unsupervised
 machine learning.
 
+We identified several interesting metrics available from the chipset
+firmware/driver using \texttt{ubus}, e.g. number of connected clients, neighbouring
+networks, medium availability, TX/RX PHY  rates, RSSI, glitches and RTS settings. See \url{https://github.com/smeets/thesis/blob/master/paramlist.md} for more
+parameters and their descriptions.
+
+
 \end{itemize}
+
+\section{Closing remarks \& thoughts}
+This thesis indicates that it will become increasingly difficult to use existing
+models for practical Wi-Fi equipment. As the IEEE 802.11 specification evolves, newer Wi-Fi routers will always implement have new implementations and new features. At least, there are probably fewer chipset makers than router equipment
+manufacturers.
+
+It seems more likely that an overall measurement using ML/AI system is more easy
+to obtain for helping customers with the routers than trying to develop a system that works from the inside out as there are too many gaps between model and physical reality.  
