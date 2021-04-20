@@ -6,8 +6,8 @@
 - [x] background
 - [x] previous work
 - [x] methodology
-- [½] results
-- [½] discussion
+- [x] results
+- [x] discussion
 - [x] future work
 
 ## other
