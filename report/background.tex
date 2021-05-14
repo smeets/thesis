@@ -2,7 +2,7 @@
 
 \chapter{Background}
 
-This chapter gives a brief introduction the technologies and tools that were
+This chapter gives a brief introduction to the technologies and tools that were
 used in this project. As explained in the introduction, the primary goal of
 this thesis was to evaluate the usefulness of the model presented in
 \cite{felemban} by comparing the channel access time of the model with an
@@ -33,7 +33,7 @@ perform our network experiments—Jana—and compare it with existing programs.
 \section{IEEE 802.11}
 
 The ubiquitous family of wireless network protocols and ammendments, such as
-IEEE 802.11g and IEEE 802.11x, commonly known as Wi-Fi. Specifically, IEEE
+IEEE 802.11g and IEEE 802.11x, is commonly known as Wi-Fi. Specifically, IEEE
 802.11 defines the PHY and MAC layers of the network stack. Each ammendment
 introduces additions, redactions and changes to these layers. It is beyond the
 scope of this report to provide a detailed overview of the, sometimes quite
@@ -70,7 +70,7 @@ synchronizes the nodes waiting to transmit, a random delay is introduced to
 desynchronise nodes. This delay is called back-off time
 ($T_{\mathit{backoff}}$) and relates to the \emph{collision avoidance}
 algorithm. The back-off procedure quantizes time into discrete
-\emph{time-slots}, each $50$ to $9$ $\mu s$ long, depending on the IEEE
+\emph{time-slots}, each $9$ $\mu$ to $50$ $\mu s$ long, depending on the IEEE
 802.11 ``version''.
 
 While in back-off, nodes listen on the medium for a full \emph{slot} and, if
@@ -94,7 +94,7 @@ Figure \ref{fig:cwsizes}.
 Time spent in back-off for each (re)transmission attempt $j$ is described in
 equation \ref{eq:tbackoff}, where \emph{SlotTime} is defined in \cite{654749}
 and $\mathcal{U}(0,W_j-1)$ is a uniformly sampled integer value between $0$
-and the contention window size $W_{j}-1$, i.e. the maximum number of
+and the contention window size $W_{j}-1$, i.e., the maximum number of
 time-slots (exclusive, since 0 is a valid back-off value).
 
 \begin{equation} \label{eq:tbackoff}
@@ -132,14 +132,15 @@ IEEE 802.11—``basic mode''. During CSMA/CA each node listens for activity
 locally and can therefore fail to detect nodes whose signal is too weak to be
 received, causing what's known as the \emph{hidden node} problem.
 
-The second multiple access scheme requires that STAs first acquire the right
-to transmit, using a \emph{request-to-send} (RTS) message. If the STA is given
-permission, the AP will respond with a \emph{clear-to-send} (CTS) message.
-This access scheme is called RTS/CTS and potentially increases performance in
-scenarios with multiple ``hidden nodes''. The RTS/CTS protocol assumes that
-all STAs  have similar tx/rx capabilities. An overview of the required
-interframe spaces (IFS) and protocol packets for ``basic'' and ``RTS/CTS''
-modes and how they compare, can be found in Figure \ref{fig:timings}.
+The second multiple access scheme requires that clients (also known as
+stations or STAs) first acquire the right to transmit, using a \emph
+{request-to-send} (RTS) message. If the STA is given permission, the AP will
+respond with a \emph{clear-to-send} (CTS) message. This access scheme is
+called RTS/CTS and potentially increases performance in scenarios with
+multiple ``hidden nodes''. The RTS/CTS protocol assumes that all STAs  have
+similar tx/rx capabilities. An overview of the required interframe spaces
+(IFS) and protocol packets for ``basic'' and ``RTS/CTS'' modes and how they
+compare, can be found in Figure \ref{fig:timings}.
 
 \begin{figure}
 \center
@@ -153,15 +154,15 @@ modes and how they compare, can be found in Figure \ref{fig:timings}.
 
 The Linux kernel has a complex networking subsystem which is beyond the scope
 of this report to detail. Since we will be using Linux-based machines in our
-tests and measurements this section will present a refresh on the Linux
+tests and measurements, this section will present a refresh on the Linux
 networking stack. Due to the measurements needed, only the outbound (egress)
 path is described.
 
-A schematic, high level view of a packet's way from  userspace program,
-through the kernel and into the network interface responsible  for physically
-transmitting it, can be found in Figure \ref{fig:linux_egress}.  There are 5
+A high-level schematic view of a packet's path can be found in Figure \ref{fig:linux_egress}. It shows the packet's path from a userspace program,
+through the kernel and into the network interface responsible for physically
+transmitting it.  There are 5
 main components in the figure: userspace, kernel, sockets, queueing
-discipline (qdisc), driver and network interface card (NIC). Each component is
+discipline (qdisc), driver and Network Interface Card (NIC). Each component is
 more complex than described and interested readers are referred to
 \cite{knet}, \cite{pcsending} and \cite[Chapter~17]{ldd}. The flow through
 Figure \ref{fig:linux_egress} and the 5 components is described below:
@@ -171,7 +172,7 @@ data through a socket using system calls \texttt{socket(2)}, \texttt{bind(2)}
 and \texttt{send(2)}, \texttt{sendto(2)} or \texttt{sendmsg(2)}.
 
 \textbf{The linux kernel} allocates a per-socket kernel buffer
-(\texttt{skb}),  where related kernel (bookeeping), socket and packet data is
+(\texttt{skb}),  where related kernel (bookkeeping), socket and packet data is
 stored. The initial size of the \texttt{skb} depends on the
 \texttt{net.core.wmem\_default} and  \texttt{net.core.wmem\_max} kernel
 parameters. The \texttt{send(2)}, \texttt{sendto(2)} and  \texttt{sendmsg(2)}
@@ -185,7 +186,7 @@ on the I/O  mode of the socket (blocking or non-blocking).
 \textbf{The queueing discipline} (qdisc) system is the internal
 queueing system  of the linux kernel. A qdisc is a configurable, per-network
 device queueing system with a  default ``pfifo\_fast'', prioritized fifo,
-queue, see Figure \ref{fig:pfifofast}. As  packets arrive the qdisc signals
+queue, see Figure \ref{fig:pfifofast}. As  packets arrive, the qdisc signals
 the driver, using a scheduler, that data is available.  The qdisc can be
 queried and configured using the \texttt{tc(8)} (traffic control),
 \texttt{ip(8)} and \texttt{ifconfig(8)} programs. There is a reconfigurable
@@ -211,7 +212,7 @@ receives packets.  The internal design documents of many NICs are not publicly
 available and open source drivers only hint at the design of important
 subsystems, such as buffers and prefetchers.
 
-The NICs used in this thesis are commonly found in laptops and does not
+The NICs used in this thesis are commonly found in laptops and do not
 have a reconfigurable internal ``TX-Ring''. Common sense suggests that
 NICs use some internal buffering mechanism in addition to the ``TX-Ring''
 controlled by the driver. Since we have no way of differentiating between
@@ -242,8 +243,7 @@ Wireless WiFi driver for Linux''—\texttt{iwlwifi}.
 The \texttt{iwlwifi} driver supports both an older operation mode, dvm
 (\texttt{iwldvm}, as well as a newer, mvm (\texttt{iwlmvm}). The
 \texttt{iwlmvm} module, included as part of \texttt{iwlwifi}, in the Linux
-kernel source tree of version 4.13 was edited to enable logging of packet
-timing statistics with microsecond accuracy.
+kernel source tree of version 4.13 was adapted for this thesis work to enable logging of packet timing statistics with microsecond accuracy.
 
 Internally, the driver allocates a fixed number of ring buffers used for
 holding transmission frame descriptors, firmware commands and incoming frames.
@@ -256,7 +256,7 @@ expense of increased latency due to queueing.
 
 \section{TG799-vac}
 
-The OpenWrt-based router examined in this thesis, depicted in Figure
+The OpenWrt-based router examined in this thesis, as depicted in Figure
 \ref{fig:tg799} and commonly known as TG799-vac, supports two concurrent IEEE
 802.11n and 802.11ac (2.4GHz and 5 GHz) IEEE 802.11 interfaces using 2x2 and
 3x3 antenna configurations, respectively (tx-antennas x rx-antennas).  The
@@ -266,12 +266,11 @@ The IEEE 802.11n chip supports SGi (Short Guard interval) and STBC (Space-time
 block code) over 20/40 MHz. The IEEE 802.11ac chip supports the same
 technologies and increases the channel bandwidth to 20/40/80 MHz. SGi reduces
 the guard interval used to eliminate intersymbol interference (as opposed to
-interframe interference, which IFS eliminates) from 800 ns to 400 ns. STBC is
+interframe interference, which IFS eliminates) from 400 ns to 800 ns. STBC is
 a technique to increase the reliability of transmission.
 
 The router has been the default router provided by many Swedish ISPs and is
-therefore a good router to use in the experiments. A custom firmware provided
-by Telenor was used to gain root access, otherwise no particular changes were
+therefore a good router to use in the experiments. A custom firmware was used to gain root access, otherwise no particular changes were
 made to keep the device in a ``natural'' condition, and should still be very
 similar to any random installation.
 
@@ -284,10 +283,9 @@ similar to any random installation.
 
 \section{ubus - the OpenWrt micro bus architecture}
 
-A program which acts as an interface to the bus daemon, \texttt{ubusd}.
-Modules are registered and organized by namespaces in \texttt{ubusd} which in
-turn is interacted with using \texttt{ubus}. A usage example can be found in
-Listing \ref{lst:ubusex}.
+\texttt{ubus} is command line interface to the bus daemon (\texttt{ubusd}).
+Modules are organized by namespaces in \texttt{ubusd} and can be interacted 
+with using \texttt{ubus}. A usage example can be found in Listing \ref{lst:ubusex}.
 
 This tool was primarily used to read statistics from the TG799-vac device,
 such as tx rates, packet counters and medium availability, intended for ``in
@@ -309,6 +307,11 @@ $ ubus call wireless.accesspoint get
 }
 \end{lstlisting}
 
+A key observation is that output is encoded in JSON format, which does not limit
+the size of numbers. Special care must be taken when using a JSON decoder to
+ensure that numbers are deserialized correctly. We observed one such problem
+during our thesis work.
+
 \section{Wireshark}
 
 Wireshark is a well-known program for capturing and inspecting network data,
@@ -317,18 +320,19 @@ thesis. On Linux, it uses \texttt{libpcap} to register a packet tap for live
 capture. Due to the way packet taps work in the Linux kernel Wireshark cannot
 timestamp the moment the packet physically was transmitted, unless the network
 interface card explicitly supports hardware timestamps. None of the NICs used
-in this thesis have this feature.
+in this thesis have this feature, hence we cannot use Wireshark for any
+time measurements.
 
 \section{jana}
 
-A program, developed during this thesis, for running network tests.
-Specifically, network tests using expontential, uniform and gamma distributed
-packet send rates and payload sizes. This is in contrast to more powerful
-tools such as \texttt{pktgen} and \texttt{trafgen}, which offer better
-performance and more per-packet control at the expense of more configuration.
-\texttt{iperf3} is a network performance benchmark tool which we used for some
-experiments. However, it does not -- to our knowledge -- support inter-packet
-latency and payload distributions.
+\texttt{jana} is a program, developed during this thesis, for running network
+ tests. Specifically, network tests using expontential, uniform and gamma
+ distributed packet send rates and payload sizes. This is in contrast to more
+ powerful tools such as \texttt{pktgen} and \texttt{trafgen}, which offer
+ better performance and more per-packet control at the expense of more
+ configuration. Another widely used network benchmark tool is \texttt
+ {iperf3}, which we used for some experiments. However, it does not--to our
+ knowledge--support inter-packet latency and payload distributions.
 
 As traffic patterns have a high impact on the network the idea was to see how
 the model performed under bursty condition, such as web browsing and content
@@ -336,8 +340,8 @@ streaming, as well as constant-rate traffic such as video conferencing and
 gaming.
 
 The network test cycle is basically a ``ready, set, go!''-type of design: a
-server waits for clients to say hello, and--after all $N$ clients have been
-registered--broadcasts a ``set'' message which all clients echo back to the
+server waits for clients to say hello, and, after all $N$ clients have been
+registered, broadcasts a ``set'' message which all clients echo back to the
 server, which again waits for $N$ ``set'' before broadcasting a ``go''
 message which marks the start of the network test. All clients wait
 approximately 1 second after they have received the ``go'' message before

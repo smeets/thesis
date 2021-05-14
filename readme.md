@@ -1,13 +1,14 @@
 # thesis
 
-- [½] abstract
-- [ ] acknowledgements
+- [x] abstract
+- [ ] popsci. summary
+- [x] acknowledgements
 - [x] introduction
 - [x] background
 - [x] previous work
 - [x] methodology
-- [½] results
-- [½] discussion
+- [x] results
+- [x] discussion
 - [x] future work
 
 ## other

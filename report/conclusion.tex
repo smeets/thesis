@@ -4,7 +4,7 @@
 
 In this chapter we first discuss the experiments and their results. Then we
 proceed to discuss the model based on experiments. Finally, we present some
-thoughts on interesting research opportunities.
+ideas on interesting research opportunities and our closing thoughts.
 
 \section{Discussion of results}
 
@@ -53,7 +53,7 @@ $L_\text{NIC}$ (and $W_\text{NIC}$) in our experiments. However, this fact
 does not imply that there are not any more packets in the NIC. Recall that the
 NIC queueing system actually consists of a driver/firmware queue and a
 hardware queue. The hardware queue on most consumer chips is \emph{probably}
-either fixed and very limited in size, or non-existant (flash memory \emph{is}
+either fixed and very limited in size, or non-existant (RAM \emph{is}
 expensive).
 
 After additional analysis of the source code of Intel's open source Wi-Fi
@@ -87,34 +87,59 @@ NIC waiting to be transmitted. Reworking Table \ref{tab:exp2data}
 on the amount of packets in the NIC waiting to be transmitted.
 
 In conclusion, this experiment, under assumption of saturation, no hardware
-buffer on the NIC, $L_\texttt{NIC} = 256$ packets, can successfully measure
-the range of $W_\texttt{NIC}$. As mentioned earlier, comparing the obtained
+buffer on the NIC, $L_\texttt{NIC} = 256$ packets, can estimate the range of
+$W_\texttt{NIC}$. As mentioned earlier, comparing the obtained
 values from our experiment with the Felemban-Ekici model is prevented by
 different network speeds and configurations.
 
 \subsection{Experiment 3: Hacking on the driver}
 
+Since we could not find a concise definition of the
+\texttt{wireless\_media\_time}, and ultimately argued that the value must include $T_{BACKOFF}$ if there is a positive correlation with regards to the number
+of nodes, and include $T_{FRAME}$ if there is a linear correlation with regards to the payload size.
+
 % TODO: Discuss wireless media time, 2G and 5G difference
-The presented \texttt{wireless\_media\_time} shows signs of
+The sampled \texttt{wireless\_media\_time} presented in Figure \ref{fig:exp3mediatime} (2.4 GHz) shows an interesting behaviour: the timing data from the system under test (localhost) clearly increase as the number
+of active raspberry pi nodes increases. This behaviour is not apparent in the control set (values sampled from another system running
+the same kernel but with another NIC), as the timing values do not strictly
+increase. A statistical analysis of the datasets could determine the level of correlation.
 
+It looks like the payload size is a contributing factor the
+media time on the localhost dataset, but not on the control dataset. The relative
+media time factor is around 2X while the payload size factor is between $64X$ to $8000X$, and the absolute difference is around $100~\mu s$, which amounts to about
+$100~\text{$\mu$S} \times 144~\text{Mbps} = 14.4~\text{Kb}$. Thus we can immediately conclude that there is no linear correlation between payload size and
+media time. Our best guess is that the NIC probably does about $100~\mu s$ worth
+of work between each (s)IRQ (which is when we sample). This guess does not seem
+to hold for the control set, however.
 
-Recall that during the CSMA process, time is quantized into time-slots, from 9
+Moving on to 5G, Figure \ref{fig:exp4mediatime} presents a completely different
+behavior and the only similarity with 2G is the shared minimum media time, at around $100~\mu s$. There does not seem to be any immediate correlation between either payload size and media time, nor number of nodes and media time. Even though
+we label this test as inconclusive, at least both the localhost dataset and control dataset show very similar behaviour. Comparing 2G and 5G modem behaviour is very tricky, not only due to a difference in protocol but often also due
+to a difference in hardware, firmware and kernel driver. It is worth noting that
+the difference observed suggest that there is no silver bullet which works for
+both IEEE 802.11 n (2G) and IEEE 802.11 ac (5G).
+
+Indeed, differences between IEEE 802.11 n and IEEE 802.11 ac can have dramatic effects
+on observable metrics. Recall that during the CSMA process, time is quantized into time-slots, from 9
 to 50 $\mu s$. At similar physical transmission rates, with $T_{\texttt{slot}}
 = 9$ will \emph{attempt} to decrement the $T_{\texttt{backoff}}$ more than 5
 times as quickly, compared with $T_\texttt{slot} = 50$. However, since
 transmission take exactly the same amount of time, the only difference becomes
 the time spent waiting for the \texttt{DIFS} and \texttt{SIFS}. Now consider
 that when $T_{\texttt{slot}} = 9$, the physical transmission rate is 200 Mbps
-and 72.2 when $T_{\texttt{slot}} = 50$ -- this is IEEE 802.11 n compared to
-IEEE 802.11 ac. The insight here is that a IEEE 802.11 ac network can send
+and 72.2 Mbps when $T_{\texttt{slot}} = 50$. This is IEEE 802.11 n compared to
+IEEE 802.11 ac.
+
+The insight here is that a IEEE 802.11 ac network can send
 frames a) faster compared to n and b) decrements the backoff counter more
 rapidly, with the implication that, network-wide, there will be more
 transmission attempts and, consequently, packet collisions, compared to
 IEEE 802.11 n, assuming network saturation and equal sample durations.
 
-This behavior is shown by the graphs -- the IEEE 802.11 ac frame drops is
-significantly higher compared to IEEE 802.11 n. We will continue to discuss
-the frame drop probability in the upcoming section.
+This behavior is implied in graphs, where the media time for small packets in IEEE 802.11 ac is significantly higher compared to IEEE 802.11 n (a large media time should primarily be caused by collisions and thus, by definition, frame drops). We will continue to discuss the frame drop probability in the upcoming section.
+
+In conclusion, we found that the experiment could show expected correlation between $T_{BACKOFF}$ and media time for 802.11 n. This was, however, not
+observed on our control system and therefore we have to conclude that our findings are too inconclusive, with a saving clause that the experiment shows promise.
 
 \section{The Felemban-Ekici Model}
 
@@ -249,7 +274,7 @@ time (RTT) of packets and comparing the measured values with a modeled RTT (
 based on IEEE 802.11 and TCP) could also lead to some interesting results.
 
 
-\item And as is common practice today, when in doubt, throw machine learning
+\item And as is common practice today: when in doubt, throw machine learning
 at the problem. While machine learning cannot enable more accurate
 measurements, a machine-learning model could be trained to predict network
 behaviour based on a large set of collected and labeled (as in, metric X
@@ -265,4 +290,20 @@ extended to record the outcome of any interventions (e.g. significantly
 better or worse), possibly allowing for collection of data for unsupervised
 machine learning.
 
+During our thesis work we were able to identify several interesting metrics, available from \texttt{ubus}, such as number of connected clients, neighbouring
+network data, medium availability, TX/RX PHY rates, RSSI, glitches and RTS settings. See \url{https://github.com/smeets/thesis/blob/master/paramlist.md} for more
+parameters and their descriptions.
+
+
 \end{itemize}
+
+\section{Closing remarks \& thoughts}
+This thesis primarily indicates that it currently is and most probably will become increasingly difficult to evaluate and use existing
+models for practical Wi-Fi equipment. As the IEEE 802.11 specification evolves, newer Wi-Fi routers will always implement have new implementations and new features. At least, there are probably fewer chipset makers than router equipment
+manufacturers.
+
+Our attempts to obtain timing highly accurate packet timing data also show
+that it requires a non-trivial amount of effort. It seems more likely that
+an overall measurement using ML/AI system is more easy to obtain for helping
+customers with the routers than trying to develop a system that works from the
+inside out as there are too many gaps between model and physical reality.

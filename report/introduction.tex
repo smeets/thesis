@@ -2,18 +2,9 @@
 
 \chapter{Introduction}
 
-This introductory chapter describes the motivations to evaluate IEEE 802.11
-(Wi-Fi) performance models based on Markov Chain approximation of the
-Distributed Coordination Function (DCF). A problem definition is also provided
-to clearly define the scope of this thesis.
+This introductory chapter begins by reviewing Wi-Fi usage in our modern society, and use this to motivate an evaluation of a IEEE 802.11 (Wi-Fi) performance model based on a Markov Chain approximation of the Distributed Coordination Function (DCF). 
 
-Chapter 2 provides a background to and overview of related systems, protocols
-and hardware. It is followed by Chapter 3 which introduces the research field
-and prior works. Chapter 4 discusses the experimental methodology used to
-achieve the different goals. Afterwards, Chapter 5 presents the results which
-are further discussed in Chapter 6.
-
-All source material available online at \url{https://github.com/smeets/thesis}.
+At the end of this chapter we describe the methodology, organization and problem definition.
 
 \section{Background}
 
@@ -26,17 +17,17 @@ All source material available online at \url{https://github.com/smeets/thesis}.
 
 Wi-Fi seems to be the wireless home network protocol of the (forseeable)
 future. In 2014 a report on Wi-Fi adoption found that 25\% of households, all
-over the world, had Wi-Fi networks set up. In households with fixed-line
+over the world, had set up Wi-Fi networks. In households with fixed-line
 broadband access, 65\% had set up a Wi-Fi network\cite{smith}. The report also
 states that the number of Wi-Fi-enabled devices is projected to increase.
 
 Consumers today have higher expectations regarding network throughput than the
-original IEEE 802.11 standard was designed for back in 1997. In recent years,
+original IEEE 802.11 standard was designed for back in the mid 90's. In recent years,
 the Wi-Fi label has become hugely popular and the number of Wi-Fi-capable
 devices have skyrocketed, especially in urban areas and neighbourhoods. The
 protocol that once was aimed at corporate sector is now almost everywhere
-around us, in vastly different use-cases than for which it first was designed.
-Beside home network use, Wi- Fi networks are deployed for mobile network
+around us, and in vastly different use-cases than for which it first was designed.
+Beside home network use, Wi-Fi networks are also deployed for mobile network
 off-loading \cite{offloading}.
 
 Alongside this explosion of households relying on a Wi-Fi router to connect
@@ -45,21 +36,23 @@ their everyday electronics (computers, phones, TVs) and ``smart devices''
 have similarly increased: video streaming in 1080p and even UHD (4K) is now
 possible on many platforms.
 
-It has become widely known among consumers that Wi-Fi can exhibit poor
-performance (for a multitude of reasons). A user streaming video (sensitive to
-throughput) to their TV will have a significant impact on the quality of
-service another user on the same network experiences on their video conference
-(sensitive to latency \& jitter). As more people attempt to work remotely this
-type of network contention can only be expected to become more common.
+But the increased Wi-Fi usage does not come without problems. It has become
+widely known among consumers that Wi-Fi can exhibit poor performance (for a
+multitude of reasons). A user streaming video (a use case where user
+experience is sensitive to throughput) to their TV will have a significant
+impact on the quality of service another user on the same network experiences
+on their video conference (sensitive to latency \& jitter). As more people
+attempt to work remotely this type of network contention can only be expected
+to become more common.
 
 Ignoring the physical aspects involved, the primary task of a wireless network
 protocol is to share the underlying medium to all clients in an effective
 manner. As with all radio technologies, Wi-Fi is primarily constrained by the
-radio spectrum it can utilize. All available performance is derived from the
+radio spectrum it can utilize. All available performance is derived from a
 clever exploitation of this physical medium. As Wi-Fi usage has increased, the
-corresponding increase in radio activity, and the resulting issues of media
+corresponding increase in radio spectrum usage, and the resulting issues of media
 sharing and interference, puts the protocol, and its medium access mechanisms
-in particular, under ever more pressure.
+in particular, under even more pressure.
 
 \section{Motivation}
 
@@ -69,10 +62,10 @@ in particular, under ever more pressure.
 % förlängningen utveckla algoritmer som WiFI routrar använder för att
 % automatiskt konfigurera sig så att prestandan blir tillräcklig.
 
-The performance of a household Wi-Fi network is not solely determined a router
+The performance of a household Wi-Fi network is not solely determined by a router
 or the broadband connection. Factors such as network configuration (channel
 settings, guard intervals, access modes), environment (noisy neighbours?), and
-clients (e.g. hardware and Wi-Fi generation) have a major impact on the
+clients (e.g. hardware and Wi-Fi generation) have a major impact on the ultimate
 network performance perceived by users.
 
 To meet a wide variety of customer expectations in scenarios such as VoIP,
@@ -82,13 +75,15 @@ configurable parameters. Even though newer routers are able to (somewhat)
 automatically (re)configure themselves based on analysis of neighbouring
 networks, they are not guaranteed to be optimal since they have a local view
 of the network (i.e. one point-of-view). Older devices rely on manual
-configuration, often factory defaults.
+configuration, often using factory defaults.
 
 If possible, could measuring (the right) Wi-Fi performance metrics shed some
-light on why the perceived network performance is poor? Could the performance
-metrics be used to construct expert-type systems? And would these metrics be
-useful in the development of autonomous (re)configuration algorithms, embedded
-in a router?
+light on why the perceived network performance is poor in a given situation?
+Could the performance metrics be used to construct expert-type systems? In
+addition would these metrics be useful in the development of autonomous
+(re)configuration algorithms, embedded in a router? How would these algorithms
+be designed? Our position is that a reasonable–for a reasonable definition
+of the definition–approach is to build algorithms upon a model.
 
 % @ARTICLE{490421, author={M. M. -. {Cheng} and J. C. -. {Chuang}},
 % @journal={IEEE Journal on Selected Areas in Communications},
@@ -108,15 +103,15 @@ in a router?
 
 Accurately modelling the Wi-Fi communication and related performance
 characteristics is an active field of research and today there are various
-proposed models (both analytical and ) which perform well in simulations
-\cite{bianchi}\cite{felemban}. Wi-Fi implements \emph{Carrier-sense multiple
+proposed models which perform well in simulations
+\cite{bianchi}\cite{felemban}. Some of these models are based on the observation that Wi-Fi implements \emph{Carrier-sense multiple
 access/Collision avoidance} (CSMA/CA)—"listen before speaking"—in a
 \emph{Distributed Coordination Function} (DCF) to reduce the likelihood of
 collisions happening in the first place, and what to do when collisions occur.
-A branch of models are built on the approximation of the DCF as a Markov
+A branch of these models–of which one we will attempt to evaluate in this report–are built on the approximation of the DCF as a Markov
 Chain. Furthermore, the models are often constrainted by assumptions,
 neccesary for mathematical tractablility, that cast doubt on the models
-ability to perform in the physical world.
+ability to reflect and perform in the physical world.
 
 Evaluating if the models, despite their assumptions, are useful for
 determining network performance could potentially be of enourmous benefit for
@@ -127,15 +122,19 @@ interventions. Who knows, at some point in the future, devices might even
 attempt to cooperatively (and autonoumously!) resolve identified network
 problems.
 
+In this report we solely collect metrics from devices running Linux, as it is
+the foundation of the majority of all Wi-Fi products on the market today. The
+same software that runs on a Wi-Fi router can be run on a laptop and since
+the Linux kernel is "open source", we can experiment directly with the
+software itself. 
 
-\section{Method and Problem Definitions}
+\section{Method, Problem Definition and Organization}
 
-This thesis aims to evaluate how well the branch of Markov Chain-based models,
-originally presented in \cite{bianchi}, perform in the physical world. The
-model evaluated is an improved version presented in \cite{felemban}.
+We aim to evaluate how well the model presented in \cite{felemban} perform in the physical world. The methodology for our work will be explained in further
+detail in following chapters, and is based on analysing the model, collecting and
+comparing empirical data with the model. 
 
-This question, as with most deceptively simple-sounding questions, must first
-be taken apart:
+Our problem definitions are formed by taking our overall goal of evaluating the Felemban-Ekici model and breaking it into smaller pieces:
 
 \begin{itemize}
 
@@ -147,8 +146,7 @@ be taken apart:
 
 \end{itemize}
 
-The problem definition also includes work related the collection, evaluation
-and potential usage of data collected from a router itself.
+Since we have elected to use an experimental methodology, we must also include definitions related to the collection and evaluation of empirical data.
 
 \begin{itemize}
 \item \emph{Problem 3} - analysis: what data should be collected?
@@ -156,8 +154,20 @@ and potential usage of data collected from a router itself.
 \item \emph{Problem 5} - evaluate: compare collected data with model and our definition from \emph{Problem 2}
 \end{itemize}
 
-In Chapter 4 we will present a definiton for \emph{Problem 2} as well as
-problem \emph{Problem 3} and \emph{Problem 4}. We show collected data for
-\emph{Problem 3} and \emph{Probme 4} in Chapter 5, and discuss these results
-with regards to \emph{Problem 5} and \emph{Problem 1} in Chapter 6.
+The remainder of this thesis is organized as follows. 
+
+Chapter 2 provides a background to, and overview of, related systems, protocols
+and hardware. 
+
+Chapter 3 introduces the research field and prior works.
+
+In Chapter 4 we present the methodology and experiments dervied from \emph{Problem 2}, \emph{Problem 3} and \emph{Problem 4}. 
+
+We show collected data for \emph{Problem 3} and \emph{Problem 4} in Chapter 5,
+and discuss these results with regards to \emph{Problem 5} and \emph
+{Problem 1} in Chapter 6 along with ideas for future work and our closing
+thoughts.
+
+Some source material can be found in the Appendix. However, please refer to the repository available online at \url{https://github.com/smeets/thesis} for more content and details.
+
 

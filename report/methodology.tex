@@ -52,7 +52,7 @@ set, is gathered from a specific device and referred to as the \emph{captured
 metrics}.
 
 Since both the original model from Bianchi and Felemban-Ekici models have
-strong performance claims backed by evaluations done with simulators the
+strong performance claims backed by evaluations done with simulators, the
 stated parameters and their behaviour can be considered fact--the models
 accurately model IEEE 802.11 performance. What remains unknown is how well
 these models perform outside simulations -- on physical hardware using
@@ -73,7 +73,9 @@ either a direct or indirect equivalent in the theoretical model. If these
 metrics match numerically the theoretical model is useful. If these metrics
 don't match numerically the theoretical model can still be considered useful
 if the trends of these metrics match. If neither of these statments hold, the
-model is not useful.
+model is not useful. If this is the case then we cannot verify the model, and
+the model should be considered useless--after all, what is the point of an 
+unverifiable model?
 
 \end{itemize}
 
@@ -99,7 +101,7 @@ relevant metrics from the model and the protocol itself. After reading through
 \end{itemize}
 
 In addition to these, there are also some parameters and variables that are
-used in \cite{felemban} but originate from IEEE 802.11 itself:
+used in \cite{felemban} but originate from IEEE 802.11 specification itself:
 
 \begin{itemize}
     \item channel bit rate
@@ -216,7 +218,7 @@ T_\text{send}$
 
 However, the $T_\text{sent}$ timestamp obtained from Wireshark/libpcap is not
 what one would expect and for our purposes this divergence between what we
-expected and what libpcap delivered was too great to contiune this line of
+expected and what libpcap delivered was too large to contiune this line of
 experimentation. In Chapter 6 we will discuss the underlying reasons for this
 in more detail.
 
@@ -270,7 +272,7 @@ L_\text{NIC} = K - L_\text{qdisc}
 \end{equation}
 
 We know have an equation for the number of packets in the NIC queue system of
-Figure \ref{fig:exp2_overview}. Recall Little's Law, $L = \lambda W$, which,
+Figure \ref{fig:exp2_overview}. Recalling Little's Law, $L = \lambda W$, which,
 in this context, states that the average number of packets $L$ in the
 networking system is equal to the generation rate multiplied by the average
 time $W$ each packet spends in the networking system. This law is applicable
@@ -525,7 +527,7 @@ equivalent metrics.
     \item \emph{packet collision probability (P)} - refers to the IEEE 802.11
     frame collision probability and as far as we researched, must be obtained from
     the NIC. Our NIC does not provide this information. An alternative is to count
-    the number of dropped packets, i.e. packets dropped by the NIC due to
+    the number of  packets dropped by the NIC due to
     exceeding the maximum number of retransmission attempts. The model defines
     this property as $P^{L+1}$, where $P$ is the conditional collision probability
     and $L$ the retry limit.
@@ -622,6 +624,7 @@ using a brute-force approach, but this resulted in skewed and unsound
 parameters. So we reached out to the authors of the model in order to try and
 obtain the original source code. After a week we got a reply that it could
 take a while to dig stuff that old up and waited, but nothing arrived and we
-received no response to subsequent email attempts.
+received no response to subsequent follow-up emails.
 
-Thus it became impossible for us to evaluate the model.
+Thus it became impossible for us to actually evaluate the model and so we
+shifted focus more heavily onto collection of the neccesary metrics. 

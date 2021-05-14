@@ -8,25 +8,13 @@ complexity of wireless communication the existing analytical Wi-Fi network
 models rely on certain network constraints and simplifications in order to be
 mathematically tractable.
 
-Still, analytical Wi-Fi network models have been proven to mimic Wi-Fi network
-simulation models closely. There are, however, no empirical tests to confirm
-that these findings still hold in practical scenarios.
+We set out to evaluate the practicality of using Wi-Fi performance models to 
+estimate network performance by collecting the model necessary parameters directly 
+from an access point. By extension, we must also collect network metrics,
+such as packet payload size and number of nodes, for comparison with the model. We 
+explore different venues to collect these parameters and metrics to find out
+if it is practical to apply the models in Wi-Fi networks. 
 
-We set out to evaluate one prominent model, based on the work of Bianchi
-\cite{bianchi}, in two scenarios: in the controlled lab and in the wild. The lab
-experiments showed that while the model is difficult to adapt to modern Wi-Fi
-networks there is a correlation between the model data and lab data.
-
-It turned out that gathering valid lab data is a hard problem without access
-to the hardware in question and a large portion of the thesis effort went into
-attempting to sample low-level network information. The first attempt was
-based on Wireshark, the second on modelling the Linux network system as a
-queueing system and third and final attempt using a modified Wi-Fi driver. The
-Wireshark-based solution failed due to Linux delivering packets to Wireshark
-before they are actually transmitted. The queuing system approach was
-discovered to contain timing errors. Our modified Wi-Fi driver shows some
-promise, however after extensive tests we could not determine whether the
-obtained data was accurate or not.
-
-
-
+After performing three attempts, we conclude that this is difficult due to several
+ aspects in the Linux kernel, such as batching optimization patterns, proprietary 
+ kernel modules and firmware blobs. 
