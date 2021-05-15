@@ -12,5 +12,7 @@ tmp:
 
 report: tmp $(SOURCES)
 	pdflatex -output-directory=tmp report.tex
-# 	bibtex -include-directory=tmp tmp/report
+	bibtex tmp/report
+	pdflatex -output-directory=tmp report.tex
+	pdflatex -output-directory=tmp report.tex
 	cp tmp/report.pdf report.pdf
