@@ -290,20 +290,39 @@ extended to record the outcome of any interventions (e.g. significantly
 better or worse), possibly allowing for collection of data for unsupervised
 machine learning.
 
-During our thesis work we were able to identify several interesting metrics, available from \texttt{ubus}, such as number of connected clients, neighbouring
-network data, medium availability, TX/RX PHY rates, RSSI, glitches and RTS settings. See \url{https://github.com/smeets/thesis/blob/master/paramlist.md} for more
+During our thesis work we were able to identify several interesting metrics,
+available from \texttt{ubus}, such as number of connected clients,
+neighbouring network data, medium availability, TX/RX PHY rates, RSSI,
+glitches and RTS settings. See \url
+{https://github.com/smeets/thesis/blob/master/paramlist.md} for more
 parameters and their descriptions.
 
 
 \end{itemize}
 
-\section{Closing remarks \& thoughts}
-This thesis primarily indicates that it currently is and most probably will become increasingly difficult to evaluate and use existing
-models for practical Wi-Fi equipment. As the IEEE 802.11 specification evolves, newer Wi-Fi routers will always implement have new implementations and new features. At least, there are probably fewer chipset makers than router equipment
-manufacturers.
+\section{Closing remarks \& thoughts} 
 
-Our attempts to obtain timing highly accurate packet timing data also show
+This thesis primarily indicates that it currently is and most probably will
+become increasingly difficult to evaluate and use existing models for
+practical Wi-Fi equipment. As the IEEE 802.11 specification evolves, new
+Wi-Fi routers will have new implementations and new features. At least, there
+are probably fewer chipset makers than router equipment manufacturers, so the
+expected variance (of the chipset and driver) of these future devices should be
+similar to today's devices.
+
+Our attempts to obtain highly accurate packet timing data also show
 that it requires a non-trivial amount of effort. It seems more likely that 
-an overall measurement using ML/AI system is more easy to obtain for helping 
-customers with the routers than trying to develop a system that works from the 
-inside out as there are too many gaps between model and physical reality.  
+an overall measurement using ML/AI system is easier to obtain for helping 
+customers with their routers than trying to develop a system that works from the 
+inside out as there are too many gaps between model and physical reality.
+
+However, there is a kind of natural elegance to the way the Bianchi
+(and subsequent models) approach network performance. By focusing on the
+(assumed) bottleneck–the Distributed Coordination Function–most of the recent
+improvements in throughput (e.g. batching, MI/MO, multi-user MI/MO) can
+simply be abstracted as channel capacity (which can be reliably sampled from
+the driver). In addition to this versatile way of modelling different
+performance features, the models have excellent performance in Wi-Fi
+simulations. We therefore believe that is is important to construct a
+functional implementation– which we weren't able to do–and run experiments in
+consumer networks.
